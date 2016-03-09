@@ -41,6 +41,7 @@ def test_werkzeug_http_error():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/not_found")
+    @graph.audit
     def not_found():
         raise NotFound
 
@@ -85,6 +86,7 @@ def test_werkzeug_http_error_custom_message():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/why_me")
+    @graph.audit
     def why_me():
         raise InternalServerError("Why me?")
 
@@ -108,6 +110,7 @@ def test_custom_error():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/unexpected")
+    @graph.audit
     def unexpected():
         raise MyUnexpectedError("unexpected")
 
@@ -131,6 +134,7 @@ def test_custom_error_status_code():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/malformed_syntax")
+    @graph.audit
     def malformed_syntax():
         raise MyValidationError
 
@@ -154,6 +158,7 @@ def test_custom_error_retryable():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/conflict")
+    @graph.audit
     def conflict():
         raise MyConflictError("Conflict")
 
@@ -182,6 +187,7 @@ def test_error_wrap():
         raise Exception("fail")
 
     @graph.app.route("/wrap")
+    @graph.audit
     def wrap():
         try:
             fail()

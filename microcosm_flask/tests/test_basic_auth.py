@@ -26,6 +26,7 @@ def test_basic_auth():
     graph = create_object_graph(name="example", testing=True, loader=lambda metadata: config)
 
     @graph.app.route("/unauthorized")
+    @graph.audit
     @graph.basic_auth.required
     def unauthorized():
         raise Exception("Should not be raised!")
@@ -53,6 +54,7 @@ def test_basic_auth_default_realm():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/unauthorized")
+    @graph.audit
     @graph.basic_auth.required
     def unauthorized():
         raise Exception("Should not be raised!")
@@ -80,6 +82,7 @@ def test_basic_auth_default_credentials():
     graph = create_object_graph(name="example", testing=True)
 
     @graph.app.route("/ok")
+    @graph.audit
     @graph.basic_auth.required
     def unauthorized():
         return "OK"
@@ -108,6 +111,7 @@ def test_basic_auth_custom_credentials():
     graph = create_object_graph(name="example", testing=True, loader=lambda metadata: config)
 
     @graph.app.route("/ok")
+    @graph.audit
     @graph.basic_auth.required
     def unauthorized():
         return "OK"

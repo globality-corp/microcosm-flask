@@ -66,7 +66,7 @@ class ConfigBasicAuth(BasicAuth):
         "default": "secret",
     }
 )
-def configure_basic_auth(graph):
+def configure_basic_auth_decorator(graph):
     """
     Configure a basic auth decorator.
 

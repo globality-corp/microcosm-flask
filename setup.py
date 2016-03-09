@@ -19,6 +19,7 @@ setup(
         "Flask>=0.10.1",
         "Flask-BasicAuth>=0.2.0",
         "microcosm>=0.4.0",
+        "microcosm-logging>=0.2.0",
     ],
     setup_requires=[
         "nose>=1.3.6",
@@ -28,7 +29,8 @@ setup(
     entry_points={
         "microcosm.factories": [
             "app = microcosm_flask.factories:configure_flask_app",
-            "basic_auth = microcosm_flask.basic_auth:configure_basic_auth",
+            "audit = microcosm_flask.audit:configure_audit_decorator",
+            "basic_auth = microcosm_flask.basic_auth:configure_basic_auth_decorator",
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",
             "health = microcosm_flask.conventions.health:configure_health",
