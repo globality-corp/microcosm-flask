@@ -37,5 +37,6 @@ def configure_flask_app(graph):
         "error_handlers",
         "health",
         "logger",
+        "route",
     )
     return graph.flask

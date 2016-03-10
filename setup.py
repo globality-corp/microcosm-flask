@@ -16,8 +16,10 @@ setup(
     zip_safe=False,
     keywords="microcosm",
     install_requires=[
+        "enum34>=1.1.2",
         "Flask>=0.10.1",
         "Flask-BasicAuth>=0.2.0",
+        "flask-cors>=2.1.2",
         "microcosm>=0.4.0",
         "microcosm-logging>=0.2.0",
     ],
@@ -34,6 +36,7 @@ setup(
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",
             "health = microcosm_flask.conventions.health:configure_health",
+            "route = microcosm_flask.routing:configure_route_decorator",
         ],
     },
     tests_require=[
