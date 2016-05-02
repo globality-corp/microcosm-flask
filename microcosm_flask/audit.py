@@ -28,6 +28,7 @@ def audit(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         response = None
+        request_id = request.headers.get('X-Request-Id', 'None')
 
         # always include these fields
         audit_dict = dict(
@@ -35,6 +36,7 @@ def audit(func):
             func=func.__name__,
             method=request.method,
         )
+        audit_dict.update({"X-Request-Id": request_id})
 
         # include request body on debug (if any)
         if current_app.debug and request.get_json(force=True, silent=True):
