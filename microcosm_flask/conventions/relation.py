@@ -75,6 +75,12 @@ class RelationConvention(Convention):
         """
         Register a replace-for relation endpoint.
 
+        For typical usage, this relation is not strictly required; once an object exists and has its own ID,
+        it is better to operate on it directly via dedicated CRUD routes.
+        However, in some cases, the composite key of (subject_id, object_id) is required to look up the object.
+        This happens, for example, when using DynamoDB where an object which maintains both a hash key and a range key
+        requires specifying them both for access.
+
         The definition's func should be a replace function, which must:
         - accept kwargs for the new-or-updated instance parameters
         - return the created or updated instance
