@@ -15,6 +15,7 @@ from microcosm_flask.conventions.encoding import (
     load_query_string_data,
     load_request_data,
     merge_data,
+    require_response_data,
 )
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.namespaces import Namespace
@@ -46,10 +47,61 @@ class RelationConvention(Convention):
         @response(definition.response_schema)
         def create(**path_data):
             request_data = load_request_data(definition.request_schema)
-            response_data = definition.func(**merge_data(path_data, request_data))
+            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             return dump_response_data(definition.response_schema, response_data, Operation.CreateFor.value.default_code)
 
         create.__doc__ = "Create a new {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+
+    def configure_deletefor(self, ns, definition):
+        """
+        Register a delete-for relation endpoint.
+
+        The definition's func should be a delete function, which must:
+        - accept kwargs for path data
+        - return truthy/falsey
+
+        :param ns: the namespace
+        :param definition: the endpoint definition
+
+        """
+        @self.graph.route(ns.instance_path, Operation.DeleteFor, ns)
+        def delete(**path_data):
+            require_response_data(definition.func(**path_data))
+            return "", Operation.DeleteFor.value.default_code
+
+        delete.__doc__ = "Delete a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+
+    def configure_replacefor(self, ns, definition):
+        """
+        Register a replace-for relation endpoint.
+
+        For typical usage, this relation is not strictly required; once an object exists and has its own ID,
+        it is better to operate on it directly via dedicated CRUD routes.
+        However, in some cases, the composite key of (subject_id, object_id) is required to look up the object.
+        This happens, for example, when using DynamoDB where an object which maintains both a hash key and a range key
+        requires specifying them both for access.
+
+        The definition's func should be a replace function, which must:
+        - accept kwargs for the new-or-updated instance parameters
+        - return the created or updated instance
+
+        :param ns: the namespace
+        :param definition: the endpoint definition
+
+        """
+        @self.graph.route(ns.relation_path, Operation.ReplaceFor, ns)
+        @request(definition.request_schema)
+        @response(definition.response_schema)
+        def replace(**path_data):
+            request_data = load_request_data(definition.request_schema)
+            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                Operation.ReplaceFor.value.default_code,
+            )
+
+        replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 
     def configure_retrievefor(self, ns, definition):
         """
@@ -72,7 +124,7 @@ class RelationConvention(Convention):
         @response(definition.response_schema)
         def retrieve(**path_data):
             request_data = load_query_string_data(request_schema)
-            response_data = definition.func(**merge_data(path_data, request_data))
+            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             return dump_response_data(definition.response_schema, response_data)
 
         retrieve.__doc__ = "Retrieve {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
