@@ -24,6 +24,7 @@ class Choices(Enum):
 class TestSchema(Schema):
     id = fields.UUID()
     foo = fields.String(description="Foo", default="bar")
+    bar = fields.String(allow_none=True)
     choice = EnumField(Choices)
     names = fields.List(fields.String)
     payload = fields.Dict()
@@ -55,6 +56,13 @@ def test_field_description_and_default():
         "type": "string",
         "description": "Foo",
         "default": "bar",
+    })))
+
+
+def test_field_allow_none():
+    parameter = build_parameter(TestSchema().fields["bar"])
+    assert_that(parameter, is_(equal_to({
+        "type": ["string", "null"],
     })))
 
 
