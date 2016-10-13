@@ -85,7 +85,7 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
 
 
 def make_response(response_data, status_code=200, headers=None):
-    if not request.headers.get("X-Response-Skip-Null"):
+    if request.headers.get("X-Response-Skip-Null"):
         # swagger does not currently support null values; remove these conditionally
         response_data = remove_null_values(response_data)
 
