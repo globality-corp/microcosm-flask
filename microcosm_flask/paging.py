@@ -2,6 +2,8 @@
 Pagination support.
 
 """
+from enum import Enum
+
 from marshmallow import fields, Schema
 
 from microcosm_flask.linking import Link, Links
@@ -84,9 +86,14 @@ class Page(object):
             ("offset", self.offset),
             ("limit", self.limit),
         ] + [
-            (key, self.rest[key])
+            (key, self._qs_value_for_tuple(self.rest[key]))
             for key in sorted(self.rest.keys())
         ]
+
+    def _qs_value_for_tuple(self, value):
+        if isinstance(value, Enum):
+            return value.name
+        return value
 
 
 class PaginatedList(object):
