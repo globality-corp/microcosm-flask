@@ -152,8 +152,9 @@ def push_resource_json_batch(session, uri, resources):
     try:
         response.raise_for_status()
     except:
-        logger.warn("Unable to replace {}".format(
+        logger.warn("Unable to replace {}, batch: {}".format(
             uri,
+            resources,
         ))
         raise
 
