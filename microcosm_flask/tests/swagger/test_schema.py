@@ -5,6 +5,7 @@ Test JSON Schema generation.
 from hamcrest import (
     assert_that,
     equal_to,
+    has_entries,
     is_,
 )
 
@@ -30,6 +31,7 @@ class ValueType(IntEnum):
 class TestSchema(Schema):
     id = fields.UUID()
     foo = fields.String(description="Foo", default="bar")
+    bar = fields.String(allow_none=True, required=True)
     choice = EnumField(Choices)
     value = EnumField(ValueType, by_value=True)
     names = fields.List(fields.String)
@@ -126,6 +128,18 @@ def test_field_dict():
     assert_that(parameter, is_(equal_to({
         "type": "object",
     })))
+
+
+def test_field_allow_none():
+    parameter = build_parameter(TestSchema().fields["bar"])
+    schema = build_schema(TestSchema())
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
+        "x-nullable": True,
+    })))
+    assert_that(schema, has_entries(
+        required=["bar"]
+    ))
 
 
 def test_field_nested():
