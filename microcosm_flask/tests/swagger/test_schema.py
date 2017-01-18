@@ -7,6 +7,7 @@ from hamcrest import (
     equal_to,
     has_entries,
     is_,
+    not_,
 )
 
 from enum import Enum, IntEnum, unique
@@ -32,6 +33,7 @@ class TestSchema(Schema):
     id = fields.UUID()
     foo = fields.String(description="Foo", default="bar")
     bar = fields.String(allow_none=True, required=True)
+    baz = fields.String(allow_none=True, required=False)
     choice = EnumField(Choices)
     value = EnumField(ValueType, by_value=True)
     names = fields.List(fields.String)
@@ -129,7 +131,7 @@ def test_field_dict():
     })))
 
 
-def test_field_allow_none():
+def test_required_field_allow_none():
     parameter = build_parameter(TestSchema().fields["bar"])
     schema = build_schema(TestSchema())
     assert_that(parameter, is_(equal_to({
@@ -139,6 +141,18 @@ def test_field_allow_none():
     assert_that(schema, has_entries(
         required=["bar"]
     ))
+
+
+def test_non_required_field_allow_none():
+    parameter = build_parameter(TestSchema().fields["baz"])
+    schema = build_schema(TestSchema())
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
+        "x-nullable": True,
+    })))
+    assert_that(schema, not_(has_entries(
+        required=["baz"]
+    )))
 
 
 def test_field_nested():
