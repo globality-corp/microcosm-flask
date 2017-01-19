@@ -6,6 +6,7 @@ from hamcrest import (
     assert_that,
     equal_to,
     has_entries,
+    has_item,
     is_,
     not_,
 )
@@ -140,7 +141,7 @@ def test_required_field_allow_none():
         "x-nullable": True,
     })))
     assert_that(schema, has_entries(
-        required=["bar"]
+        required=has_item("bar")
     ))
 
 
@@ -151,9 +152,9 @@ def test_non_required_field_allow_none():
         "type": "string",
         "x-nullable": True,
     })))
-    assert_that(schema, not_(has_entries(
-        required=["baz"]
-    )))
+    assert_that(schema, has_entries(
+        required=not_(has_item("baz"))
+    ))
 
 
 def test_field_nested():
