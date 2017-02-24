@@ -53,6 +53,7 @@ class Operation(Enum):
     # ad hoc operations
     Command = OperationInfo("command", "POST", NODE_PATTERN, 200)
     Query = OperationInfo("query", "GET", NODE_PATTERN, 200)
+    Upload = OperationInfo("upload", "POST", NODE_PATTERN, 204)
 
     @classmethod
     def from_name(cls, name):
