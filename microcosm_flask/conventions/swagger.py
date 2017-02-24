@@ -67,8 +67,10 @@ class SwaggerConvention(Convention):
         "search_for",
         "update",
         "update_batch",
+        "upload",
     ],
     path_prefix="",
+    version="",
 )
 def configure_swagger(graph):
     """

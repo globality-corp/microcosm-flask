@@ -30,6 +30,7 @@ from microcosm_flask.conventions.registry import (
 )
 from microcosm_flask.errors import ErrorSchema, ErrorContextSchema, SubErrorSchema
 from microcosm_flask.naming import name_for
+from microcosm_flask.operations import Operation
 from microcosm_flask.routing import make_path
 from microcosm_flask.swagger.naming import operation_name, type_name
 from microcosm_flask.swagger.schema import build_parameter, iter_schemas
@@ -240,12 +241,17 @@ def add_responses(swagger_operation, operation, ns, func):
     else:
         description = "{} {}".format(operation.value.name, ns.subject_name)
 
-    # resource request
-    request_resource = get_request_schema(func)
-    if isinstance(request_resource, string_types):
-        if not hasattr(swagger_operation, "consumes"):
-            swagger_operation.consumes = []
-        swagger_operation.consumes.append(request_resource)
+    if operation in (Operation.Upload,):
+        swagger_operation.consumes = [
+            "multipart/form-data"
+        ]
+    else:
+        # resource request
+        request_resource = get_request_schema(func)
+        if isinstance(request_resource, string_types):
+            if not hasattr(swagger_operation, "consumes"):
+                swagger_operation.consumes = []
+            swagger_operation.consumes.append(request_resource)
 
     # resources response
     response_resource = get_response_schema(func)
