@@ -28,6 +28,7 @@ setup(
         "python-dateutil>=2.5.2",
         "PyYAML>=3.11",
         "rfc3986>=0.4.1",
+        "datadog>=0.15.0"
     ],
     setup_requires=[
         "nose>=1.3.6",
@@ -53,6 +54,7 @@ setup(
             "route = microcosm_flask.routing:configure_route_decorator",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
             "uuid = microcosm_flask.converters:configure_uuid",
+            "monitor = microcosm_flask.monitor:configure_monitor_decorator",
         ],
     },
     tests_require=[

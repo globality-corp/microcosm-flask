@@ -21,6 +21,7 @@ def make_path(graph, path):
     enable_audit=True,
     enable_basic_auth=False,
     enable_cors=True,
+    enable_monitor = True,
     log_with_context=True,
     path_prefix="/api",
 )
@@ -67,10 +68,15 @@ def configure_route_decorator(graph):
             # set the opaque component data_func to look at the flask request context
             func = graph.opaque.initialize(graph.request_context)(func)
 
-            # keep audit decoration last (before registering the route) so that
-            # errors raised by other decorators are captured in the audit trail
+            # keep audit decoration last (just before monitoring) so that
+            # errors raised by other decorators (except monitoring) are captured in the audit trail
             if graph.config.route.enable_audit:
                 func = graph.audit(func)
+
+            # keep monitoring decoration last (before registring the route) so that
+            # it captures the timing of the entire route
+            if graph.config.route.enable_monitor:
+                func = graph.monitor(func)
 
             graph.app.route(
                 make_path(graph, path),
