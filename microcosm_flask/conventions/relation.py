@@ -41,7 +41,7 @@ class RelationConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.relation_path, Operation.CreateFor, ns)
+        @self.add_route(ns.relation_path, Operation.CreateFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def create(**path_data):
@@ -63,7 +63,7 @@ class RelationConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.relation_path, Operation.DeleteFor, ns)
+        @self.add_route(ns.relation_path, Operation.DeleteFor, ns)
         def delete(**path_data):
             require_response_data(definition.func(**path_data))
             return "", Operation.DeleteFor.value.default_code
@@ -89,7 +89,7 @@ class RelationConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.relation_path, Operation.ReplaceFor, ns)
+        @self.add_route(ns.relation_path, Operation.ReplaceFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def replace(**path_data):
@@ -122,7 +122,7 @@ class RelationConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.relation_path, Operation.UpdateFor, ns)
+        @self.add_route(ns.relation_path, Operation.UpdateFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def replace(**path_data):
@@ -152,7 +152,7 @@ class RelationConvention(Convention):
         """
         request_schema = definition.request_schema or Schema()
 
-        @self.graph.route(ns.relation_path, Operation.RetrieveFor, ns)
+        @self.add_route(ns.relation_path, Operation.RetrieveFor, ns)
         @qs(request_schema)
         @response(definition.response_schema)
         def retrieve(**path_data):
@@ -180,7 +180,7 @@ class RelationConvention(Convention):
         """
         paginated_list_schema = make_paginated_list_schema(ns.object_ns, definition.response_schema)()
 
-        @self.graph.route(ns.relation_path, Operation.SearchFor, ns)
+        @self.add_route(ns.relation_path, Operation.SearchFor, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):

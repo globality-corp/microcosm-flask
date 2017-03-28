@@ -5,6 +5,10 @@ Convention base class.
 from microcosm_flask.operations import Operation
 
 
+class RouteAlreadyRegisteredException(Exception):
+    pass
+
+
 class EndpointDefinition(tuple):
     """
     A definition for an endpoint.
@@ -38,6 +42,7 @@ class Convention(object):
     """
     def __init__(self, graph):
         self.graph = graph
+        self._registered_routes = set()
 
     def configure(self, ns, mappings=None, **kwargs):
         """
@@ -55,6 +60,16 @@ class Convention(object):
                 pass
             else:
                 configure_func(ns, self._make_definition(definition))
+
+    def add_route(self, path, operation, ns):
+        route = (operation.value.method, path)
+
+        if route in self._registered_routes:
+            raise RouteAlreadyRegisteredException(route)
+
+        self._registered_routes.add(route)
+
+        return self.graph.route(path, operation, ns)
 
     def _find_func(self, operation):
         """

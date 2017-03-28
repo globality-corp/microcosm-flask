@@ -34,6 +34,7 @@ class Operation(Enum):
     Count = OperationInfo("count", "HEAD", NODE_PATTERN, 200)
     Create = OperationInfo("create", "POST", NODE_PATTERN, 201)
     UpdateBatch = OperationInfo("update_batch", "PATCH", NODE_PATTERN, 200)
+    CreateCollection = OperationInfo("create_collection", "POST", NODE_PATTERN, 200)
 
     # instance operations
     Retrieve = OperationInfo("retrieve", "GET", NODE_PATTERN, 200)
