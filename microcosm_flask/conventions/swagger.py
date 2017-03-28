@@ -46,7 +46,7 @@ class SwaggerConvention(Convention):
         Register a swagger endpoint for a set of operations.
 
         """
-        @self.graph.route(ns.singleton_path, Operation.Discover, ns)
+        @self.add_route(ns.singleton_path, Operation.Discover, ns)
         def discover():
             swagger = build_swagger(self.graph, ns, self.find_matching_endpoints(ns))
             g.hide_body = True

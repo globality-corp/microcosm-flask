@@ -24,7 +24,7 @@ class AliasConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.alias_path, Operation.Alias, ns)
+        @self.add_route(ns.alias_path, Operation.Alias, ns)
         def retrieve(**path_data):
             resource = definition.func(**path_data)
 

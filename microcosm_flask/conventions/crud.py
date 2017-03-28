@@ -43,7 +43,7 @@ class CRUDConvention(Convention):
         """
         paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
 
-        @self.graph.route(ns.collection_path, Operation.Search, ns)
+        @self.add_route(ns.collection_path, Operation.Search, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
@@ -86,7 +86,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.collection_path, Operation.Count, ns)
+        @self.add_route(ns.collection_path, Operation.Count, ns)
         @qs(definition.request_schema)
         def count(**path_data):
             request_data = load_query_string_data(definition.request_schema)
@@ -108,7 +108,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.collection_path, Operation.Create, ns)
+        @self.add_route(ns.collection_path, Operation.Create, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def create(**path_data):
@@ -132,7 +132,7 @@ class CRUDConvention(Convention):
         """
         operation = Operation.UpdateBatch
 
-        @self.graph.route(ns.collection_path, operation, ns)
+        @self.add_route(ns.collection_path, operation, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def update_batch(**path_data):
@@ -156,7 +156,7 @@ class CRUDConvention(Convention):
         """
         request_schema = definition.request_schema or Schema()
 
-        @self.graph.route(ns.instance_path, Operation.Retrieve, ns)
+        @self.add_route(ns.instance_path, Operation.Retrieve, ns)
         @qs(request_schema)
         @response(definition.response_schema)
         def retrieve(**path_data):
@@ -178,7 +178,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Delete, ns)
+        @self.add_route(ns.instance_path, Operation.Delete, ns)
         def delete(**path_data):
             require_response_data(definition.func(**path_data))
             return "", Operation.Delete.value.default_code
@@ -197,7 +197,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Replace, ns)
+        @self.add_route(ns.instance_path, Operation.Replace, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def replace(**path_data):
@@ -222,7 +222,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Update, ns)
+        @self.add_route(ns.instance_path, Operation.Update, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def update(**path_data):
@@ -242,7 +242,7 @@ class CRUDConvention(Convention):
         """
         paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
 
-        @self.graph.route(ns.collection_path, Operation.CreateCollection, ns)
+        @self.add_route(ns.collection_path, Operation.CreateCollection, ns)
         @request(definition.request_schema)
         @response(paginated_list_schema)
         def create_collection(**path_data):
