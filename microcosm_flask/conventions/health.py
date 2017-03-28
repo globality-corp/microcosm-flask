@@ -88,7 +88,7 @@ class HealthConvention(Convention):
 
     def configure_retrieve(self, ns, definition):
 
-        @self.graph.route(ns.singleton_path, Operation.Retrieve, ns)
+        @self.add_route(ns.singleton_path, Operation.Retrieve, ns)
         @skip_logging
         def current_health():
             response_data = self.health.to_dict()

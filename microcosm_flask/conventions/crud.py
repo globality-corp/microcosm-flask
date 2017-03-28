@@ -43,7 +43,7 @@ class CRUDConvention(Convention):
         """
         paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
 
-        @self.graph.route(ns.collection_path, Operation.Search, ns)
+        @self.add_route(ns.collection_path, Operation.Search, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
@@ -86,7 +86,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.collection_path, Operation.Count, ns)
+        @self.add_route(ns.collection_path, Operation.Count, ns)
         @qs(definition.request_schema)
         def count(**path_data):
             request_data = load_query_string_data(definition.request_schema)
@@ -108,7 +108,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.collection_path, Operation.Create, ns)
+        @self.add_route(ns.collection_path, Operation.Create, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def create(**path_data):
@@ -132,7 +132,7 @@ class CRUDConvention(Convention):
         """
         operation = Operation.UpdateBatch
 
-        @self.graph.route(ns.collection_path, operation, ns)
+        @self.add_route(ns.collection_path, operation, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def update_batch(**path_data):
@@ -156,7 +156,7 @@ class CRUDConvention(Convention):
         """
         request_schema = definition.request_schema or Schema()
 
-        @self.graph.route(ns.instance_path, Operation.Retrieve, ns)
+        @self.add_route(ns.instance_path, Operation.Retrieve, ns)
         @qs(request_schema)
         @response(definition.response_schema)
         def retrieve(**path_data):
@@ -178,7 +178,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Delete, ns)
+        @self.add_route(ns.instance_path, Operation.Delete, ns)
         def delete(**path_data):
             require_response_data(definition.func(**path_data))
             return "", Operation.Delete.value.default_code
@@ -197,7 +197,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Replace, ns)
+        @self.add_route(ns.instance_path, Operation.Replace, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def replace(**path_data):
@@ -222,7 +222,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        @self.graph.route(ns.instance_path, Operation.Update, ns)
+        @self.add_route(ns.instance_path, Operation.Update, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
         def update(**path_data):
@@ -232,6 +232,53 @@ class CRUDConvention(Convention):
             return dump_response_data(definition.response_schema, response_data)
 
         update.__doc__ = "Update some or all of a {} by id".format(ns.subject_name)
+
+    def configure_createcollection(self, ns, definition):
+        """
+        Register create collection endpoint.
+
+        :param ns: the namespace
+        :param definition: the endpoint definition
+        """
+        paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
+
+        @self.add_route(ns.collection_path, Operation.CreateCollection, ns)
+        @request(definition.request_schema)
+        @response(paginated_list_schema)
+        def create_collection(**path_data):
+            request_data = load_request_data(definition.request_schema)
+            page = self.page_cls(
+                offset=request_data.get("offset"),
+                limit=request_data.get("limit"),
+            )
+            return_value = definition.func(**merge_data(
+                path_data,
+                merge_data(
+                    request_data,
+                    page.to_dict(as_str=False),
+                ),
+            ))
+
+            if len(return_value) == 3:
+                items, count, context = return_value
+            else:
+                context = {}
+                items, count = return_value
+
+            response_data = PaginatedList(
+                ns=ns,
+                page=page,
+                items=items,
+                count=count,
+                schema=definition.response_schema,
+                operation=Operation.CreateCollection,
+                **context
+            )
+
+            headers = encode_count_header(count)
+            return dump_response_data(paginated_list_schema, response_data, headers=headers)
+
+        create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))
 
 
 def configure_crud(graph, ns, mappings, path_prefix=""):

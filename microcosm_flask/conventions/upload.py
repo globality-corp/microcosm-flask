@@ -63,14 +63,15 @@ def temporary_upload(name, fileobj):
 class UploadConvention(Convention):
 
     def __init__(self, graph, exclude_func=None):
-        self.graph = graph
+        Convention.__init__(self, graph)
+
         self.exclude_func = exclude_func or (lambda name, fileobj: False)
 
     def create_upload_func(self, ns, definition, path, operation):
         request_schema = definition.request_schema or Schema()
         response_schema = definition.response_schema or Schema()
 
-        @self.graph.route(path, operation, ns)
+        @self.add_route(path, operation, ns)
         def upload(**path_data):
             request_data = load_query_string_data(request_schema)
 

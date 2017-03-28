@@ -54,7 +54,7 @@ class DiscoveryConvention(Convention):
         """
         page_schema = PageSchema()
 
-        @self.graph.route("/", Operation.Discover, ns)
+        @self.add_route("/", Operation.Discover, ns)
         def discover():
             # accept pagination limit from request
             page = Page.from_query_string(load_query_string_data(page_schema))

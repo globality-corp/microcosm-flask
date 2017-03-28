@@ -34,7 +34,7 @@ class BuildInfoConvention(Convention):
 
     def configure_retrieve(self, ns, definition):
 
-        @self.graph.route(ns.singleton_path, Operation.Retrieve, ns)
+        @self.add_route(ns.singleton_path, Operation.Retrieve, ns)
         @skip_logging
         def build_info():
             response_data = self.build_info.to_dict()
