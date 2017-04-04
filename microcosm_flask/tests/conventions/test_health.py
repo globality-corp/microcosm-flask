@@ -42,7 +42,7 @@ def test_health_check_custom_check():
 
     client = graph.flask.test_client()
 
-    graph.health_convention.checks["foo"] = lambda graph: None
+    graph.health_convention.checks["foo"] = lambda graph: "hi"
 
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(200)))
@@ -52,7 +52,7 @@ def test_health_check_custom_check():
         "ok": True,
         "checks": {
             "foo": {
-                "message": "ok",
+                "message": "hi",
                 "ok": True,
             },
         },
