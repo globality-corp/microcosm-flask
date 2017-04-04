@@ -298,3 +298,9 @@ class TestCrud(object):
         }
         response = self.client.patch(uri, data=dumps(request_data))
         self.assert_response(response, 404)
+
+    def test_datadog(self):
+        uri = "/api/person"
+        response = self.client.get(uri)
+        self.assert_response(response, 200)
+        assert_that(response.headers["microcosm.flask.requests"], is_(equal_to("['operation:person.search.v1', 'method:GET', 'func:search', 'status_code:200', 'result:success']")))

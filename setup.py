@@ -28,6 +28,7 @@ setup(
         "python-dateutil>=2.5.2",
         "PyYAML>=3.11",
         "rfc3986>=0.4.1",
+        "datadog>=0.15.0",
     ],
     setup_requires=[
         "nose>=1.3.6",
