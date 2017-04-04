@@ -15,8 +15,9 @@ from microcosm_flask.operations import Operation
 
 
 class HealthResult(object):
-    def __init__(self, error=None):
+    def __init__(self, error=None, result=None):
         self.error = error
+        self.result = result or "ok"
 
     def __nonzero__(self):
         return self.error is None
@@ -25,7 +26,7 @@ class HealthResult(object):
         return self.error is None
 
     def __str__(self):
-        return "ok" if self.error is None else self.error
+        return self.result if self.error is None else self.error
 
     def to_dict(self):
         return {
@@ -36,10 +37,10 @@ class HealthResult(object):
     @classmethod
     def evaluate(cls, func, graph):
         try:
-            func(graph)
-            return cls()
+            result = func(graph)
+            return cls(result=result)
         except Exception as error:
-            return cls(extract_error_message(error))
+            return cls(error=extract_error_message(error))
 
 
 class Health(object):
