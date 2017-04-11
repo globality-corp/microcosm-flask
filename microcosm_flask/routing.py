@@ -7,7 +7,6 @@ Intercepts Flask's normal route registration to inject conventions.
 from flask_cors import cross_origin
 
 from microcosm.api import defaults
-from microcosm.errors import LockedGraphError, NotBoundError
 from microcosm_logging.decorators import context_logger
 
 
