@@ -40,6 +40,7 @@ class Namespace(object):
                  controller=None,
                  version=None,
                  enable_basic_auth=False,
+                 enable_metrics=False,
                  identifier_type="uuid"):
         """
         :param subject: the target resource (or resource name) of this namespace
@@ -55,6 +56,7 @@ class Namespace(object):
         self.controller = controller
         self.version = version
         self.enable_basic_auth = enable_basic_auth
+        self.enable_metrics = enable_metrics
         self.identifier_type = identifier_type
 
     @property

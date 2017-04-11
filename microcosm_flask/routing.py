@@ -7,6 +7,7 @@ Intercepts Flask's normal route registration to inject conventions.
 from flask_cors import cross_origin
 
 from microcosm.api import defaults
+from microcosm.errors import LockedGraphError, NotBoundError
 from microcosm_logging.decorators import context_logger
 
 
@@ -21,6 +22,7 @@ def make_path(graph, path):
     enable_audit=True,
     enable_basic_auth=False,
     enable_cors=True,
+    enable_metrics=False,
     log_with_context=True,
     path_prefix="/api",
 )
@@ -48,11 +50,16 @@ def configure_route_decorator(graph):
         :param ns: a `Namespace` instance
         """
         def decorator(func):
+            endpoint = ns.endpoint_for(operation)
+
             if graph.config.route.enable_cors:
                 func = cross_origin(supports_credentials=True)(func)
 
             if graph.config.route.enable_basic_auth or ns.enable_basic_auth:
                 func = graph.basic_auth.required(func)
+
+            if graph.config.route.enable_metrics or ns.enable_metrics:
+                func = graph.metrics_timing(endpoint)(func)
 
             if all([
                 graph.config.route.log_with_context,
@@ -74,7 +81,7 @@ def configure_route_decorator(graph):
 
             graph.app.route(
                 make_path(graph, path),
-                endpoint=ns.endpoint_for(operation),
+                endpoint=endpoint,
                 methods=[operation.value.method],
             )(func)
             return func
