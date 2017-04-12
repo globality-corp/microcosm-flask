@@ -29,6 +29,9 @@ setup(
         "PyYAML>=3.11",
         "rfc3986>=0.4.1",
     ],
+    extras_require={
+        "metrics": "microcosm-metrics>=0.1.0",
+    },
     setup_requires=[
         "nose>=1.3.6",
     ],
