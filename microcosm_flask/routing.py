@@ -4,8 +4,9 @@ Routing registration support.
 Intercepts Flask's normal route registration to inject conventions.
 
 """
-from flask_cors import cross_origin
+from distutils.util import strtobool
 
+from flask_cors import cross_origin
 from microcosm.api import defaults
 from microcosm_logging.decorators import context_logger
 
@@ -18,11 +19,11 @@ def make_path(graph, path):
     converters=[
         "uuid",
     ],
-    enable_audit=True,
-    enable_basic_auth=False,
-    enable_cors=True,
-    enable_metrics=False,
-    log_with_context=True,
+    enable_audit="true",
+    enable_basic_auth="false",
+    enable_context_logger="true",
+    enable_cors="true",
+    enable_metrics="false",
     path_prefix="/api",
 )
 def configure_route_decorator(graph):
@@ -39,6 +40,12 @@ def configure_route_decorator(graph):
             pass
 
     """
+    enable_audit = strtobool(graph.config.route.enable_audit)
+    enable_basic_auth = strtobool(graph.config.route.enable_basic_auth)
+    enable_context_logger = strtobool(graph.config.route.enable_context_logger)
+    enable_cors = strtobool(graph.config.route.enable_cors)
+    enable_metrics = strtobool(graph.config.route.enable_metrics)
+
     # routes depends on converters
     graph.use(*graph.config.route.converters)
 
@@ -51,19 +58,16 @@ def configure_route_decorator(graph):
         def decorator(func):
             endpoint = ns.endpoint_for(operation)
 
-            if graph.config.route.enable_cors:
+            if enable_cors:
                 func = cross_origin(supports_credentials=True)(func)
 
-            if graph.config.route.enable_basic_auth or ns.enable_basic_auth:
+            if enable_basic_auth or ns.enable_basic_auth:
                 func = graph.basic_auth.required(func)
 
-            if graph.config.route.enable_metrics or ns.enable_metrics:
+            if enable_metrics or ns.enable_metrics:
                 func = graph.metrics_timing(endpoint)(func)
 
-            if all([
-                graph.config.route.log_with_context,
-                ns.controller is not None,
-            ]):
+            if enable_context_logger and ns.controller is not None:
                 func = context_logger(
                     graph.request_context,
                     func,
@@ -75,7 +79,7 @@ def configure_route_decorator(graph):
 
             # keep audit decoration last (before registering the route) so that
             # errors raised by other decorators are captured in the audit trail
-            if graph.config.route.enable_audit:
+            if enable_audit:
                 func = graph.audit(func)
 
             graph.app.route(
