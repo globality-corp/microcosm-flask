@@ -1,4 +1,3 @@
-
 """
 Metrics extensions for routes.
 
