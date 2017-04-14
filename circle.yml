@@ -11,7 +11,7 @@ general:
 
 dependencies:
   override:
-    - pip install tox tox-pyenv microcosm-metrics
+    - pip install tox tox-pyenv
     - pyenv local 2.7.11 3.6.0  # Should correspond to pre-installed Python versions on CircleCI
 
 test:
