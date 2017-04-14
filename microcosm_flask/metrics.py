@@ -14,7 +14,7 @@ from microcosm_flask.errors import extract_status_code
 
 class StatusCodeClassifier(Classifier):
     """
-    Label route results its status code.
+    Label route result/error with its status code.
 
     """
     def label_result(self, result):
