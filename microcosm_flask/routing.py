@@ -57,15 +57,13 @@ def configure_route_decorator(graph):
         """
         def decorator(func):
             endpoint = ns.endpoint_for(operation)
+            endpoint_path = make_path(graph, path)
 
             if enable_cors:
                 func = cross_origin(supports_credentials=True)(func)
 
             if enable_basic_auth or ns.enable_basic_auth:
                 func = graph.basic_auth.required(func)
-
-            if enable_metrics or ns.enable_metrics:
-                func = graph.metrics_timing(endpoint)(func)
 
             if enable_context_logger and ns.controller is not None:
                 func = context_logger(
@@ -77,13 +75,18 @@ def configure_route_decorator(graph):
             # set the opaque component data_func to look at the flask request context
             func = graph.opaque.initialize(graph.request_context)(func)
 
+            if enable_metrics or ns.enable_metrics:
+                from microcosm_flask.metrics import StatusCodeClassifier
+                func = graph.metrics_counting(endpoint, classifier_cls=StatusCodeClassifier)(func)
+                func = graph.metrics_timing(endpoint)(func)
+
             # keep audit decoration last (before registering the route) so that
             # errors raised by other decorators are captured in the audit trail
             if enable_audit:
                 func = graph.audit(func)
 
             graph.app.route(
-                make_path(graph, path),
+                endpoint_path,
                 endpoint=endpoint,
                 methods=[operation.value.method],
             )(func)
