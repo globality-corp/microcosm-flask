@@ -87,7 +87,10 @@ def build_parameter(field):
 
     parameter = {}
     if field_type:
-        parameter["type"] = field_type
+        if field.allow_none is True:
+            parameter["type"] = [field_type, 'null']
+        else:
+            parameter["type"] = field_type
     if field.metadata.get("description"):
         parameter["description"] = field.metadata["description"]
     if field_format:
