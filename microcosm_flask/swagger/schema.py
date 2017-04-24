@@ -6,6 +6,7 @@ from logging import getLogger
 from six import string_types
 
 from marshmallow import fields
+from marshmallow_polyfield import PolyField
 
 from microcosm_flask.fields import (
     EnumField,
@@ -24,6 +25,7 @@ logger = getLogger("microcosm_flask.swagger")
 FIELD_MAPPINGS = {
     EnumField: (None, None),
     LanguageField: ("string", "language"),
+    PolyField: ("object", None),
     QueryStringList: ("array", None),
     URIField: ("string", "uri"),
     fields.Boolean: ("boolean", None),
