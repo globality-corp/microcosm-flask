@@ -78,7 +78,7 @@ def configure_route_decorator(graph):
             if enable_metrics or ns.enable_metrics:
                 from microcosm_flask.metrics import StatusCodeClassifier
                 func = graph.metrics_counting(endpoint, classifier_cls=StatusCodeClassifier)(func)
-                func = graph.metrics_timing(endpoint)(func)
+                func = graph.metrics_timing(endpoint, ns.metrics_tag_mappers)(func)
 
             # keep audit decoration last (before registering the route) so that
             # errors raised by other decorators are captured in the audit trail
