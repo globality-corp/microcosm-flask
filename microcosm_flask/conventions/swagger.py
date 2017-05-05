@@ -68,6 +68,7 @@ class SwaggerConvention(Convention):
         "search_for",
         "update",
         "update_batch",
+        "update_for",
         "upload",
         "upload_for",
     ],
