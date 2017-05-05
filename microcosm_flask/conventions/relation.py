@@ -19,15 +19,17 @@ from microcosm_flask.conventions.encoding import (
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import Page, PaginatedList, make_paginated_list_schema
+from microcosm_flask.paging import OffsetLimitPage
 
 
 class RelationConvention(Convention):
 
-    def __init__(self, graph, paginated_list_class=PaginatedList):
-        super(RelationConvention, self).__init__(graph)
+    @property
+    def page_cls(self):
+        return OffsetLimitPage
 
-        self.paginated_list_class = paginated_list_class
+    def __init__(self, graph):
+        super(RelationConvention, self).__init__(graph)
 
     def configure_createfor(self, ns, definition):
         """
@@ -178,26 +180,20 @@ class RelationConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        paginated_list_schema = make_paginated_list_schema(ns.object_ns, definition.response_schema)()
+        paginated_list_schema = self.page_cls.make_paginated_list_schema_class(
+            ns.object_ns,
+            definition.response_schema,
+        )()
 
         @self.add_route(ns.relation_path, Operation.SearchFor, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
             request_data = load_query_string_data(definition.request_schema)
-            page = Page.from_query_string(request_data)
-            items, count, context = definition.func(**merge_data(path_data, request_data))
-
-            response_data = self.paginated_list_class(
-                ns=ns,
-                page=page,
-                items=items,
-                count=count,
-                schema=definition.response_schema,
-                operation=Operation.SearchFor,
-                **context
-            )
-            return dump_response_data(paginated_list_schema, response_data)
+            page = self.page_cls.from_query_string(definition.request_schema)
+            result = definition.func(**merge_data(path_data, request_data))
+            response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
+            return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 
