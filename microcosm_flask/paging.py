@@ -5,7 +5,7 @@ Most applications start with offset/limit pagination because it's simplest to im
 but other pagination schemes are possible and can be more performant especially in infinite
 scroll settings. This module encapsulates paging into a set of extensible, inter-related objects.
 
- -  A `Page` is represents information about a specific page (for example, the currently requested one)
+ -  A `Page` represents information about a specific page (for example, the currently requested one)
  -  A `PageSchema` defines a (marshmallow) schema for decoding a page from some data (e.g. the query string)
  -  A `PaginatedList` defines a list of items that knows about its current page and *may* define HAL-style
     links to other pages.
@@ -301,7 +301,7 @@ class OffsetLimitPage(Page):
         Parse an items + count tuple result.
 
         May either be three item tuple containing items, count, and a context dictionary (see: relation convention)
-        or a two item tuyple containing only items and count.
+        or a two item tuple containing only items and count.
 
         """
         if len(result) == 3:
