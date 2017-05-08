@@ -41,7 +41,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
+        paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)(strict=True)
 
         @self.add_route(ns.collection_path, Operation.Search, ns)
         @qs(definition.request_schema)
