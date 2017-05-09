@@ -20,7 +20,7 @@ from microcosm_flask.conventions.logging_level import UntilDeadline
 
 def test_retrieve_logging_levels():
     """
-    Default health check returns OK.
+    Can retrieve current logging levels.
 
     """
     graph = create_object_graph(name="example", testing=True)
@@ -58,9 +58,9 @@ def test_retrieve_logging_levels():
     )
 
 
-def test_create_conditional_logging_level():
+def test_update_conditional_logging_level():
     """
-    Default health check returns OK.
+    Can update logging levels temporarily.
 
     """
     graph = create_object_graph(name="example", testing=True)
