@@ -17,14 +17,18 @@ from microcosm_flask.conventions.encoding import (
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import Page, PaginatedList, make_paginated_list_schema
+from microcosm_flask.paging import identity, OffsetLimitPage, OffsetLimitPageSchema
 
 
 class CRUDConvention(Convention):
 
     @property
     def page_cls(self):
-        return Page
+        return OffsetLimitPage
+
+    @property
+    def page_schema(self):
+        return OffsetLimitPageSchema
 
     def configure_search(self, ns, definition):
         """
@@ -41,33 +45,18 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
-        paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
+        paginated_list_schema = self.page_cls.make_paginated_list_schema_class(
+            ns,
+            definition.response_schema,
+        )()
 
         @self.add_route(ns.collection_path, Operation.Search, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
-            request_data = load_query_string_data(definition.request_schema)
-            page = self.page_cls.from_query_string(request_data)
-            return_value = definition.func(**merge_data(path_data, page.to_dict(as_str=False)))
-
-            if len(return_value) == 3:
-                items, count, context = return_value
-            else:
-                context = {}
-                items, count = return_value
-
-            response_data = PaginatedList(
-                ns=ns,
-                page=page,
-                items=items,
-                count=count,
-                schema=definition.response_schema,
-                operation=Operation.Search,
-                **context
-            )
-
-            headers = encode_count_header(count)
+            page = self.page_cls.from_query_string(definition.request_schema)
+            result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
+            response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
@@ -240,42 +229,29 @@ class CRUDConvention(Convention):
         :param ns: the namespace
         :param definition: the endpoint definition
         """
-        paginated_list_schema = make_paginated_list_schema(ns, definition.response_schema)()
+        paginated_list_schema = self.page_cls.make_paginated_list_schema_class(
+            ns,
+            definition.response_schema,
+        )()
 
         @self.add_route(ns.collection_path, Operation.CreateCollection, ns)
         @request(definition.request_schema)
         @response(paginated_list_schema)
         def create_collection(**path_data):
             request_data = load_request_data(definition.request_schema)
-            page = self.page_cls(
-                offset=request_data.get("offset"),
-                limit=request_data.get("limit"),
-            )
-            return_value = definition.func(**merge_data(
+            # NB: if we don't filter the request body through an explicit page schema,
+            # we will leak other request arguments into the pagination query strings
+            page = self.page_cls.from_query_string(self.page_schema(), request_data)
+
+            result = definition.func(**merge_data(
                 path_data,
                 merge_data(
                     request_data,
-                    page.to_dict(as_str=False),
+                    page.to_dict(func=identity),
                 ),
             ))
 
-            if len(return_value) == 3:
-                items, count, context = return_value
-            else:
-                context = {}
-                items, count = return_value
-
-            response_data = PaginatedList(
-                ns=ns,
-                page=page,
-                items=items,
-                count=count,
-                schema=definition.response_schema,
-                operation=Operation.CreateCollection,
-                **context
-            )
-
-            headers = encode_count_header(count)
+            response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))

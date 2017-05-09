@@ -4,11 +4,11 @@ A discovery endpoint provides links to other endpoints.
 """
 from microcosm.api import defaults
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.encoding import load_query_string_data, make_response
+from microcosm_flask.conventions.encoding import make_response
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
-from microcosm_flask.paging import Page, PageSchema
+from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema
 from microcosm_flask.operations import Operation
 
 
@@ -22,7 +22,7 @@ def iter_links(operations, page):
             operation=operation,
             ns=ns,
             type=ns.subject_name,
-            qs=page.to_tuples(),
+            qs=page.to_items(),
         )
 
 
@@ -52,17 +52,17 @@ class DiscoveryConvention(Convention):
         Register a discovery endpoint for a set of operations.
 
         """
-        page_schema = PageSchema()
+        page_schema = OffsetLimitPageSchema()
 
         @self.add_route("/", Operation.Discover, ns)
         def discover():
             # accept pagination limit from request
-            page = Page.from_query_string(load_query_string_data(page_schema))
+            page = OffsetLimitPage.from_query_string(page_schema)
             page.offset = 0
 
             response_data = dict(
                 _links=Links({
-                    "self": Link.for_(Operation.Discover, ns, qs=page.to_tuples()),
+                    "self": Link.for_(Operation.Discover, ns, qs=page.to_items()),
                     "search": [
                         link for link in iter_links(self.find_matching_endpoints(ns), page)
                     ],
