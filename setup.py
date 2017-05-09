@@ -23,7 +23,7 @@ setup(
         "Flask-UUID>=0.2",
         "marshmallow>=2.12.2",
         "microcosm>=0.17.0",
-        "microcosm-logging>=0.12.0",
+        "microcosm-logging>=0.14.2",
         "openapi>=0.5.0",
         "python-dateutil>=2.5.2",
         "PyYAML>=3.11",
