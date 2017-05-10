@@ -3,17 +3,14 @@ Expose/manage logging levels.
 
 """
 from collections import namedtuple
-from logging import getLogger, PlaceHolder, root
-from time import time
+from logging import PlaceHolder, root
 
 from marshmallow import fields, Schema
 from microcosm.api import defaults
-from microcosm_logging.levels import ConditionalLoggingLevel
-from werkzeug.exceptions import UnprocessableEntity
 
 from microcosm_flask.conventions.base import Convention, EndpointDefinition
-from microcosm_flask.conventions.encoding import dump_response_data, load_request_data
-from microcosm_flask.conventions.registry import request, response
+from microcosm_flask.conventions.encoding import dump_response_data
+from microcosm_flask.conventions.registry import response
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
@@ -84,44 +81,6 @@ class LoggerSchema(Schema):
     children = fields.List(fields.Nested("LoggerSchema"), required=True)
 
 
-class UpdateConditionalLoggingLevelSchema(Schema):
-    duration = fields.Float(required=False, missing=300.0)
-    name = fields.String(required=True)
-    level = fields.String(
-        required=False,
-        missing="DEBUG",
-        validate=lambda level: level in ["DEBUG", "INFO", "WARN", "ERROR", "CRITICAL"],
-    )
-
-
-class UntilDeadline(object):
-    """
-    Boolean-valued callable that returns true until a deadline is reached.
-
-    """
-    def __init__(self, when):
-        self.when = when
-
-    def __call__(self):
-        return self.now() < self.when
-
-    @staticmethod
-    def now():
-        """
-        Mock-friendly time function.
-
-        """
-        return time()
-
-    @classmethod
-    def of_seconds(cls, delta):
-        """
-        Construct a deadline that is `delta` seconds from now.
-
-        """
-        return cls(cls.now() + delta)
-
-
 class LoggingLevelConvention(Convention):
     """
     Convention that exposing logging configuration.
@@ -143,37 +102,6 @@ class LoggingLevelConvention(Convention):
             logger_tree = build_logger_tree()
             return dump_response_data(response_schema, logger_tree)
 
-    def configure_update(self, ns, definition):
-        request_schema = definition.request_schema
-        response_schema = definition.response_schema
-
-        @self.add_route(ns.singleton_path, Operation.Update, ns)
-        @request(request_schema)
-        @response(response_schema)
-        def update():
-            request_data = load_request_data(request_schema)
-
-            logger = getLogger(request_data["name"])
-            oldLevel = logger.getEffectiveLevel()
-            newLevel = dehumanize_level(request_data["level"])
-
-            duration = request_data["duration"]
-
-            if duration > self.max_duration:
-                raise UnprocessableEntity("Duration is more than {}".format(self.max_duration))
-
-            until_deadline = UntilDeadline.of_seconds(duration)
-
-            ConditionalLoggingLevel.setLevel(
-                logger,
-                newLevel,
-                oldLevel,
-                until_deadline,
-            )
-
-            logger_tree = build_logger_tree()
-            return dump_response_data(response_schema, logger_tree, Operation.Update.value.default_code)
-
 
 @defaults(
     max_duration=300.0,
@@ -187,10 +115,6 @@ def configure_logging_level(graph):
     convention.configure(
         ns,
         retrieve=EndpointDefinition(
-            response_schema=LoggerSchema(),
-        ),
-        update=EndpointDefinition(
-            request_schema=UpdateConditionalLoggingLevelSchema(),
             response_schema=LoggerSchema(),
         ),
     )
