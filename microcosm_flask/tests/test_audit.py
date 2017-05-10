@@ -298,24 +298,7 @@ class TestRequestInfo(object):
 
         """
         assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
-        with self.graph.flask.test_request_context("/", headers={"X-Debug": "*"}):
+        with self.graph.flask.test_request_context("/", headers={"X-Request-Debug": "true"}):
             with logging_levels():
                 assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
         assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
-
-    def test_component_logging_level(self):
-        """
-        Enable DEBUG logging temporarily.
-
-        """
-        assert_that(getLogger("foo").getEffectiveLevel(), is_(equal_to(NOTSET)))
-        assert_that(getLogger("bar").getEffectiveLevel(), is_(equal_to(NOTSET)))
-        assert_that(getLogger("baz").getEffectiveLevel(), is_(equal_to(NOTSET)))
-        with self.graph.flask.test_request_context("/", headers={"X-Debug": "foo,baz"}):
-            with logging_levels():
-                assert_that(getLogger("foo").getEffectiveLevel(), is_(equal_to(DEBUG)))
-                assert_that(getLogger("bar").getEffectiveLevel(), is_(equal_to(NOTSET)))
-                assert_that(getLogger("baz").getEffectiveLevel(), is_(equal_to(DEBUG)))
-        assert_that(getLogger("foo").getEffectiveLevel(), is_(equal_to(NOTSET)))
-        assert_that(getLogger("bar").getEffectiveLevel(), is_(equal_to(NOTSET)))
-        assert_that(getLogger("baz").getEffectiveLevel(), is_(equal_to(NOTSET)))

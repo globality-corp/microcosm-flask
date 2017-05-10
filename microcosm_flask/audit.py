@@ -4,6 +4,7 @@ Audit log support for Flask routes.
 """
 from collections import namedtuple
 from contextlib import contextmanager
+from distutils.util import strtobool
 from functools import wraps
 from logging import DEBUG, getLogger
 from json import loads
@@ -51,26 +52,19 @@ def logging_levels():
     """
     Context manager to conditionally set logging levels.
 
-    Supports setting pre-request, comma-delimited logging levels using the `X-Debug` header.
-    Maps the root logger to "*" for disambiguation.
+    Supports setting per-request debug logging using the `X-Request-Debug` header.
 
     """
-    # extra logger names from headers
-    loggers = [
-        "" if logger.strip() == "*" else logger.strip()
-        for logger in request.headers.get("x-debug", "").split(",")
-    ]
-    logging_levels = {
-        logger: getLogger(logger).getEffectiveLevel()
-        for logger in loggers
-    }
+    enabled = strtobool(request.headers.get("x-request-debug", "false"))
+    level = None
     try:
-        for logger in loggers:
-            getLogger(logger).level = DEBUG
+        if enabled:
+            level = getLogger().getEffectiveLevel()
+            getLogger().setLevel(DEBUG)
         yield
     finally:
-        for logger in loggers:
-            getLogger(logger).level = logging_levels[logger]
+        if enabled:
+            getLogger().setLevel(level)
 
 
 def audit(func):
