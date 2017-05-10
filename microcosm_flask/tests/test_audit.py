@@ -2,6 +2,8 @@
 Audit structure tests.
 
 """
+from logging import DEBUG, NOTSET, getLogger
+
 from flask import g
 from hamcrest import (
     assert_that,
@@ -14,7 +16,7 @@ from microcosm.api import create_object_graph
 from mock import MagicMock
 from werkzeug.exceptions import NotFound
 
-from microcosm_flask.audit import AuditOptions, RequestInfo
+from microcosm_flask.audit import AuditOptions, RequestInfo, logging_levels
 
 
 def test_func(*args, **kwargs):
@@ -290,20 +292,13 @@ class TestRequestInfo(object):
             ))
             logger.warning.assert_not_called()
 
-    def test_log_internal_server_error(self):
+    def test_root_logging_level(self):
         """
-        Log at WARNING on internal server error.
+        Enable DEBUG logging temporarily.
 
         """
-        with self.graph.flask.test_request_context("/"):
-            request_info = RequestInfo(self.options, test_func, None)
-            request_info.status_code = 500
-
-            logger = MagicMock()
-            request_info.log(logger)
-            logger.warning.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-            ))
-            logger.info.assert_not_called()
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        with self.graph.flask.test_request_context("/", headers={"X-Request-Debug": "true"}):
+            with logging_levels():
+                assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))

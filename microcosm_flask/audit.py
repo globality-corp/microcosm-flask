@@ -3,8 +3,10 @@ Audit log support for Flask routes.
 
 """
 from collections import namedtuple
+from contextlib import contextmanager
+from distutils.util import strtobool
 from functools import wraps
-from logging import getLogger
+from logging import DEBUG, getLogger
 from json import loads
 from traceback import format_exc
 
@@ -45,6 +47,26 @@ def should_skip_logging(func):
     return getattr(func, SKIP_LOGGING, False)
 
 
+@contextmanager
+def logging_levels():
+    """
+    Context manager to conditionally set logging levels.
+
+    Supports setting per-request debug logging using the `X-Request-Debug` header.
+
+    """
+    enabled = strtobool(request.headers.get("x-request-debug", "false"))
+    level = None
+    try:
+        if enabled:
+            level = getLogger().getEffectiveLevel()
+            getLogger().setLevel(DEBUG)
+        yield
+    finally:
+        if enabled:
+            getLogger().setLevel(level)
+
+
 def audit(func):
     """
     Record a Flask route function in the audit log.
@@ -58,7 +80,8 @@ def audit(func):
             include_request_body=True,
             include_response_body=True,
         )
-        return _audit_request(options, func, None, *args, **kwargs)
+        with logging_levels():
+            return _audit_request(options, func, None, *args, **kwargs)
 
     return wrapper
 
