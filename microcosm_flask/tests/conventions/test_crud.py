@@ -15,7 +15,7 @@ from microcosm.api import create_object_graph
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import PageSchema
+from microcosm_flask.paging import OffsetLimitPageSchema
 from microcosm_flask.tests.conventions.fixtures import (
     Address,
     AddressSchema,
@@ -47,14 +47,14 @@ PERSON_MAPPINGS = {
     Operation.UpdateBatch: (person_update_batch, NewPersonBatchSchema(), PersonBatchSchema()),
     Operation.Replace: (person_replace, NewPersonSchema(), PersonSchema()),
     Operation.Retrieve: (person_retrieve, PersonLookupSchema(), PersonSchema()),
-    Operation.Search: (person_search, PageSchema(), PersonSchema()),
+    Operation.Search: (person_search, OffsetLimitPageSchema(), PersonSchema()),
     Operation.Update: (person_update, NewPersonSchema(), PersonSchema()),
 }
 
 
 ADDRESS_MAPPINGS = {
     Operation.Retrieve: (address_retrieve, AddressSchema()),
-    Operation.Search: (address_search, PageSchema(), AddressSchema()),
+    Operation.Search: (address_search, OffsetLimitPageSchema(), AddressSchema()),
 }
 
 

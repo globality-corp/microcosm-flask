@@ -52,14 +52,16 @@ def load_request_data(request_schema, partial=False):
     return request_data.data
 
 
-def load_query_string_data(request_schema):
+def load_query_string_data(request_schema, query_string_data=None):
     """
     Load query string data using the given schema.
 
     Schemas are assumed to be compatible with the `PageSchema`.
 
     """
-    query_string_data = request.args
+    if query_string_data is None:
+        query_string_data = request.args
+
     request_data = request_schema.load(query_string_data)
     if request_data.errors:
         # pass the validation errors back in the context

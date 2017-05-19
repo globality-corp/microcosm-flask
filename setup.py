@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 project = "microcosm-flask"
-version = "0.70.1"
+version = "0.71.0"
 
 setup(
     name=project,
@@ -23,7 +23,7 @@ setup(
         "Flask-UUID>=0.2",
         "marshmallow>=2.12.2",
         "microcosm>=0.17.0",
-        "microcosm-logging>=0.12.0",
+        "microcosm-logging>=0.14.2",
         "openapi>=0.5.0",
         "python-dateutil>=2.5.2",
         "PyYAML>=3.11",
@@ -51,6 +51,7 @@ setup(
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",
             "health_convention = microcosm_flask.conventions.health:configure_health",
+            "logging_level_convention = microcosm_flask.conventions.logging_level:configure_logging_level",
             "port_forwarding = microcosm_flask.forwarding:configure_port_forwarding",
             "request_context = microcosm_flask.context:configure_request_context",
             "route = microcosm_flask.routing:configure_route_decorator",
