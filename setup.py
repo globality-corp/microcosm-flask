@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 project = "microcosm-flask"
-version = "0.70.1"
+version = "0.71.0"
 
 setup(
     name=project,
