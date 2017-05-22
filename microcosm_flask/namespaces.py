@@ -33,15 +33,18 @@ class Namespace(object):
 
     """
 
-    def __init__(self,
-                 subject,
-                 object_=None,
-                 path=None,
-                 controller=None,
-                 version=None,
-                 enable_basic_auth=False,
-                 enable_metrics=False,
-                 identifier_type="uuid"):
+    def __init__(
+        self,
+        subject,
+        object_=None,
+        path=None,
+        controller=None,
+        version=None,
+        enable_basic_auth=False,
+        enable_metrics=False,
+        identifier_type="uuid",
+        metrics_tag_mappers=None,
+     ):
         """
         :param subject: the target resource (or resource name) of this namespace
         :param object_: the subject resource (or resource name) of this namespace (e.g. for relations)
@@ -49,6 +52,8 @@ class Namespace(object):
         :param controller: the object responsible for implementations associated with this namespace.
         :param version: the version of this namespace
         :param enable_basic_auth: enable basic auth for this namespace if it's not enabled globally
+        :param metrics_tag_mappers: mapping from kwargs key to a function that will convert its value
+                                    (when not null) to a metrics tag
         """
         self.subject = subject
         self.object_ = object_
@@ -58,6 +63,7 @@ class Namespace(object):
         self.enable_basic_auth = enable_basic_auth
         self.enable_metrics = enable_metrics
         self.identifier_type = identifier_type
+        self.metrics_tag_mappers = metrics_tag_mappers
 
     @property
     def path(self):

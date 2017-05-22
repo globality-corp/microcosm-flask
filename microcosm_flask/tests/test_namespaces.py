@@ -2,6 +2,7 @@
 Namespace tests.
 
 """
+from collections import OrderedDict
 from hamcrest import (
     assert_that,
     equal_to,
@@ -158,3 +159,13 @@ def test_namespace_accepts_controller():
         url = ns.url_for(Operation.Search)
         assert_that(url, is_(equal_to("http://localhost/api/foo")))
         assert_that(ns.controller, is_(equal_to(controller)))
+
+
+def test_metrics_tag_mappers():
+    """
+    Namespaces can contain metric_tag_mappers.
+
+    """
+    metrics_tag_mappers = OrderedDict(foo=lambda x: "foo" + x)
+    ns = Namespace(subject="foo", metrics_tag_mappers=metrics_tag_mappers)
+    assert_that(ns.metrics_tag_mappers, is_(equal_to(metrics_tag_mappers)))
