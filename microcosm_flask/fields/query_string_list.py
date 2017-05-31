@@ -24,6 +24,9 @@ class QueryStringList(List):
             attribute_elements = [attr_element.split(",") for attr_element in obj.getlist(attr)]
             attribute_params = [param for attr_param in attribute_elements for param in attr_param]
 
-            return attribute_params
+            return super(QueryStringList, self)._deserialize(attribute_params, attr, obj)
         except ValueError:
             raise ValidationError("Invalid query string list argument")
+
+    def _serialize(self, value, attr, obj):
+        return ",".join(str(val) for val in super(QueryStringList, self)._serialize(value, attr, obj))

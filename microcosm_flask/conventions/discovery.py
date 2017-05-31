@@ -57,14 +57,14 @@ class DiscoveryConvention(Convention):
         @self.add_route("/", Operation.Discover, ns)
         def discover():
             # accept pagination limit from request
-            page = OffsetLimitPage.from_query_string(page_schema)
-            page.offset = 0
+            _, out_page = OffsetLimitPage.from_query_string(page_schema)
+            out_page.offset = 0
 
             response_data = dict(
                 _links=Links({
-                    "self": Link.for_(Operation.Discover, ns, qs=page.to_items()),
+                    "self": Link.for_(Operation.Discover, ns, qs=out_page.to_items()),
                     "search": [
-                        link for link in iter_links(self.find_matching_endpoints(ns), page)
+                        link for link in iter_links(self.find_matching_endpoints(ns), out_page)
                     ],
                 }).to_dict()
             )

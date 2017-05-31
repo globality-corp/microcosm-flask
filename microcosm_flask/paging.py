@@ -42,6 +42,8 @@ from flask import request
 
 from microcosm_flask.conventions.encoding import encode_count_header, load_query_string_data
 from microcosm_flask.linking import Link, Links
+from microcosm_flask.conventions.encoding import with_context
+from werkzeug.exceptions import UnprocessableEntity
 
 
 def identity(x):
@@ -219,7 +221,11 @@ class Page(object):
 
         """
         dct = load_query_string_data(schema, qs)
-        return cls.from_dict(dct)
+        out_data = schema.dump(dct)
+        if out_data.errors:
+            # pass the validation errors back in the context
+            raise with_context(UnprocessableEntity("Validation error"), dict(errors=out_data.errors))
+        return cls.from_dict(dct), cls.from_dict(out_data.data)
 
     @classmethod
     def from_dict(cls, dct):

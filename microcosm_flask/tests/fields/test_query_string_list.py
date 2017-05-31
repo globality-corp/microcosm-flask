@@ -48,4 +48,4 @@ def test_query_list_dump():
         "foo_ids": ["a"],
     })
 
-    assert_that(result.data["foo_ids"], is_(equal_to(["a"])))
+    assert_that(result.data["foo_ids"], is_(equal_to("a")))
