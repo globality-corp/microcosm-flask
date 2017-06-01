@@ -190,9 +190,9 @@ class RelationConvention(Convention):
         @response(paginated_list_schema)
         def search(**path_data):
             request_data = load_query_string_data(definition.request_schema)
-            page = self.page_cls.from_query_string(definition.request_schema)
+            _, out_page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, request_data))
-            response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
+            response_data, headers = out_page.to_paginated_list(result, ns, Operation.SearchFor)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)

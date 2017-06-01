@@ -42,10 +42,23 @@ def test_query_list_load_with_duplicate_keys():
     assert_that(result.data["foo_ids"], is_(equal_to(["a", "b"])))
 
 
+def test_reuse_list_dump():
+    schema = QueryStringListSchema()
+    result = schema.load(
+        ImmutableMultiDict([("foo_ids", "a,b")]),
+    )
+    result = schema.dump(result.data)
+    result = schema.load(
+        ImmutableMultiDict(result.data.items()),
+    )
+
+    assert_that(result.data["foo_ids"], is_(equal_to(["a", "b"])))
+
+
 def test_query_list_dump():
     schema = QueryStringListSchema()
     result = schema.dump({
         "foo_ids": ["a"],
     })
 
-    assert_that(result.data["foo_ids"], is_(equal_to(["a"])))
+    assert_that(result.data["foo_ids"], is_(equal_to("a")))

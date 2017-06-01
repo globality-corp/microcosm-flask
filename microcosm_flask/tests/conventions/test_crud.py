@@ -4,6 +4,8 @@ CRUD convention tests.
 """
 from json import dumps, loads
 
+from enum import Enum
+
 from hamcrest import (
     assert_that,
     contains_inanyorder,
@@ -11,11 +13,14 @@ from hamcrest import (
     is_,
 )
 
+from marshmallow.fields import String
+
 from microcosm.api import create_object_graph
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPageSchema
+from microcosm_flask.fields import QueryStringList, EnumField
 from microcosm_flask.tests.conventions.fixtures import (
     Address,
     AddressSchema,
@@ -41,6 +46,16 @@ from microcosm_flask.tests.conventions.fixtures import (
 )
 
 
+class TestEnum(Enum):
+    A = "A"
+    B = "B"
+
+
+class SearchAddressPageSchema(OffsetLimitPageSchema):
+    list_param = QueryStringList(String())
+    enum_param = EnumField(TestEnum)
+
+
 PERSON_MAPPINGS = {
     Operation.Create: (person_create, NewPersonSchema(), PersonSchema()),
     Operation.Delete: (person_delete,),
@@ -54,7 +69,7 @@ PERSON_MAPPINGS = {
 
 ADDRESS_MAPPINGS = {
     Operation.Retrieve: (address_retrieve, AddressSchema()),
-    Operation.Search: (address_search, OffsetLimitPageSchema(), AddressSchema()),
+    Operation.Search: (address_search, SearchAddressPageSchema(), AddressSchema()),
 }
 
 
@@ -131,6 +146,32 @@ class TestCrud(object):
             "_links": {
                 "self": {
                     "href": "http://localhost/api/person/{}/address?offset=0&limit=20".format(PERSON_ID_1),
+                }
+            }
+        })
+
+    def test_reuse_search_self_link(self):
+        uri = "/api/person/{}/address?list_param=a,b,c&enum_param=A".format(PERSON_ID_1)
+        response = self.client.get(uri)
+        response_data = loads(response.get_data().decode("utf-8"))
+        response = self.client.get(response_data["_links"]["self"]["href"])
+        self.assert_response(response, 200, {
+            "count": 1,
+            "offset": 0,
+            "limit": 20,
+            "items": [{
+                "id": str(ADDRESS_ID_1),
+                "addressLine": "a,b,c3A",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost/api/person/{}/address/{}".format(PERSON_ID_1, ADDRESS_ID_1),
+                    }
+                },
+            }],
+            "_links": {
+                "self": {
+                    "href": "http://localhost/api/person/{}/address?offset=0&limit=20&enum_param=A&list_param=a%2Cb%2Cc"
+                            .format(PERSON_ID_1),
                 }
             }
         })

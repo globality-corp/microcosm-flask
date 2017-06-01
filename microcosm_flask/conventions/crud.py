@@ -54,9 +54,9 @@ class CRUDConvention(Convention):
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
-            page = self.page_cls.from_query_string(definition.request_schema)
-            result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
-            response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
+            in_page, out_page = self.page_cls.from_query_string(definition.request_schema)
+            result = definition.func(**merge_data(path_data, in_page.to_dict(func=identity)))
+            response_data, headers = out_page.to_paginated_list(result, ns, Operation.Search)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
@@ -241,17 +241,17 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             # NB: if we don't filter the request body through an explicit page schema,
             # we will leak other request arguments into the pagination query strings
-            page = self.page_cls.from_query_string(self.page_schema(), request_data)
+            in_page, out_page = self.page_cls.from_query_string(self.page_schema(), request_data)
 
             result = definition.func(**merge_data(
                 path_data,
                 merge_data(
                     request_data,
-                    page.to_dict(func=identity),
+                    in_page.to_dict(func=identity),
                 ),
             ))
 
-            response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
+            response_data, headers = out_page.to_paginated_list(result, ns, Operation.CreateCollection)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))

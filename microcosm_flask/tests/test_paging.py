@@ -37,11 +37,11 @@ def test_offset_limit_page_to_from_dict():
 def test_offset_limit_page_from_query_string():
     graph = create_object_graph(name="example", testing=True)
     with graph.flask.test_request_context(query_string="offset=1&foo=bar"):
-        page = OffsetLimitPage.from_query_string(OffsetLimitPageSchema())
-        assert_that(page.offset, is_(equal_to(1)))
-        assert_that(page.limit, is_(equal_to(20)))
+        in_page, _ = OffsetLimitPage.from_query_string(OffsetLimitPageSchema())
+        assert_that(in_page.offset, is_(equal_to(1)))
+        assert_that(in_page.limit, is_(equal_to(20)))
         # schema filters out extra arguments
-        assert_that(page.to_dict(), is_not(has_entry("foo", "bar")))
+        assert_that(in_page.to_dict(), is_not(has_entry("foo", "bar")))
 
 
 def test_offset_limit_page_to_paginated_list():
