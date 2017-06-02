@@ -5,6 +5,11 @@ A list field field that supports query string parameter parsing.
 from marshmallow.fields import List, ValidationError
 
 
+class SelfSerializableList(list):
+    def __str__(self):
+        return ",".join(str(item) for item in self)
+
+
 class QueryStringList(List):
     def _deserialize(self, value, attr, obj):
         """
@@ -22,7 +27,7 @@ class QueryStringList(List):
 
         try:
             attribute_elements = [attr_element.split(",") for attr_element in obj.getlist(attr)]
-            attribute_params = [param for attr_param in attribute_elements for param in attr_param]
+            attribute_params = SelfSerializableList(param for attr_param in attribute_elements for param in attr_param)
 
             return attribute_params
         except ValueError:
