@@ -7,15 +7,34 @@ from hamcrest import (
     equal_to,
     is_,
 )
+from enum import Enum
 from werkzeug.datastructures import ImmutableMultiDict
 from marshmallow import Schema
 from marshmallow.fields import String
 
-from microcosm_flask.fields import QueryStringList
+from microcosm_flask.fields import QueryStringList, EnumField
 
 
 class QueryStringListSchema(Schema):
     foo_ids = QueryStringList(String())
+
+
+class TestEnum(Enum):
+    A = "A"
+    B = "B"
+
+
+class EnumQueryStringListSchema(Schema):
+    foo_ids = QueryStringList(EnumField(TestEnum))
+
+
+def test_query_list_deserialize_items():
+    schema = EnumQueryStringListSchema()
+    result = schema.load(
+        ImmutableMultiDict([("foo_ids", "A,B")]),
+    )
+
+    assert_that(result.data["foo_ids"], is_(equal_to([TestEnum.A, TestEnum.B])))
 
 
 def test_query_list_load_with_comma_separated_single_keys():
