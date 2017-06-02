@@ -98,9 +98,11 @@ def address_retrieve(id, person_id, address_id):
 def address_search(person_id, offset, limit, list_param=None, enum_param=None):
     if list_param is None or enum_param is None:
         return [ADDRESS_1], 1, dict(person_id=person_id)
-    return Address(ADDRESS_ID_1,
-                   PERSON_ID_1,
-                   ",".join(list_param) + str(len(list_param)) + enum_param.value), 1, dict(person_id=person_id)
+    return Address(
+        ADDRESS_ID_1,
+        PERSON_ID_1,
+        ",".join(list_param) + str(len(list_param)) + enum_param.value
+    ), 1, dict(person_id=person_id)
 
 
 def person_create(**kwargs):
