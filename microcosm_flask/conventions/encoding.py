@@ -69,18 +69,6 @@ def load_query_string_data(request_schema, query_string_data=None):
     return request_data.data
 
 
-def remove_null_values(data):
-    if isinstance(data, dict):
-        return {
-            key: remove_null_values(value)
-            for key, value in data.items()
-            if value is not None
-        }
-    if type(data) in (list, tuple):
-        return type(data)(map(remove_null_values, data))
-    return data
-
-
 def dump_response_data(response_schema, response_data, status_code=200, headers=None):
     """
     Dumps response data as JSON using the given schema.
@@ -98,10 +86,6 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
 
 
 def make_response(response_data, status_code=200, headers=None):
-    if request.headers.get("X-Response-Skip-Null"):
-        # swagger does not currently support null values; remove these conditionally
-        response_data = remove_null_values(response_data)
-
     headers = headers or {}
     if "Content-Type" not in headers:
         # Specify JSON as the response content type by default

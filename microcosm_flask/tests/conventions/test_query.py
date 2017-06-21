@@ -118,12 +118,6 @@ class TestQuery(object):
                     },
                     "parameters": [
                         {
-                            "in": "header",
-                            "name": "X-Response-Skip-Null",
-                            "required": False,
-                            "type": "string",
-                        },
-                        {
                             "required": False,
                             "type": "string",
                             "name": "value",

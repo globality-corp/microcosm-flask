@@ -194,11 +194,6 @@ def build_operation(operation, ns, rule, func):
         tags=[ns.subject_name],
     )
 
-    # custom header parameter
-    swagger_operation.parameters.append(
-        header_param("X-Response-Skip-Null")
-    )
-
     # path parameters
     swagger_operation.parameters.extend([
         # TODO: inject type information for parameters based on converter syntax

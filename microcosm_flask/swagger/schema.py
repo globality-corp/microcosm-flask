@@ -66,6 +66,25 @@ def swagger_field(field, swagger_type="string", swagger_format=None):
     return field
 
 
+def handle_enum(field, parameter):
+    # enums
+    enum = getattr(field, "enum", None)
+    if enum:
+        enum_values = [
+            choice.value if field.by_value else choice.name
+            for choice in enum
+        ]
+        if all((isinstance(enum_value, string_types) for enum_value in enum_values)):
+            enum_type = "string"
+        elif all((is_int(enum_value) for enum_value in enum_values)):
+            enum_type = "integer"
+        else:
+            raise Exception("Cannot infer enum type for field: {}".format(field.name))
+
+        parameter["type"] = enum_type
+        parameter["enum"] = enum_values
+
+
 def build_parameter(field):
     """
     Build a parameter from a marshmallow field.
@@ -100,22 +119,7 @@ def build_parameter(field):
         if isinstance(field, fields.Decimal):
             parameter["format"] = "decimal"
 
-    # enums
-    enum = getattr(field, "enum", None)
-    if enum:
-        enum_values = [
-            choice.value if field.by_value else choice.name
-            for choice in enum
-        ]
-        if all((isinstance(enum_value, string_types) for enum_value in enum_values)):
-            enum_type = "string"
-        elif all((is_int(enum_value) for enum_value in enum_values)):
-            enum_type = "integer"
-        else:
-            raise Exception("Cannot infer enum type for field: {}".format(field.name))
-
-        parameter["type"] = enum_type
-        parameter["enum"] = enum_values
+    handle_enum(field, parameter)
 
     # nested
     if isinstance(field, fields.Nested):
@@ -124,6 +128,12 @@ def build_parameter(field):
     # arrays
     if isinstance(field, fields.List):
         parameter["items"] = build_parameter(field.container)
+
+    if field.allow_none:
+        # XXX Update to new name when we switch to next version of OpenAPI
+        # spec
+        # See https://github.com/OAI/OpenAPI-Specification/pull/741
+        parameter["x-nullable"] = True
 
     return parameter
 
@@ -137,7 +147,7 @@ def build_schema(marshmallow_schema):
     required_fields = [
         field.dump_to or name
         for name, field in fields
-        if field.required and not field.allow_none
+        if field.required
     ]
     schema = {
         "type": "object",
