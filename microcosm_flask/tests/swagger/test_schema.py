@@ -11,8 +11,15 @@ from hamcrest import (
 from enum import Enum, IntEnum, unique
 from marshmallow import Schema, fields
 
-from microcosm_flask.fields import EnumField
-from microcosm_flask.swagger.schema import build_schema, build_parameter
+from microcosm_flask.fields import (
+    EnumField,
+    TimestampField,
+)
+from microcosm_flask.swagger.schema import (
+    build_schema,
+    build_parameter,
+    swagger_field,
+)
 from microcosm_flask.tests.conventions.fixtures import NewPersonSchema
 
 
@@ -37,6 +44,10 @@ class TestSchema(Schema):
     ref = fields.Nested(NewPersonSchema)
     decimal = fields.Decimal()
     decimalString = fields.Decimal(as_string=True)
+    decorated = swagger_field(fields.Method())
+    datetime = fields.DateTime()
+    unix_timestamp = TimestampField()
+    iso_timestamp = TimestampField(use_isoformat=True)
 
 
 def test_schema_generation():
@@ -132,4 +143,36 @@ def test_field_nested():
     parameter = build_parameter(TestSchema().fields["ref"])
     assert_that(parameter, is_(equal_to({
         "$ref": "#/definitions/NewPerson",
+    })))
+
+
+def test_field_decorated_method():
+    parameter = build_parameter(TestSchema().fields["decorated"])
+    assert_that(parameter, is_(equal_to({
+        # NB: default for `fields.Method` is "object"
+        "type": "string",
+    })))
+
+
+def test_field_datetime():
+    parameter = build_parameter(TestSchema().fields["datetime"])
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
+        "format": "date-time",
+    })))
+
+
+def test_field_unix_timestamp():
+    parameter = build_parameter(TestSchema().fields["unix_timestamp"])
+    assert_that(parameter, is_(equal_to({
+        "type": "float",
+        "format": "timestamp",
+    })))
+
+
+def test_field_iso_timestamp():
+    parameter = build_parameter(TestSchema().fields["iso_timestamp"])
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
+        "format": "date-time",
     })))

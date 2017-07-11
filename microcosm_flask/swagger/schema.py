@@ -11,6 +11,7 @@ from microcosm_flask.fields import (
     EnumField,
     LanguageField,
     QueryStringList,
+    TimestampField,
     URIField,
 )
 from microcosm_flask.naming import name_for
@@ -61,9 +62,118 @@ def is_int(value):
 
 
 def swagger_field(field, swagger_type="string", swagger_format=None):
+    """
+    Decorator for an existing field type to coerce a specific swagger type/format.
+
+    Usage:
+
+        class MySchema(Schema):
+             myfield = swagger_field(fields.Foo(), swagger_type="string")
+
+    """
     setattr(field, SWAGGER_TYPE, swagger_type)
     setattr(field, SWAGGER_FORMAT, swagger_format)
     return field
+
+
+def resolve_tagged_field(field):
+    """
+    Fields tagged with `swagger_field` shoudl respect user definitions.
+
+    """
+    field_type = getattr(field, SWAGGER_TYPE)
+    field_format = getattr(field, SWAGGER_FORMAT, None)
+    if field_format:
+        return dict(
+            type=field_type,
+            format=field_format,
+        )
+    else:
+        return dict(
+            type=field_type,
+        )
+
+
+def resolve_enum_field(field):
+    """
+    Enum fields should include choices.
+
+    """
+    enum = getattr(field, "enum", None)
+    enum_values = [
+        choice.value if field.by_value else choice.name
+        for choice in enum
+    ]
+    if all((isinstance(enum_value, string_types) for enum_value in enum_values)):
+        return dict(
+            type="string",
+            enum=enum_values,
+        )
+    elif all((is_int(enum_value) for enum_value in enum_values)):
+        return dict(
+            type="integer",
+            enum=enum_values,
+        )
+    else:
+        raise Exception("Cannot infer enum type for field: {}".format(field.name))
+
+
+def resolve_timestamp_field(field):
+    """
+    Timestamp fields should respect configuration.
+
+    """
+    if field.use_isoformat:
+        return dict(
+            type="string",
+            format="date-time",
+        )
+    else:
+        return dict(
+            type="float",
+            format="timestamp",
+        )
+
+
+def resolve_numeric_string_field(field):
+    """
+    Numeric fields should respect the `as_string` parameter.
+
+    """
+    if isinstance(field, fields.Decimal):
+        return dict(
+            type="string",
+            format="decimal",
+        )
+    else:
+        return dict(
+            type="string",
+        )
+
+
+def resolve_default_for_field(field):
+    """
+    Field defaults should be the fallback.
+
+    """
+    try:
+        field_type, field_format = FIELD_MAPPINGS[type(field)]
+        if field_format:
+            return dict(
+                type=field_type,
+                format=field_format,
+            )
+        elif field_type:
+            return dict(
+                type=field_type,
+            )
+        else:
+            return dict()
+    except KeyError:
+        logger.exception("No mapped swagger type for marshmallow field: {}".format(
+            field,
+        ))
+        raise
 
 
 def build_parameter(field):
@@ -73,49 +183,22 @@ def build_parameter(field):
     See: https://github.com/marshmallow-code/apispec/blob/dev/apispec/ext/marshmallow/swagger.py#L81
 
     """
-    try:
-        field_type, field_format = FIELD_MAPPINGS[type(field)]
-    except KeyError:
-        if hasattr(field, SWAGGER_TYPE):
-            field_type = getattr(field, SWAGGER_TYPE)
-            field_format = getattr(field, SWAGGER_FORMAT, None)
-        else:
-            logger.exception("No mapped swagger type for marshmallow field: {}".format(
-                field,
-            ))
-            raise
+    if hasattr(field, SWAGGER_TYPE):
+        parameter = resolve_tagged_field(field)
+    elif getattr(field, "enum", None):
+        parameter = resolve_enum_field(field)
+    elif getattr(field, 'as_string', None):
+        parameter = resolve_numeric_string_field(field)
+    elif isinstance(field, TimestampField):
+        parameter = resolve_timestamp_field(field)
+    else:
+        parameter = resolve_default_for_field(field)
 
-    parameter = {}
-    if field_type:
-        parameter["type"] = field_type
     if field.metadata.get("description"):
         parameter["description"] = field.metadata["description"]
-    if field_format:
-        parameter["format"] = field_format
+
     if field.default:
         parameter["default"] = field.default
-    # NB: all marshallow Number fields support as_string
-    if getattr(field, 'as_string', None):
-        parameter["type"] = "string"
-        if isinstance(field, fields.Decimal):
-            parameter["format"] = "decimal"
-
-    # enums
-    enum = getattr(field, "enum", None)
-    if enum:
-        enum_values = [
-            choice.value if field.by_value else choice.name
-            for choice in enum
-        ]
-        if all((isinstance(enum_value, string_types) for enum_value in enum_values)):
-            enum_type = "string"
-        elif all((is_int(enum_value) for enum_value in enum_values)):
-            enum_type = "integer"
-        else:
-            raise Exception("Cannot infer enum type for field: {}".format(field.name))
-
-        parameter["type"] = enum_type
-        parameter["enum"] = enum_values
 
     # nested
     if isinstance(field, fields.Nested):
