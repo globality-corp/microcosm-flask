@@ -111,17 +111,17 @@ def test_build_swagger():
                             "in": "header",
                         },
                         {
-                            "required": True,
-                            "type": "string",
-                            "name": "person_id",
-                            "in": "path",
-                        },
-                        {
                             "in": "body",
                             "name": "body",
                             "schema": {
                                 "$ref": "#/definitions/UpdatePerson",
                             },
+                        },
+                        {
+                            "required": True,
+                            "type": "string",
+                            "name": "person_id",
+                            "in": "path",
                         },
                     ],
                     "operationId": "update",

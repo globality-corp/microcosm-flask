@@ -221,6 +221,9 @@ def build_operation(operation, ns, rule, func):
             body_param(request_schema)
         )
 
+    # sort parameters for predictable output
+    swagger_operation.parameters.sort(key=lambda parameter: parameter["name"])
+
     add_responses(swagger_operation, operation, ns, func)
     return swagger_operation
 
