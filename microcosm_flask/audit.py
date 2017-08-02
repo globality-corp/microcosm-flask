@@ -9,8 +9,10 @@ from functools import wraps
 from logging import DEBUG, getLogger
 from json import loads
 from traceback import format_exc
+from uuid import UUID
 
 from flask import current_app, g, request
+from inflection import underscore
 from microcosm.api import defaults
 from microcosm_flask.errors import (
     extract_context,
@@ -24,10 +26,19 @@ from microcosm_logging.timing import elapsed_time
 AuditOptions = namedtuple("AuditOptions", [
     "include_request_body",
     "include_response_body",
+    "include_query_string",
 ])
 
 
 SKIP_LOGGING = "_microcosm_flask_skip_audit_logging"
+
+
+def is_uuid(value):
+    try:
+        UUID(value)
+        return True
+    except:
+        return False
 
 
 def skip_logging(func):
@@ -79,6 +90,7 @@ def audit(func):
         options = AuditOptions(
             include_request_body=True,
             include_response_body=True,
+            include_query_string=True,
         )
         with logging_levels():
             return _audit_request(options, func, None, *args, **kwargs)
@@ -96,6 +108,7 @@ class RequestInfo(object):
         self.operation = request.endpoint
         self.func = func.__name__
         self.method = request.method
+        self.args = request.args
         self.request_context = request_context
         self.timing = dict()
 
@@ -103,6 +116,7 @@ class RequestInfo(object):
         self.stack_trace = None
         self.request_body = None
         self.response_body = None
+        self.response_headers = None
         self.status_code = None
         self.success = None
 
@@ -113,6 +127,12 @@ class RequestInfo(object):
             method=self.method,
             **self.timing
         )
+        if self.options.include_query_string and self.args:
+            dct.update({
+                key: values[0]
+                for key, values in self.args.iterlists()
+                if len(values) == 1 and is_uuid(values[0])
+            })
 
         if self.request_context is not None:
             dct.update(self.request_context())
@@ -133,6 +153,7 @@ class RequestInfo(object):
 
         self.post_process_request_body(dct)
         self.post_process_response_body(dct)
+        self.post_process_response_headers(dct)
 
         return dct
 
@@ -162,7 +183,7 @@ class RequestInfo(object):
     def capture_response(self, response):
         self.success = True
 
-        body, self.status_code = parse_response(response)
+        body, self.status_code, self.response_headers = parse_response(response)
 
         if not current_app.debug:
             # only capture responsebody on debug
@@ -231,6 +252,24 @@ class RequestInfo(object):
             response_body=self.response_body,
         )
 
+    def post_process_response_headers(self, dct):
+        """
+        Rewrite X-<>-Id header into audit logs.
+        """
+        if not self.response_headers:
+            return
+
+        for key, value in self.response_headers.items():
+            parts = key.split("-")
+            if len(parts) != 3:
+                continue
+            if parts[0] != "X":
+                continue
+            if parts[-1] != "Id":
+                continue
+
+            dct["{}_id".format(underscore(parts[1]))] = value
+
 
 def _audit_request(options, func, request_context, *args, **kwargs):  # noqa: C901
     """
@@ -260,24 +299,28 @@ def _audit_request(options, func, request_context, *args, **kwargs):  # noqa: C9
 
 def parse_response(response):
     """
-    Parse a Flask response into a body and status code.
+    Parse a Flask response into a body, a status code, and headers
 
     The returned value from a Flask view could be:
         * a tuple of (response, status) or (response, status, headers)
         * a Response object
         * a string
     """
-    if isinstance(response, tuple) and len(response) > 1:
-        return response[0], response[1]
+    if isinstance(response, tuple):
+        if len(response) > 2:
+            return response[0], response[1], response[2]
+        elif len(response) > 1:
+            return response[0], response[1], {}
     try:
-        return response.data, response.status_code
+        return response.data, response.status_code, response.headers
     except AttributeError:
-        return response, 200
+        return response, 200, {}
 
 
 @defaults(
     include_request_body=True,
     include_response_body=True,
+    include_query_string=True,
 )
 def configure_audit_decorator(graph):
     """
@@ -291,6 +334,7 @@ def configure_audit_decorator(graph):
     """
     include_request_body = graph.config.audit.include_request_body
     include_response_body = graph.config.audit.include_response_body
+    include_query_string = graph.config.audit.include_query_string
 
     def _audit(func):
         @wraps(func)
@@ -298,6 +342,7 @@ def configure_audit_decorator(graph):
             options = AuditOptions(
                 include_request_body=include_request_body,
                 include_response_body=include_response_body,
+                include_query_string=include_query_string,
             )
             return _audit_request(options, func, graph.request_context,  *args, **kwargs)
         return wrapper
