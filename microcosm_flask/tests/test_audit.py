@@ -3,6 +3,7 @@ Audit structure tests.
 
 """
 from logging import DEBUG, NOTSET, getLogger
+from uuid import uuid4
 
 from flask import g
 from hamcrest import (
@@ -40,6 +41,7 @@ class TestRequestInfo(object):
         self.options = AuditOptions(
             include_request_body=True,
             include_response_body=True,
+            include_query_string=True,
         )
 
     def test_base_info(self):
@@ -196,6 +198,9 @@ class TestRequestInfo(object):
                 ))),
             )
 
+    def test_response_id(self):
+        pass
+
     def test_response_body(self):
         """
         Can capture the response body.
@@ -291,6 +296,36 @@ class TestRequestInfo(object):
                 func="test_func",
             ))
             logger.warning.assert_not_called()
+
+    def test_log_query_string(self):
+        ref_id = str(uuid4())
+
+        with self.graph.flask.test_request_context("/", query_string=dict(foo=ref_id)):
+            request_info = RequestInfo(self.options, test_func, None)
+
+            logger = MagicMock()
+            request_info.log(logger)
+            logger.info.assert_called_with(dict(
+                operation="test_func",
+                method="GET",
+                func="test_func",
+                foo=ref_id
+            ))
+
+    def test_log_response_id_header(self):
+        new_id = str(uuid4())
+        with self.graph.flask.test_request_context("/"):
+            request_info = RequestInfo(self.options, test_func, None)
+            request_info.response_headers = {"X-FooBar-Id": new_id}
+
+            logger = MagicMock()
+            request_info.log(logger)
+            logger.info.assert_called_with(dict(
+                operation="test_func",
+                method="GET",
+                func="test_func",
+                foo_bar_id=new_id,
+            ))
 
     def test_root_logging_level(self):
         """

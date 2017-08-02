@@ -18,7 +18,7 @@ class StatusCodeClassifier(Classifier):
 
     """
     def label_result(self, result):
-        _, status_code = parse_response(result)
+        _, status_code, _ = parse_response(result)
         return str(status_code)
 
     def label_error(self, error):

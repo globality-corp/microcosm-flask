@@ -195,6 +195,7 @@ class TestCrud(object):
                 }
             },
         })
+        assert_that(response.headers["X-Person-Id"], is_(equal_to(str(PERSON_ID_2))))
 
     def test_create_empty_object(self):
         response = self.client.post("/api/person", data='{}')
