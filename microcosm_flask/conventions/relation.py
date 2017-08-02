@@ -11,6 +11,7 @@ from marshmallow import Schema
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import (
     dump_response_data,
+    encode_id_header,
     load_query_string_data,
     load_request_data,
     merge_data,
@@ -49,7 +50,13 @@ class RelationConvention(Convention):
         def create(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            return dump_response_data(definition.response_schema, response_data, Operation.CreateFor.value.default_code)
+            headers = encode_id_header(response_data)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                Operation.CreateFor.value.default_code,
+                headers=headers,
+            )
 
         create.__doc__ = "Create a new {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 

@@ -3,8 +3,11 @@ Support for encoding and decoding request/response content.
 
 """
 from flask import jsonify, request
+from inflection import camelize
 from werkzeug import Headers
 from werkzeug.exceptions import NotFound, UnprocessableEntity
+
+from microcosm_flask.naming import name_for
 
 
 def with_headers(error, headers):
@@ -18,8 +21,29 @@ def with_context(error, errors):
 
 
 def encode_count_header(count):
+    """
+    Generate a header for a count HEAD response.
+
+    """
     return {
         "X-Total-Count": count,
+    }
+
+
+def encode_id_header(resource):
+    """
+    Generate a header for a newly created resource.
+
+    Assume `id` attribute convention.
+
+    """
+    if not hasattr(resource, "id"):
+        return {}
+
+    return {
+        "X-{}-Id".format(
+            camelize(name_for(resource))
+        ): str(resource.id),
     }
 
 
