@@ -130,7 +130,7 @@ class RequestInfo(object):
         if self.options.include_query_string and self.args:
             dct.update({
                 key: values[0]
-                for key, values in self.args.iterlists()
+                for key, values in self.args.lists()
                 if len(values) == 1 and is_uuid(values[0])
             })
 
