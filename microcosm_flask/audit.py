@@ -26,6 +26,7 @@ from microcosm_logging.timing import elapsed_time
 AuditOptions = namedtuple("AuditOptions", [
     "include_request_body",
     "include_response_body",
+    "include_path",
     "include_query_string",
 ])
 
@@ -90,6 +91,7 @@ def audit(func):
         options = AuditOptions(
             include_request_body=True,
             include_response_body=True,
+            include_path=True,
             include_query_string=True,
         )
         with logging_levels():
@@ -109,6 +111,7 @@ class RequestInfo(object):
         self.func = func.__name__
         self.method = request.method
         self.args = request.args
+        self.view_args = request.view_args
         self.request_context = request_context
         self.timing = dict()
 
@@ -127,6 +130,11 @@ class RequestInfo(object):
             method=self.method,
             **self.timing
         )
+        if self.options.include_path and self.view_args:
+            dct.update({
+                key: value
+                for key, value in self.view_args.items()
+            })
         if self.options.include_query_string and self.args:
             dct.update({
                 key: values[0]
@@ -320,6 +328,7 @@ def parse_response(response):
 @defaults(
     include_request_body=True,
     include_response_body=True,
+    include_path=True,
     include_query_string=True,
 )
 def configure_audit_decorator(graph):
@@ -334,6 +343,7 @@ def configure_audit_decorator(graph):
     """
     include_request_body = graph.config.audit.include_request_body
     include_response_body = graph.config.audit.include_response_body
+    include_path = graph.config.audit.include_path
     include_query_string = graph.config.audit.include_query_string
 
     def _audit(func):
@@ -342,6 +352,7 @@ def configure_audit_decorator(graph):
             options = AuditOptions(
                 include_request_body=include_request_body,
                 include_response_body=include_response_body,
+                include_path=include_path,
                 include_query_string=include_query_string,
             )
             return _audit_request(options, func, graph.request_context,  *args, **kwargs)

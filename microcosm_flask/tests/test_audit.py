@@ -37,10 +37,12 @@ class TestRequestInfo(object):
         )
 
         self.graph.flask.route("/")(test_func)
+        self.graph.flask.route("/<foo>")(test_func)
 
         self.options = AuditOptions(
             include_request_body=True,
             include_response_body=True,
+            include_path=True,
             include_query_string=True,
         )
 
@@ -296,6 +298,19 @@ class TestRequestInfo(object):
                 func="test_func",
             ))
             logger.warning.assert_not_called()
+
+    def test_log_path(self):
+        with self.graph.flask.test_request_context("/bar"):
+            request_info = RequestInfo(self.options, test_func, None)
+
+            logger = MagicMock()
+            request_info.log(logger)
+            logger.info.assert_called_with(dict(
+                operation="test_func",
+                method="GET",
+                func="test_func",
+                foo="bar",
+            ))
 
     def test_log_query_string(self):
         ref_id = str(uuid4())
