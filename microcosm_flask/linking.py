@@ -11,6 +11,7 @@ from werkzeug.routing import BuildError
 
 from microcosm_flask.namespaces import Namespace
 
+
 # NB: it would be nice to use marshmallow schemas in lieu of `to_dict()` functions here
 #
 # The main obstacles are:
@@ -87,9 +88,7 @@ class Link(object):
         :param kwargs: optional endpoint expansion arguments (e.g. for URI parameters)
         :raises BuildError: if link templating is needed and disallowed
         """
-        # ensure that we actually have a Namespace; many legacy code paths use strings or tuples
-        ns = Namespace.make(ns)
-
+        assert isinstance(ns, Namespace)
         try:
             href, templated = ns.href_for(operation, qs=qs, **kwargs), False
         except BuildError as error:

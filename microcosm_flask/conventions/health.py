@@ -5,7 +5,6 @@ Reports service health and basic information from the "/api/health" endpoint,
 using HTTP 200/503 status codes to indicate healthiness.
 
 """
-from microcosm.api import defaults
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response
@@ -97,9 +96,6 @@ class HealthConvention(Convention):
             return make_response(response_data, status_code=status_code)
 
 
-@defaults(
-    path_prefix="",
-)
 def configure_health(graph):
     """
     Configure the health endpoint.
@@ -108,7 +104,6 @@ def configure_health(graph):
               manipulate health state.
     """
     ns = Namespace(
-        path=graph.config.health_convention.path_prefix,
         subject=Health,
     )
 

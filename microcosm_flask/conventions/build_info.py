@@ -42,7 +42,6 @@ class BuildInfoConvention(Convention):
 
 
 @defaults(
-    path_prefix="",
     build_num=None,
     sha1=None,
 )
@@ -52,7 +51,6 @@ def configure_build_info(graph):
 
     """
     ns = Namespace(
-        path=graph.config.build_info_convention.path_prefix,
         subject=BuildInfo,
     )
 

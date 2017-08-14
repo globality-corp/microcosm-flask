@@ -51,15 +51,9 @@ class AddressSchema(NewAddressSchema):
         links = Links()
         links["self"] = Link.for_(
             Operation.Retrieve,
-            ns=Namespace(
-                subject=Address,
-                path=Namespace(
-                    subject=Person,
-                ).instance_path,
-            ),
-            person_id=obj.person_id,
+            Namespace(subject=Address),
             address_id=obj.id,
-            )
+        )
         return links.to_dict()
 
 
@@ -69,7 +63,11 @@ class PersonSchema(NewPersonSchema):
 
     def get_links(self, obj):
         links = Links()
-        links["self"] = Link.for_(Operation.Retrieve, Person, person_id=obj.id)
+        links["self"] = Link.for_(
+            Operation.Retrieve,
+            Namespace(subject=Person),
+            person_id=obj.id,
+        )
         return links.to_dict()
 
 
@@ -91,18 +89,18 @@ PERSON_3 = Person(PERSON_ID_3, "Charlie", "Smith")
 ADDRESS_1 = Address(ADDRESS_ID_1, PERSON_ID_1, "21 Acme St., San Francisco CA 94110")
 
 
-def address_retrieve(id, person_id, address_id):
+def address_retrieve(id, address_id):
     return ADDRESS_1
 
 
-def address_search(person_id, offset, limit, list_param=None, enum_param=None):
+def address_search(offset, limit, list_param=None, enum_param=None):
     if list_param is None or enum_param is None:
-        return [ADDRESS_1], 1, dict(person_id=person_id)
+        return [ADDRESS_1], 1
     return Address(
         ADDRESS_ID_1,
         PERSON_ID_1,
         ",".join(list_param) + str(len(list_param)) + enum_param.value
-    ), 1, dict(person_id=person_id)
+    ), 1
 
 
 def person_create(**kwargs):

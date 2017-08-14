@@ -72,7 +72,6 @@ class SwaggerConvention(Convention):
         "upload",
         "upload_for",
     ],
-    path_prefix="",
     version="",
 )
 def configure_swagger(graph):
@@ -81,7 +80,6 @@ def configure_swagger(graph):
 
     """
     ns = Namespace(
-        path=graph.config.swagger_convention.path_prefix,
         subject=graph.config.swagger_convention.name,
         version=graph.config.swagger_convention.version,
     )

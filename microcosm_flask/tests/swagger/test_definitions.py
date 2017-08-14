@@ -36,7 +36,7 @@ def test_build_swagger():
         subject=Person,
         version="v1",
     )
-    configure_crud(graph, ns.subject, PERSON_MAPPINGS, ns.path)
+    configure_crud(graph, ns, PERSON_MAPPINGS)
 
     # match all (of the one) operations
     def match_function(operation, obj, rule):

@@ -32,11 +32,9 @@ class Namespace(object):
     object encapsulates the rest.
 
     """
-
     def __init__(self,
                  subject,
                  object_=None,
-                 path=None,
                  prefix=None,
                  controller=None,
                  version=None,
@@ -50,10 +48,12 @@ class Namespace(object):
         :param controller: the object responsible for implementations associated with this namespace.
         :param version: the version of this namespace
         :param enable_basic_auth: enable basic auth for this namespace if it's not enabled globally
+        :param identifier_type: the Flask data type to use for identifiers; usually `uuid` or `string`
+
         """
         self.subject = subject
         self.object_ = object_
-        self.prefix = prefix or path or ""
+        self.prefix = prefix or ""
         self.controller = controller
         self.version = version
         self.enable_basic_auth = enable_basic_auth
@@ -167,26 +167,3 @@ class Namespace(object):
             url,
             "{}{}".format(qs_character, urlencode(qs)) if qs else "",
         )
-
-    @classmethod
-    def make(cls, value, path=None):
-        """
-        Create a Namespace from a value.
-
-        Used to transition older APIs that relied on strings/objects/tuples/lists
-        to pass subject and object information instead of Namespace instances.
-
-        """
-        if isinstance(value, Namespace):
-            return value
-        elif isinstance(value, (tuple, list)):
-            return cls(
-                subject=value[0],
-                object_=value[1],
-                path=path,
-            )
-        else:
-            return cls(
-                subject=value,
-                path=path,
-            )

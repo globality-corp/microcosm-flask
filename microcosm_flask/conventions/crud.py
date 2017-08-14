@@ -16,7 +16,6 @@ from microcosm_flask.conventions.encoding import (
     require_response_data,
 )
 from microcosm_flask.conventions.registry import qs, request, response
-from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import identity, OffsetLimitPage, OffsetLimitPageSchema
 
@@ -264,7 +263,7 @@ class CRUDConvention(Convention):
         create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))
 
 
-def configure_crud(graph, ns, mappings, path_prefix=""):
+def configure_crud(graph, ns, mappings):
     """
     Register CRUD endpoints for a resource object.
 
@@ -281,6 +280,5 @@ def configure_crud(graph, ns, mappings, path_prefix=""):
         }
 
     """
-    ns = Namespace.make(ns, path=path_prefix)
     convention = CRUDConvention(graph)
     convention.configure(ns, mappings)

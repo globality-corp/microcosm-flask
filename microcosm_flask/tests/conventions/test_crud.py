@@ -76,13 +76,13 @@ ADDRESS_MAPPINGS = {
 }
 
 
-class TestCrud(object):
+class TestCRUD(object):
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)
         person_ns = Namespace(subject=Person)
-        address_ns = Namespace(subject=Address, path=person_ns.instance_path)
-        configure_crud(self.graph, Person, PERSON_MAPPINGS)
+        address_ns = Namespace(subject=Address)
+        configure_crud(self.graph, person_ns, PERSON_MAPPINGS)
         configure_crud(self.graph, address_ns, ADDRESS_MAPPINGS)
         self.client = self.graph.flask.test_client()
 
@@ -131,7 +131,7 @@ class TestCrud(object):
         assert_that(response.headers["X-Total-Count"], is_(equal_to(str(1))))
 
     def test_search_with_context(self):
-        uri = "/api/person/{}/address".format(PERSON_ID_1)
+        uri = "/api/address".format(PERSON_ID_1)
         response = self.client.get(uri)
         self.assert_response(response, 200, {
             "count": 1,
@@ -142,19 +142,19 @@ class TestCrud(object):
                 "addressLine": "21 Acme St., San Francisco CA 94110",
                 "_links": {
                     "self": {
-                        "href": "http://localhost/api/person/{}/address/{}".format(PERSON_ID_1, ADDRESS_ID_1),
+                        "href": "http://localhost/api/address/{}".format(ADDRESS_ID_1),
                     }
                 },
             }],
             "_links": {
                 "self": {
-                    "href": "http://localhost/api/person/{}/address?offset=0&limit=20".format(PERSON_ID_1),
+                    "href": "http://localhost/api/address?offset=0&limit=20",
                 }
             }
         })
 
     def test_reuse_search_self_link(self):
-        uri = "/api/person/{}/address?list_param=a,b,c&enum_param=A".format(PERSON_ID_1)
+        uri = "/api/address?list_param=a,b,c&enum_param=A".format(PERSON_ID_1)
         response = self.client.get(uri)
         response_data = loads(response.get_data().decode("utf-8"))
         response = self.client.get(response_data["_links"]["self"]["href"])
@@ -167,14 +167,13 @@ class TestCrud(object):
                 "addressLine": "a,b,c3A",
                 "_links": {
                     "self": {
-                        "href": "http://localhost/api/person/{}/address/{}".format(PERSON_ID_1, ADDRESS_ID_1),
+                        "href": "http://localhost/api/address/{}".format(ADDRESS_ID_1),
                     }
                 },
             }],
             "_links": {
                 "self": {
-                    "href": "http://localhost/api/person/{}/address?offset=0&limit=20&enum_param=A&list_param=a%2Cb%2Cc"
-                            .format(PERSON_ID_1),
+                    "href": "http://localhost/api/address?offset=0&limit=20&enum_param=A&list_param=a%2Cb%2Cc",
                 }
             }
         })

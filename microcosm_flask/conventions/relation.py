@@ -18,7 +18,6 @@ from microcosm_flask.conventions.encoding import (
     require_response_data,
 )
 from microcosm_flask.conventions.registry import qs, request, response
-from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPage
 
@@ -205,11 +204,10 @@ class RelationConvention(Convention):
         search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 
 
-def configure_relation(graph, ns, mappings, path_prefix=""):
+def configure_relation(graph, ns, mappings):
     """
     Register relation endpoint(s) between two resources.
 
     """
-    ns = Namespace.make(ns, path=path_prefix)
     convention = RelationConvention(graph)
     convention.configure(ns, mappings)
