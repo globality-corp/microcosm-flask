@@ -168,17 +168,27 @@ def query_param(name, field, required=False):
     return swagger.QueryParameterSubSchema(**parameter)
 
 
-def path_param(name, param_type="string"):
+def path_param(name, ns):
     """
     Build a path parameter definition.
 
     """
-    return swagger.PathParameterSubSchema(**{
+    if ns.identifier_type == "uuid":
+        param_type = "string"
+        param_format = "uuid"
+    else:
+        param_type = "string"
+        param_format = None
+
+    kwargs = {
         "name": name,
         "in": "path",
         "required": True,
         "type": param_type,
-    })
+    }
+    if param_format:
+        kwargs["format"] = param_format
+    return swagger.PathParameterSubSchema(**kwargs)
 
 
 def build_operation(operation, ns, rule, func):
@@ -201,8 +211,7 @@ def build_operation(operation, ns, rule, func):
 
     # path parameters
     swagger_operation.parameters.extend([
-        # TODO: inject type information for parameters based on converter syntax
-        path_param(argument)
+        path_param(argument, ns)
         for argument in rule.arguments
     ])
 

@@ -122,6 +122,7 @@ def test_build_swagger():
                             "type": "string",
                             "name": "person_id",
                             "in": "path",
+                            "format": "uuid",
                         },
                     ],
                     "operationId": "update",

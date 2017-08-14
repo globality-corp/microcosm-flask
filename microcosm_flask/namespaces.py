@@ -37,6 +37,7 @@ class Namespace(object):
                  subject,
                  object_=None,
                  path=None,
+                 prefix=None,
                  controller=None,
                  version=None,
                  enable_basic_auth=False,
@@ -52,7 +53,7 @@ class Namespace(object):
         """
         self.subject = subject
         self.object_ = object_
-        self.prefix = path or ""
+        self.prefix = prefix or path or ""
         self.controller = controller
         self.version = version
         self.enable_basic_auth = enable_basic_auth
