@@ -70,16 +70,16 @@ class Namespace(object):
         Build the path (prefix) leading up to this namespace.
 
         """
-        if self.version:
-            if self.qualifier:
-                return self.prefix + "/" + self.version + "/" + self.qualifier
-            else:
-                return self.prefix + "/" + self.version
-        else:
-            if self.qualifier:
-                return self.prefix + "/" + self.qualifier
-            else:
-                return self.prefix
+        return "/".join([
+            self.prefix,
+        ] + [
+            part
+            for part in [
+                self.version,
+                self.qualifier,
+            ]
+            if part
+        ])
 
     @property
     def object_ns(self):

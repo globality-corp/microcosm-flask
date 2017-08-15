@@ -19,7 +19,7 @@ from microcosm_flask.conventions.encoding import (
 )
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import OffsetLimitPage
+from microcosm_flask.paging import identity, OffsetLimitPage
 
 
 class RelationConvention(Convention):
@@ -195,9 +195,8 @@ class RelationConvention(Convention):
         @qs(definition.request_schema)
         @response(paginated_list_schema)
         def search(**path_data):
-            request_data = load_query_string_data(definition.request_schema)
             page = self.page_cls.from_query_string(definition.request_schema)
-            result = definition.func(**merge_data(path_data, request_data))
+            result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
