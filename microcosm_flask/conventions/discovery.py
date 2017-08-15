@@ -76,7 +76,6 @@ class DiscoveryConvention(Convention):
     operations=[
         "search",
     ],
-    path_prefix="",
 )
 def configure_discovery(graph):
     """
@@ -84,7 +83,6 @@ def configure_discovery(graph):
 
     """
     ns = Namespace(
-        path=graph.config.discovery_convention.path_prefix,
         subject=graph.config.discovery_convention.name,
     )
     convention = DiscoveryConvention(graph)

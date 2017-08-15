@@ -47,7 +47,7 @@ def test_templated_link_to_dict():
 
 def test_link_for_operation():
     graph = create_object_graph(name="example", testing=True)
-    ns = Namespace("foo")
+    ns = Namespace(subject="foo")
 
     @graph.route(ns.collection_path, Operation.Search, ns)
     def func():
@@ -60,20 +60,20 @@ def test_link_for_operation():
 
 def test_link_for_operation_without_namespace():
     graph = create_object_graph(name="example", testing=True)
-    ns = Namespace("foo")
+    ns = Namespace(subject="foo")
 
     @graph.route(ns.collection_path, Operation.Search, ns)
     def func():
         pass
 
     with graph.app.test_request_context():
-        link = Link.for_(Operation.Search, "foo")
+        link = Link.for_(Operation.Search, ns)
         assert_that(link.href, is_(equal_to("http://localhost/api/foo")))
 
 
 def test_link_for_operation_with_query_string():
     graph = create_object_graph(name="example", testing=True)
-    ns = Namespace("foo")
+    ns = Namespace(subject="foo")
 
     @graph.route(ns.collection_path, Operation.Search, ns)
     def func():
@@ -86,7 +86,7 @@ def test_link_for_operation_with_query_string():
 
 def test_link_for_operation_templated():
     graph = create_object_graph(name="example", testing=True)
-    ns = Namespace("foo")
+    ns = Namespace(subject="foo")
 
     @graph.route(ns.instance_path, Operation.Retrieve, ns)
     def func():

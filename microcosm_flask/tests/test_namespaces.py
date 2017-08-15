@@ -158,3 +158,24 @@ def test_namespace_accepts_controller():
         url = ns.url_for(Operation.Search)
         assert_that(url, is_(equal_to("http://localhost/api/foo")))
         assert_that(ns.controller, is_(equal_to(controller)))
+
+
+def test_qualified_operation_href_for():
+    """
+    Qualified operations add to the URI.
+
+    """
+    graph = create_object_graph(name="example", testing=True)
+    ns = Namespace(subject="foo", qualifier="bar", version="v1")
+
+    @graph.route(ns.collection_path, Operation.Search, ns)
+    def search_foo():
+        pass
+
+    @graph.route(ns.instance_path, Operation.Retrieve, ns)
+    def get_foo(foo_id):
+        pass
+
+    with graph.app.test_request_context():
+        url = ns.href_for(Operation.Retrieve, foo_id="baz")
+        assert_that(url, is_(equal_to("http://localhost/api/v1/bar/foo/baz")))
