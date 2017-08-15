@@ -38,8 +38,10 @@ class Namespace(object):
                  prefix=None,
                  controller=None,
                  version=None,
+                 qualifier=None,
                  enable_basic_auth=False,
                  enable_metrics=False,
+                 identifier_key=None,
                  identifier_type="uuid"):
         """
         :param subject: the target resource (or resource name) of this namespace
@@ -54,18 +56,30 @@ class Namespace(object):
         self.subject = subject
         self.object_ = object_
         self.prefix = prefix or ""
+        self.qualifier = qualifier
         self.controller = controller
         self.version = version
         self.enable_basic_auth = enable_basic_auth
         self.enable_metrics = enable_metrics
+        self.identifier_key = identifier_key
         self.identifier_type = identifier_type
 
     @property
     def path(self):
+        """
+        Build the path (prefix) leading up to this namespace.
+
+        """
         if self.version:
-            return self.prefix + "/" + self.version
+            if self.qualifier:
+                return self.prefix + "/" + self.version + "/" + self.qualifier
+            else:
+                return self.prefix + "/" + self.version
         else:
-            return self.prefix
+            if self.qualifier:
+                return self.prefix + "/" + self.qualifier
+            else:
+                return self.prefix
 
     @property
     def object_ns(self):
@@ -74,9 +88,10 @@ class Namespace(object):
 
         """
         return Namespace(
-            path=self.path,
             subject=self.object_,
             object_=None,
+            prefix=self.prefix,
+            qualifier=self.qualifier,
             version=self.version,
         )
 
@@ -94,7 +109,7 @@ class Namespace(object):
 
     @property
     def instance_path(self):
-        return self.path + instance_path_for(self.subject, self.identifier_type)
+        return self.path + instance_path_for(self.subject, self.identifier_type, self.identifier_key)
 
     @property
     def alias_path(self):
@@ -102,7 +117,7 @@ class Namespace(object):
 
     @property
     def relation_path(self):
-        return self.path + relation_path_for(self.subject, self.object_, self.identifier_type)
+        return self.path + relation_path_for(self.subject, self.object_, self.identifier_type, self.identifier_key)
 
     @property
     def singleton_path(self):
@@ -150,6 +165,7 @@ class Namespace(object):
         :param kwargs: additional arguments for URL path expansion,
             which are passed to flask.url_for.
             In particular, _external=True produces absolute url.
+
         """
         return url_for(self.endpoint_for(operation), _external=_external, **kwargs)
 
@@ -159,6 +175,7 @@ class Namespace(object):
 
         :parm qs: the query string dictionary, if any
         :param kwargs: additional arguments for path expansion
+
         """
         url = urljoin(request.url_root, self.url_for(operation, **kwargs))
         qs_character = "?" if url.find("?") == -1 else "&"

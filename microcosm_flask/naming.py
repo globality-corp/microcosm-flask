@@ -46,15 +46,15 @@ def singleton_path_for(name):
     )
 
 
-def instance_path_for(name, identifier_type):
+def instance_path_for(name, identifier_type, identifier_key=None):
     """
     Get a path for thing.
 
     """
-    return "/{}/<{}:{}_id>".format(
+    return "/{}/<{}:{}>".format(
         name_for(name),
         identifier_type,
-        name_for(name),
+        identifier_key or "{}_id".format(name_for(name)),
     )
 
 
@@ -69,14 +69,14 @@ def alias_path_for(name):
     )
 
 
-def relation_path_for(from_name, to_name, identifier_type):
+def relation_path_for(from_name, to_name, identifier_type, identifier_key=None):
     """
     Get a path relating a thing to another.
 
     """
-    return "/{}/<{}:{}_id>/{}".format(
+    return "/{}/<{}:{}>/{}".format(
         name_for(from_name),
         identifier_type,
-        name_for(from_name),
+        identifier_key or "{}_id".format(name_for(from_name)),
         name_for(to_name),
     )
