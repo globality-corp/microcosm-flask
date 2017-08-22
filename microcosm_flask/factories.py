@@ -10,6 +10,8 @@ import microcosm.opaque  # noqa
 
 @defaults(
     port=5000,
+    enable_profiling=False,
+    profile_dir=None,
 )
 def configure_flask(graph):
     """
