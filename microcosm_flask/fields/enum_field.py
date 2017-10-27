@@ -47,7 +47,7 @@ class EnumField(Field):
         except ValueError:
             try:
                 return self.enum(int(value))
-            except:
+            except Exception:
                 pass
             self.fail('by_value', value=value)
 

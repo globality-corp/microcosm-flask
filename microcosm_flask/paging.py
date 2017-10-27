@@ -273,7 +273,7 @@ class OffsetLimitPage(Page):
     def default_limit(self):
         try:
             return int(request.headers["X-Request-Limit"])
-        except:
+        except Exception:
             return 20
 
     def to_items(self, func=str):

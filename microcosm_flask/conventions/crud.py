@@ -2,6 +2,7 @@
 Conventions for canonical CRUD endpoints.
 
 """
+from functools import wraps
 from inflection import pluralize
 from marshmallow import Schema
 
@@ -53,6 +54,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.collection_path, Operation.Search, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
+        @wraps(definition.func)
         def search(**path_data):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
@@ -77,6 +79,7 @@ class CRUDConvention(Convention):
         """
         @self.add_route(ns.collection_path, Operation.Count, ns)
         @qs(definition.request_schema)
+        @wraps(definition.func)
         def count(**path_data):
             request_data = load_query_string_data(definition.request_schema)
             count = definition.func(**merge_data(path_data, request_data))
@@ -100,6 +103,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.collection_path, Operation.Create, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def create(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
@@ -130,6 +134,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.collection_path, operation, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def update_batch(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
@@ -154,6 +159,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.instance_path, Operation.Retrieve, ns)
         @qs(request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def retrieve(**path_data):
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
@@ -174,6 +180,7 @@ class CRUDConvention(Convention):
 
         """
         @self.add_route(ns.instance_path, Operation.Delete, ns)
+        @wraps(definition.func)
         def delete(**path_data):
             require_response_data(definition.func(**path_data))
             return "", Operation.Delete.value.default_code
@@ -195,6 +202,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.instance_path, Operation.Replace, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def replace(**path_data):
             request_data = load_request_data(definition.request_schema)
             # Replace/put should create a resource if not already present, but we do not
@@ -220,6 +228,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.instance_path, Operation.Update, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def update(**path_data):
             # NB: using partial here means that marshmallow will not validate required fields
             request_data = load_request_data(definition.request_schema, partial=True)
@@ -243,6 +252,7 @@ class CRUDConvention(Convention):
         @self.add_route(ns.collection_path, Operation.CreateCollection, ns)
         @request(definition.request_schema)
         @response(paginated_list_schema)
+        @wraps(definition.func)
         def create_collection(**path_data):
             request_data = load_request_data(definition.request_schema)
             # NB: if we don't filter the request body through an explicit page schema,

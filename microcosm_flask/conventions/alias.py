@@ -2,6 +2,8 @@
 Conventions for aliasing endpoints.
 
 """
+from functools import wraps
+
 from flask import redirect
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.naming import name_for
@@ -25,6 +27,7 @@ class AliasConvention(Convention):
 
         """
         @self.add_route(ns.alias_path, Operation.Alias, ns)
+        @wraps(definition.func)
         def retrieve(**path_data):
             resource = definition.func(**path_data)
 
