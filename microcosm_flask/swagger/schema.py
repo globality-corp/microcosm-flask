@@ -55,7 +55,7 @@ SWAGGER_FORMAT = "__swagger_format__"
 def is_int(value):
     try:
         int(value)
-    except:
+    except Exception:
         return False
     else:
         return True

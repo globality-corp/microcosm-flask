@@ -5,6 +5,7 @@ For relations, endpoint definitions require that the `Namespace` contain *both*
 a subject and an object.
 
 """
+from functools import wraps
 from inflection import pluralize
 from marshmallow import Schema
 
@@ -46,6 +47,7 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.CreateFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def create(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
@@ -72,6 +74,7 @@ class RelationConvention(Convention):
 
         """
         @self.add_route(ns.relation_path, Operation.DeleteFor, ns)
+        @wraps(definition.func)
         def delete(**path_data):
             require_response_data(definition.func(**path_data))
             return "", Operation.DeleteFor.value.default_code
@@ -100,6 +103,7 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.ReplaceFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def replace(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
@@ -133,6 +137,7 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.UpdateFor, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def replace(**path_data):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
@@ -163,6 +168,7 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.RetrieveFor, ns)
         @qs(request_schema)
         @response(definition.response_schema)
+        @wraps(definition.func)
         def retrieve(**path_data):
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
@@ -194,6 +200,7 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.SearchFor, ns)
         @qs(definition.request_schema)
         @response(paginated_list_schema)
+        @wraps(definition.func)
         def search(**path_data):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))

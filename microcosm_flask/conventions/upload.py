@@ -3,6 +3,7 @@ Conventions for file upload.
 
 """
 from contextlib import contextmanager
+from functools import wraps
 from os.path import join
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -56,7 +57,7 @@ def temporary_upload(name, fileobj):
     fileobj.save(filepath)
     try:
         yield name, filepath, fileobj.filename
-    except:
+    finally:
         rmtree(tempdir)
 
 
@@ -72,6 +73,7 @@ class UploadConvention(Convention):
         response_schema = definition.response_schema or Schema()
 
         @self.add_route(path, operation, ns)
+        @wraps(definition.func)
         def upload(**path_data):
             request_data = load_query_string_data(request_schema)
 
@@ -104,7 +106,7 @@ class UploadConvention(Convention):
         The definition's func should be an upload function, which must:
         - accept kwargs for path data and query string parameters
         - accept a list of tuples of the form (formname, tempfilepath, filename)
-        - optionall return a resource
+        - optionally return a resource
 
         :param ns: the namespace
         :param definition: the endpoint definition

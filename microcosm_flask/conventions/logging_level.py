@@ -38,7 +38,7 @@ def humanize_level(value):
             40: "ERROR",
             50: "CRITICAL",
         }[int(value)]
-    except:
+    except Exception:
         return value
 
 

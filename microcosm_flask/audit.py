@@ -38,7 +38,7 @@ def is_uuid(value):
     try:
         UUID(value)
         return True
-    except:
+    except Exception:
         return False
 
 

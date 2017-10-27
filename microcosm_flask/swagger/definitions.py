@@ -65,7 +65,7 @@ def build_swagger(graph, ns, operations):
     add_definitions(schema.definitions, operations)
     try:
         schema.validate()
-    except:
+    except Exception:
         logger.exception("Swagger definition did not validate against swagger schema")
         raise
 
