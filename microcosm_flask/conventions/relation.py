@@ -5,6 +5,7 @@ For relations, endpoint definitions require that the `Namespace` contain *both*
 a subject and an object.
 
 """
+from flask import make_response
 from functools import wraps
 from inflection import pluralize
 from marshmallow import Schema
@@ -52,6 +53,7 @@ class RelationConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             headers = encode_id_header(response_data)
+            definition.header_func(headers)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -76,8 +78,15 @@ class RelationConvention(Convention):
         @self.add_route(ns.relation_path, Operation.DeleteFor, ns)
         @wraps(definition.func)
         def delete(**path_data):
+            headers = dict()
             require_response_data(definition.func(**path_data))
-            return "", Operation.DeleteFor.value.default_code
+            definition.header_func(headers)
+            return make_response(
+                "",
+                None,
+                status_code=Operation.DeleteFor.value.default_code,
+                headers=headers,
+            )
 
         delete.__doc__ = "Delete a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 
@@ -105,12 +114,15 @@ class RelationConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def replace(**path_data):
+            headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            definition.header_func(headers)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
-                Operation.ReplaceFor.value.default_code,
+                status_code=Operation.ReplaceFor.value.default_code,
+                headers=headers,
             )
 
         replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -139,12 +151,15 @@ class RelationConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def replace(**path_data):
+            headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            definition.header_func(headers)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
-                Operation.UpdateFor.value.default_code,
+                status_code=Operation.UpdateFor.value.default_code,
+                headers=headers,
             )
 
         replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -170,9 +185,15 @@ class RelationConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def retrieve(**path_data):
+            headers = dict()
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            return dump_response_data(definition.response_schema, response_data)
+            definition.header_func(headers)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                headers=headers,
+            )
 
         retrieve.__doc__ = "Retrieve {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 
@@ -205,6 +226,7 @@ class RelationConvention(Convention):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
+            definition.header_func(headers)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)

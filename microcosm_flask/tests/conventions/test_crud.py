@@ -59,8 +59,12 @@ class SearchAddressPageSchema(OffsetLimitPageSchema):
     enum_param = EnumField(TestEnum)
 
 
+def add_request_id(headers):
+    headers["X-Request-Id"] = "request-id"
+
+
 PERSON_MAPPINGS = {
-    Operation.Create: (person_create, NewPersonSchema(), PersonSchema()),
+    Operation.Create: (person_create, NewPersonSchema(), PersonSchema(), add_request_id),
     Operation.Delete: (person_delete,),
     Operation.UpdateBatch: (person_update_batch, NewPersonBatchSchema(), PersonBatchSchema()),
     Operation.Replace: (person_replace, NewPersonSchema(), PersonSchema()),
@@ -195,6 +199,7 @@ class TestCRUD(object):
             },
         })
         assert_that(response.headers["X-Person-Id"], is_(equal_to(str(PERSON_ID_2))))
+        assert_that(response.headers["X-Request-Id"], is_(equal_to("request-id")))
 
     def test_create_empty_object(self):
         response = self.client.post("/api/person", data='{}')

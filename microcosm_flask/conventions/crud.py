@@ -59,6 +59,7 @@ class CRUDConvention(Convention):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
+            definition.header_func(headers)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
@@ -84,6 +85,7 @@ class CRUDConvention(Convention):
             request_data = load_query_string_data(definition.request_schema)
             count = definition.func(**merge_data(path_data, request_data))
             headers = encode_count_header(count)
+            definition.header_func(headers)
             return dump_response_data(None, None, headers=headers)
 
         count.__doc__ = "Count the size of the collection of all {}".format(pluralize(ns.subject_name))
@@ -108,10 +110,11 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
             headers = encode_id_header(response_data)
+            definition.header_func(headers)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
-                Operation.Create.value.default_code,
+                status_code=Operation.Create.value.default_code,
                 headers=headers,
             )
 
@@ -136,9 +139,16 @@ class CRUDConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def update_batch(**path_data):
+            headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
-            return dump_response_data(definition.response_schema, response_data, operation.value.default_code)
+            definition.header_func(headers)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                status_code=operation.value.default_code,
+                headers=headers,
+            )
 
         update_batch.__doc__ = "Update a batch of {}".format(ns.subject_name)
 
@@ -161,9 +171,15 @@ class CRUDConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def retrieve(**path_data):
+            headers = dict()
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            return dump_response_data(definition.response_schema, response_data)
+            definition.header_func(headers)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                headers=headers,
+            )
 
         retrieve.__doc__ = "Retrieve a {} by id".format(ns.subject_name)
 
@@ -182,8 +198,15 @@ class CRUDConvention(Convention):
         @self.add_route(ns.instance_path, Operation.Delete, ns)
         @wraps(definition.func)
         def delete(**path_data):
+            headers = dict()
             require_response_data(definition.func(**path_data))
-            return "", Operation.Delete.value.default_code
+            definition.header_func(headers)
+            return dump_response_data(
+                "",
+                None,
+                status_code=Operation.Delete.value.default_code,
+                headers=headers,
+            )
 
         delete.__doc__ = "Delete a {} by id".format(ns.subject_name)
 
@@ -204,12 +227,18 @@ class CRUDConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def replace(**path_data):
+            headers = dict()
             request_data = load_request_data(definition.request_schema)
             # Replace/put should create a resource if not already present, but we do not
             # enforce these semantics at the HTTP layer. If `func` returns falsey, we
             # will raise a 404.
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            return dump_response_data(definition.response_schema, response_data)
+            definition.header_func(headers)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                headers=headers,
+            )
 
         replace.__doc__ = "Create or update a {} by id".format(ns.subject_name)
 
@@ -230,10 +259,16 @@ class CRUDConvention(Convention):
         @response(definition.response_schema)
         @wraps(definition.func)
         def update(**path_data):
+            headers = dict()
             # NB: using partial here means that marshmallow will not validate required fields
             request_data = load_request_data(definition.request_schema, partial=True)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            return dump_response_data(definition.response_schema, response_data)
+            definition.header_func(headers)
+            return dump_response_data(
+                definition.response_schema,
+                response_data,
+                headers=headers,
+            )
 
         update.__doc__ = "Update some or all of a {} by id".format(ns.subject_name)
 
@@ -268,6 +303,7 @@ class CRUDConvention(Convention):
             ))
 
             response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
+            definition.header_func(headers)
             return dump_response_data(paginated_list_schema, response_data, headers=headers)
 
         create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))
