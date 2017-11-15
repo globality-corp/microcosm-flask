@@ -5,7 +5,6 @@ For relations, endpoint definitions require that the `Namespace` contain *both*
 a subject and an object.
 
 """
-from flask import make_response
 from functools import wraps
 from inflection import pluralize
 from marshmallow import Schema
@@ -81,7 +80,7 @@ class RelationConvention(Convention):
             headers = dict()
             require_response_data(definition.func(**path_data))
             definition.header_func(headers)
-            return make_response(
+            return dump_response_data(
                 "",
                 None,
                 status_code=Operation.DeleteFor.value.default_code,
