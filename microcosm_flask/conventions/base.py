@@ -5,6 +5,10 @@ Convention base class.
 from microcosm_flask.operations import Operation
 
 
+def identity(x):
+    return x
+
+
 class RouteAlreadyRegisteredException(Exception):
     pass
 
@@ -14,13 +18,13 @@ class EndpointDefinition(tuple):
     A definition for an endpoint.
 
     """
-    def __new__(cls, func=None, request_schema=None, response_schema=None):
+    def __new__(cls, func=None, request_schema=None, response_schema=None, header_func=None):
         """
         :param func: a function to process request data and return response data
         :param request_schema: a marshmallow schema to decode/validate request data
         :param response_schema: a marshmallow schema to encode response data
         """
-        return tuple.__new__(EndpointDefinition, (func, request_schema, response_schema))
+        return tuple.__new__(EndpointDefinition, (func, request_schema, response_schema, header_func))
 
     @property
     def func(self):
@@ -33,6 +37,10 @@ class EndpointDefinition(tuple):
     @property
     def response_schema(self):
         return self[2]
+
+    @property
+    def header_func(self):
+        return self[3] or identity
 
 
 class Convention(object):
@@ -110,4 +118,11 @@ class Convention(object):
                 func=definition[0],
                 request_schema=definition[1],
                 response_schema=definition[2],
+            )
+        elif len(definition) == 4:
+            return EndpointDefinition(
+                func=definition[0],
+                request_schema=definition[1],
+                response_schema=definition[2],
+                header_func=definition[3],
             )

@@ -47,6 +47,14 @@ def encode_id_header(resource):
     }
 
 
+def encode_headers(resource):
+    """
+    Generate headers from a resource.
+
+    """
+    return {}
+
+
 def load_request_data(request_schema, partial=False):
     """
     Load request data as JSON using the given schema.
