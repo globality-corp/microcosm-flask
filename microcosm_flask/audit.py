@@ -23,6 +23,10 @@ from microcosm_flask.errors import (
 from microcosm_logging.timing import elapsed_time
 
 
+DEFAULT_INCLUDE_REQUEST_BODY = 400
+DEFAULT_INCLUDE_RESPONSE_BODY = 400
+
+
 AuditOptions = namedtuple("AuditOptions", [
     "include_request_body",
     "include_response_body",
@@ -89,8 +93,8 @@ def audit(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         options = AuditOptions(
-            include_request_body=True,
-            include_response_body=True,
+            include_request_body=DEFAULT_INCLUDE_REQUEST_BODY,
+            include_response_body=DEFAULT_INCLUDE_RESPONSE_BODY,
             include_path=True,
             include_query_string=True,
         )
@@ -168,7 +172,13 @@ class RequestInfo(object):
     def log(self, logger):
         if self.status_code == 500:
             # something actually went wrong; investigate
-            logger.warning(self.to_dict())
+            dct = self.to_dict()
+
+            if current_app.debug or current_app.testing:
+                message = dct.pop("message")
+                logger.warning(message, extra=dct, exc_info=True)
+            else:
+                logger.warning(dct)
         else:
             # usually log at INFO; a raised exception can be an error or expected behavior (e.g. 404)
             logger.info(self.to_dict())
@@ -180,6 +190,14 @@ class RequestInfo(object):
 
         if not self.options.include_request_body:
             # only capture request body if requested
+            return
+
+        if all((
+            request.content_length,
+            self.options.include_request_body is not True,
+            request.content_length >= self.options.include_request_body,
+        )):
+            # don't capture request body if it's too large
             return
 
         if not request.get_json(force=True, silent=True):
@@ -203,6 +221,13 @@ class RequestInfo(object):
 
         if not body:
             # only capture request body if there is one
+            return
+
+        if all((
+            self.options.include_response_body is not True,
+            len(body) >= self.options.include_response_body,
+        )):
+            # don't capture response body if it's too large
             return
 
         try:
@@ -326,8 +351,8 @@ def parse_response(response):
 
 
 @defaults(
-    include_request_body=True,
-    include_response_body=True,
+    include_request_body=DEFAULT_INCLUDE_REQUEST_BODY,
+    include_response_body=DEFAULT_INCLUDE_RESPONSE_BODY,
     include_path=True,
     include_query_string=True,
 )
@@ -342,7 +367,7 @@ def configure_audit_decorator(graph):
             ...
     """
     include_request_body = graph.config.audit.include_request_body
-    include_response_body = graph.config.audit.include_response_body
+    include_response_body = int(graph.config.audit.include_response_body)
     include_path = graph.config.audit.include_path
     include_query_string = graph.config.audit.include_query_string
 
