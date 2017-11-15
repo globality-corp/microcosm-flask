@@ -353,8 +353,8 @@ def parse_response(response):
 @defaults(
     include_request_body=DEFAULT_INCLUDE_REQUEST_BODY,
     include_response_body=DEFAULT_INCLUDE_RESPONSE_BODY,
-    include_path=True,
-    include_query_string=True,
+    include_path="true",
+    include_query_string="true",
 )
 def configure_audit_decorator(graph):
     """
@@ -366,10 +366,10 @@ def configure_audit_decorator(graph):
         def login(username, password):
             ...
     """
-    include_request_body = graph.config.audit.include_request_body
+    include_request_body = int(graph.config.audit.include_request_body)
     include_response_body = int(graph.config.audit.include_response_body)
-    include_path = graph.config.audit.include_path
-    include_query_string = graph.config.audit.include_query_string
+    include_path = strtobool(graph.config.audit.include_path)
+    include_query_string = strtobool(graph.config.audit.include_query_string)
 
     def _audit(func):
         @wraps(func)
