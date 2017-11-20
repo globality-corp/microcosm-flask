@@ -192,11 +192,11 @@ class RequestInfo(object):
             # only capture request body if requested
             return
 
-        if all((
-            request.content_length,
-            self.options.include_request_body is not True,
-            request.content_length >= self.options.include_request_body,
-        )):
+        if (
+                request.content_length and
+                self.options.include_request_body is not True and
+                request.content_length >= self.options.include_request_body
+        ):
             # don't capture request body if it's too large
             return
 
@@ -223,10 +223,10 @@ class RequestInfo(object):
             # only capture request body if there is one
             return
 
-        if all((
-            self.options.include_response_body is not True,
-            len(body) >= self.options.include_response_body,
-        )):
+        if (
+                self.options.include_response_body is not True and
+                len(body) >= self.options.include_response_body
+        ):
             # don't capture response body if it's too large
             return
 
