@@ -48,11 +48,11 @@ class TestRouteMetrics(object):
         assert_that(response.status_code, is_(equal_to(200)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "example.foo.search.v1",
+            "undefined.example.foo.search.v1",
             ANY,
         )
         self.graph.metrics.increment.assert_called_with(
-            "example.foo.search.v1.200.count",
+            "undefined.example.foo.search.v1.200.count",
         )
 
     def test_different_status_code_metrics(self):
@@ -68,11 +68,11 @@ class TestRouteMetrics(object):
         assert_that(response.status_code, is_(equal_to(204)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "example.foo.search.v1",
+            "undefined.example.foo.search.v1",
             ANY,
         )
         self.graph.metrics.increment.assert_called_with(
-            "example.foo.search.v1.204.count",
+            "undefined.example.foo.search.v1.204.count",
         )
 
     def test_exception_metrics(self):
@@ -88,9 +88,9 @@ class TestRouteMetrics(object):
         assert_that(response.status_code, is_(equal_to(404)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "example.foo.search.v1",
+            "undefined.example.foo.search.v1",
             ANY,
         )
         self.graph.metrics.increment.assert_called_with(
-            "example.foo.search.v1.404.count",
+            "undefined.example.foo.search.v1.404.count",
         )

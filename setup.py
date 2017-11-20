@@ -2,7 +2,7 @@
 from setuptools import find_packages, setup
 
 project = "microcosm-flask"
-version = "0.84.1"
+version = "0.84.2"
 
 setup(
     name=project,
@@ -30,7 +30,7 @@ setup(
         "rfc3986>=0.4.1",
     ],
     extras_require={
-        "metrics": "microcosm-metrics>=0.2.2",
+        "metrics": "microcosm-metrics>=0.2.3",
     },
     setup_requires=[
         "nose>=1.3.6",
