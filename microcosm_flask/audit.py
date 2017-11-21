@@ -60,7 +60,8 @@ def should_skip_logging(func):
     Should we skip logging for this handler?
 
     """
-    return getattr(func, SKIP_LOGGING, False)
+    disabled = strtobool(request.headers.get("x-request-nolog", "false"))
+    return disabled or getattr(func, SKIP_LOGGING, False)
 
 
 @contextmanager
@@ -380,6 +381,6 @@ def configure_audit_decorator(graph):
                 include_path=include_path,
                 include_query_string=include_query_string,
             )
-            return _audit_request(options, func, graph.request_context,  *args, **kwargs)
+            return _audit_request(options, func, graph.request_context, *args, **kwargs)
         return wrapper
     return _audit
