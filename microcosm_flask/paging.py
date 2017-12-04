@@ -322,4 +322,8 @@ class OffsetLimitPage(Page):
             items = fields.List(fields.Nested(item_schema), required=True)
             _links = fields.Raw()
 
+            @property
+            def csv_column_order(self):
+                return getattr(item_schema, "csv_column_order", None)
+
         return PaginatedListSchema

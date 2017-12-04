@@ -33,6 +33,10 @@ class NewPersonSchema(Schema):
     firstName = fields.Str(attribute="first_name", required=True)
     lastName = fields.Str(attribute="last_name", required=True)
 
+    @property
+    def csv_column_order(self):
+        return ["firstName", "lastName"]
+
 
 class NewPersonBatchSchema(Schema):
     items = fields.List(fields.Nested(NewPersonSchema))
@@ -43,8 +47,12 @@ class UpdatePersonSchema(Schema):
     lastName = fields.Str(attribute="last_name")
 
 
-class AddressSchema(NewAddressSchema):
+class AddressCSVSchema(NewAddressSchema):
+    # Same as AddressSchema, without the added links
     id = fields.UUID(required=True)
+
+
+class AddressSchema(AddressCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 
     def get_links(self, obj):
@@ -57,8 +65,18 @@ class AddressSchema(NewAddressSchema):
         return links.to_dict()
 
 
-class PersonSchema(NewPersonSchema):
+class PersonCSVSchema(NewPersonSchema):
+    # PersonSchema without the links
     id = fields.UUID(required=True)
+
+    @property
+    def csv_column_order(self):
+        column_order = ["id"]
+        column_order .extend([field for field in super(PersonCSVSchema, self).csv_column_order])
+        return column_order
+
+
+class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 
     def get_links(self, obj):

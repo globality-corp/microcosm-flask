@@ -12,6 +12,7 @@ def parse_args(graph):
     default_enable_profiling = graph.config.flask.enable_profiling
 
     parser = ArgumentParser()
+    parser.add_argument("-s", default="127.0.0.1")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=default_port)
     parser.add_argument("--with-profiling", action="store_true", default=default_enable_profiling)
