@@ -2,6 +2,7 @@
 Testing fixtures (e.g. for CRUD).
 
 """
+from copy import copy
 from uuid import uuid4
 
 from marshmallow import fields, Schema
@@ -157,8 +158,10 @@ def person_replace(person_id, **kwargs):
 
 def person_update(person_id, **kwargs):
     if person_id == PERSON_ID_1:
+        # Copy to avoid changing attr of constant
+        person_1_copy = copy(PERSON_1)
         for key, value in kwargs.items():
-            setattr(PERSON_1, key, value)
-        return PERSON_1
+            setattr(person_1_copy, key, value)
+        return person_1_copy
     else:
         return None

@@ -74,8 +74,7 @@ def configure_csv(graph, ns, mappings):
     Example mapping:
 
         {
-            Operation.Create: (create_foo, NewFooSchema(), FooSchema()),
-            Operation.Delete: (delete_foo,),
+            Operation.Search: (search_foo, FooSearchSchema(), FooSchema()),
             Operation.Retrieve: (retrieve_foo, FooSchema()),
         }
 

@@ -199,7 +199,6 @@ def csvify(response_data, response_schema):
     The CSV is built from JSON-like object (Python `dict` or list of `dicts`)
 
     """
-    # TODO: determine column ordering with response schema
     if "items" in response_data:
         list_response_data = response_data["items"]
     else:
