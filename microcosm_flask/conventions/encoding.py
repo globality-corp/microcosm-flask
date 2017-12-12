@@ -199,7 +199,7 @@ def find_response_format(allowed_response_formats):
             return allowed_response_formats[0]
         # Finally, default to JSON
         return ResponseFormats.JSON
-    
+
     for response_format in ResponseFormats:
         if all([
             response_format.value.content_type == request_accept_content_type,

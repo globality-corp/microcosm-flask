@@ -5,14 +5,12 @@ Conventions for canonical CRUD endpoints.
 from functools import wraps
 from inflection import pluralize
 from marshmallow import Schema
-from werkzeug.exceptions import NotAcceptable
 
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import (
     dump_response_data,
     encode_count_header,
     encode_id_header,
-    find_response_format,
     load_query_string_data,
     load_request_data,
     merge_data,
@@ -24,12 +22,6 @@ from microcosm_flask.paging import identity, OffsetLimitPage, OffsetLimitPageSch
 
 
 class CRUDConvention(Convention):
-
-    def negotiate_response_content(self, allowed_response_formats):
-        response_format = find_response_format(allowed_response_formats)
-        if response_format is None:
-            raise NotAcceptable()
-        return response_format
 
     @property
     def page_cls(self):

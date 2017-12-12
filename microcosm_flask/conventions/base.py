@@ -2,6 +2,9 @@
 Convention base class.
 
 """
+from werkzeug.exceptions import NotAcceptable
+
+from microcosm_flask.conventions.encoding import find_response_format
 from microcosm_flask.operations import Operation
 
 
@@ -99,6 +102,12 @@ class Convention(object):
             operation_name = operation.lower()
 
         return getattr(self, "configure_{}".format(operation_name))
+
+    def negotiate_response_content(self, allowed_response_formats):
+        response_format = find_response_format(allowed_response_formats)
+        if response_format is None:
+            raise NotAcceptable()
+        return response_format
 
     def _make_definition(self, definition):
         """
