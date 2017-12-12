@@ -7,7 +7,7 @@ from inflection import camelize
 from werkzeug import Headers
 from werkzeug.exceptions import NotFound, UnprocessableEntity
 
-from microcosm_flask.formatting.json_formatter import JSONFormatter
+from microcosm_flask.enums import ResponseFormats
 from microcosm_flask.naming import name_for
 
 
@@ -114,7 +114,7 @@ def remove_null_values(data):
     return data
 
 
-def dump_response_data(response_schema, response_data, status_code=200, headers=None, formatter=None):
+def dump_response_data(response_schema, response_data, status_code=200, headers=None, response_format=None):
     """
     Dumps response data as JSON using the given schema.
 
@@ -127,13 +127,20 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
     if response_schema:
         response_data = response_schema.dump(response_data).data
 
-    return make_response(response_data, status_code, headers, formatter)
+    return make_response(response_data, response_schema, response_format, status_code, headers)
 
 
-def make_response(response_data, status_code=200, headers=None, formatter=None):
-    if formatter is None:
-        # Default to JSON response
-        formatter = JSONFormatter()
+def make_response(
+                  response_data,
+                  response_schema=None,
+                  response_format=None,
+                  status_code=200,
+                  headers=None,
+                  ):
+    if response_format is None:
+        response_format = ResponseFormats.JSON
+    formatter = response_format.value.formatter(response_schema)
+
     if request.headers.get("X-Response-Skip-Null"):
         # swagger does not currently support null values; remove these conditionally
         response_data = remove_null_values(response_data)
@@ -171,3 +178,30 @@ def require_response_data(response_data):
     if not response_data:
         raise NotFound
     return response_data
+
+
+def find_response_format(allowed_response_formats):
+    """
+    Basic content negotiation logic.
+
+    If the 'Accept' header doesn't exactly match a format we can handle, we return JSON
+
+    """
+    if allowed_response_formats is None:
+        allowed_response_formats = [ResponseFormats.JSON]
+
+    request_accept_content_type = request.headers.get("Accept")
+
+    if request_accept_content_type is not None:
+        for response_format in ResponseFormats:
+            if all([
+                response_format.value.content_type == request_accept_content_type,
+                response_format in allowed_response_formats
+            ]):
+                return response_format
+        return None
+    # Nothing specified, default to endpoint definition
+    if len(allowed_response_formats) > 0:
+        return allowed_response_formats[0]
+    # Finally, default to JSON
+    return ResponseFormats.JSON

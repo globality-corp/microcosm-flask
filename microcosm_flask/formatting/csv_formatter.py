@@ -5,19 +5,17 @@ from six import StringIO
 
 from microcosm_flask.formatting.base import BaseFormatter
 
+CSV_CONTENT_TYPE = "text/csv"
+
 
 class CSVFormatter(BaseFormatter):
-    def __init__(self, response_schema):
-        # CSV formatting uses the response schema for column ordering (if defined)
-        self.response_schema = response_schema
-
     def make_response(self, response_data, headers):
         # TODO: pass in optional filename
         filename = "response.csv"
         headers["Content-Disposition"] = "attachment; filename=\"{}\"".format(filename)
-        headers["Content-Type"] = "text/csv; charset=utf-8"
+        headers["Content-Type"] = "{}; charset=utf-8".format(CSV_CONTENT_TYPE)
 
-        response = Response(self.csvify(response_data), mimetype="text/csv")
+        response = Response(self.csvify(response_data), mimetype=CSV_CONTENT_TYPE)
         return response, headers
 
     def csvify(self, response_data):

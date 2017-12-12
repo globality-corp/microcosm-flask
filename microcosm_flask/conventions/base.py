@@ -18,13 +18,16 @@ class EndpointDefinition(tuple):
     A definition for an endpoint.
 
     """
-    def __new__(cls, func=None, request_schema=None, response_schema=None, header_func=None):
+    def __new__(cls, func=None, request_schema=None, response_schema=None, header_func=None, response_formats=None):
         """
         :param func: a function to process request data and return response data
         :param request_schema: a marshmallow schema to decode/validate request data
         :param response_schema: a marshmallow schema to encode response data
         """
-        return tuple.__new__(EndpointDefinition, (func, request_schema, response_schema, header_func))
+        return tuple.__new__(
+            EndpointDefinition,
+            (func, request_schema, response_schema, header_func, response_formats),
+        )
 
     @property
     def func(self):
@@ -41,6 +44,10 @@ class EndpointDefinition(tuple):
     @property
     def header_func(self):
         return self[3] or identity
+
+    @property
+    def response_formats(self):
+        return self[4]
 
 
 class Convention(object):
