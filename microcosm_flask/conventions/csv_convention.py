@@ -11,6 +11,7 @@ from microcosm_flask.conventions.encoding import (
     merge_data,
 )
 from microcosm_flask.conventions.registry import qs, response
+from microcosm_flask.formatting.csv_formatter import CSVFormatter
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import identity, OffsetLimitPage, OffsetLimitPageSchema
 
@@ -58,7 +59,12 @@ class CSVConvention(Convention):
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
             definition.header_func(headers)
-            return dump_response_data(paginated_list_schema, response_data, headers=headers, response_format="csv")
+            return dump_response_data(
+                paginated_list_schema,
+                response_data,
+                headers=headers,
+                formatter=CSVFormatter(paginated_list_schema),
+            )
 
         search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
 

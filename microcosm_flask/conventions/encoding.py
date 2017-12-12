@@ -2,14 +2,12 @@
 Support for encoding and decoding request/response content.
 
 """
-from csv import writer, QUOTE_MINIMAL
-
-from flask import jsonify, request, Response
+from flask import request
 from inflection import camelize
-from six import StringIO
 from werkzeug import Headers
 from werkzeug.exceptions import NotFound, UnprocessableEntity
 
+from microcosm_flask.formatting.json_formatter import JSONFormatter
 from microcosm_flask.naming import name_for
 
 
@@ -116,7 +114,7 @@ def remove_null_values(data):
     return data
 
 
-def dump_response_data(response_schema, response_data, status_code=200, headers=None, response_format=None):
+def dump_response_data(response_schema, response_data, status_code=200, headers=None, formatter=None):
     """
     Dumps response data as JSON using the given schema.
 
@@ -129,37 +127,19 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
     if response_schema:
         response_data = response_schema.dump(response_data).data
 
-    return make_response(response_data, response_schema, status_code, headers, response_format)
+    return make_response(response_data, status_code, headers, formatter)
 
 
-def make_csv_response(response_data, response_schema, headers):
-    # TODO: pass in optional filename
-    filename = "response.csv"
-    headers["Content-Disposition"] = "attachment; filename=\"{}\"".format(filename)
-    headers["Content-Type"] = "text/csv; charset=utf-8"
-
-    response = Response(csvify(response_data, response_schema), mimetype="text/csv")
-    return response, headers
-
-
-def make_json_response(response_data, headers):
-    response = jsonify(response_data)
-    if "Content-Type" not in headers:
-        headers["Content-Type"] = "application/json"
-    return response, headers
-
-
-def make_response(response_data, response_schema=None, status_code=200, headers=None, response_format=None):
+def make_response(response_data, status_code=200, headers=None, formatter=None):
+    if formatter is None:
+        # Default to JSON response
+        formatter = JSONFormatter()
     if request.headers.get("X-Response-Skip-Null"):
         # swagger does not currently support null values; remove these conditionally
         response_data = remove_null_values(response_data)
 
     headers = headers or {}
-    if response_format == "csv":
-        response, headers = make_csv_response(response_data, response_schema, headers)
-    else:
-        # json by default
-        response, headers = make_json_response(response_data, headers)
+    response, headers = formatter.make_response(response_data, headers)
 
     response.headers = Headers(headers)
     response.status_code = status_code
@@ -191,35 +171,3 @@ def require_response_data(response_data):
     if not response_data:
         raise NotFound
     return response_data
-
-
-def csvify(response_data, response_schema):
-    """
-    Make Flask `response` object, with data returned as a generator for the CSV content
-    The CSV is built from JSON-like object (Python `dict` or list of `dicts`)
-
-    """
-    if "items" in response_data:
-        list_response_data = response_data["items"]
-    else:
-        list_response_data = [response_data]
-
-    response_fields = list(list_response_data[0].keys())
-
-    column_order = getattr(response_schema, "csv_column_order", None)
-    if column_order is None:
-        # We should still be able to return a CSV even if no column order has been specified
-        column_names = response_fields
-    else:
-        column_names = response_schema.csv_column_order
-        # The column order be only partially specified
-        column_names.extend([field_name for field_name in response_fields if field_name not in column_names])
-
-    output = StringIO()
-    csv_writer = writer(output, quoting=QUOTE_MINIMAL)
-    csv_writer.writerow(column_names)
-    for item in list_response_data:
-        csv_writer.writerow([item[column] for column in column_names])
-    # Ideally we'd want to `yield` each line to stream the content
-    # But something downstream seems to break streaming
-    yield output.getvalue()
