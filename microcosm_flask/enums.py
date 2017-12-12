@@ -14,10 +14,10 @@ ResponseFormatSpec = namedtuple("ResponseFormatSpec", ["content_type", "formatte
 @unique
 class ResponseFormats(Enum):
     CSV = ResponseFormatSpec(
-            content_type=CSV_CONTENT_TYPE,
-            formatter=CSVFormatter,
-        )
+        content_type=CSV_CONTENT_TYPE,
+        formatter=CSVFormatter,
+    )
     JSON = ResponseFormatSpec(
-            content_type=JSON_CONTENT_TYPE,
-            formatter=JSONFormatter,
-        )
+        content_type=JSON_CONTENT_TYPE,
+        formatter=JSONFormatter,
+    )

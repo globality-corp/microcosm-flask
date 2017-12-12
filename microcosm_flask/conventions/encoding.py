@@ -187,21 +187,23 @@ def find_response_format(allowed_response_formats):
     If the 'Accept' header doesn't exactly match a format we can handle, we return JSON
 
     """
-    if allowed_response_formats is None:
+    # allowed formats default to [] before this
+    if not allowed_response_formats:
         allowed_response_formats = [ResponseFormats.JSON]
 
     request_accept_content_type = request.headers.get("Accept")
 
-    if request_accept_content_type is not None:
-        for response_format in ResponseFormats:
-            if all([
-                response_format.value.content_type == request_accept_content_type,
-                response_format in allowed_response_formats
-            ]):
-                return response_format
-        return None
-    # Nothing specified, default to endpoint definition
-    if len(allowed_response_formats) > 0:
-        return allowed_response_formats[0]
-    # Finally, default to JSON
-    return ResponseFormats.JSON
+    if request_accept_content_type is None:
+        # Nothing specified, default to endpoint definition
+        if len(allowed_response_formats) > 0:
+            return allowed_response_formats[0]
+        # Finally, default to JSON
+        return ResponseFormats.JSON
+    
+    for response_format in ResponseFormats:
+        if all([
+            response_format.value.content_type == request_accept_content_type,
+            response_format in allowed_response_formats
+        ]):
+            return response_format
+    return None

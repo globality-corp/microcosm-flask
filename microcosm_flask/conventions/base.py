@@ -47,7 +47,7 @@ class EndpointDefinition(tuple):
 
     @property
     def response_formats(self):
-        return self[4]
+        return self[4] or []
 
 
 class Convention(object):
