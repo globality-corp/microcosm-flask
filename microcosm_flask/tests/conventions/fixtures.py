@@ -2,6 +2,7 @@
 Testing fixtures (e.g. for CRUD).
 
 """
+from copy import copy
 from uuid import uuid4
 
 from marshmallow import fields, Schema
@@ -33,6 +34,10 @@ class NewPersonSchema(Schema):
     firstName = fields.Str(attribute="first_name", required=True)
     lastName = fields.Str(attribute="last_name", required=True)
 
+    @property
+    def csv_column_order(self):
+        return ["firstName", "lastName"]
+
 
 class NewPersonBatchSchema(Schema):
     items = fields.List(fields.Nested(NewPersonSchema))
@@ -43,8 +48,12 @@ class UpdatePersonSchema(Schema):
     lastName = fields.Str(attribute="last_name")
 
 
-class AddressSchema(NewAddressSchema):
+class AddressCSVSchema(NewAddressSchema):
+    # Same as AddressSchema, without the added links
     id = fields.UUID(required=True)
+
+
+class AddressSchema(AddressCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 
     def get_links(self, obj):
@@ -57,8 +66,18 @@ class AddressSchema(NewAddressSchema):
         return links.to_dict()
 
 
-class PersonSchema(NewPersonSchema):
+class PersonCSVSchema(NewPersonSchema):
+    # PersonSchema without the links
     id = fields.UUID(required=True)
+
+    @property
+    def csv_column_order(self):
+        column_order = ["id"]
+        column_order .extend([field for field in super(PersonCSVSchema, self).csv_column_order])
+        return column_order
+
+
+class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 
     def get_links(self, obj):
@@ -139,8 +158,10 @@ def person_replace(person_id, **kwargs):
 
 def person_update(person_id, **kwargs):
     if person_id == PERSON_ID_1:
+        # Copy to avoid changing attr of constant
+        person_1_copy = copy(PERSON_1)
         for key, value in kwargs.items():
-            setattr(PERSON_1, key, value)
-        return PERSON_1
+            setattr(person_1_copy, key, value)
+        return person_1_copy
     else:
         return None
