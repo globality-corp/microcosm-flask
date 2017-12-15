@@ -53,11 +53,13 @@ class RelationConvention(Convention):
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             headers = encode_id_header(response_data)
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 Operation.CreateFor.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         create.__doc__ = "Create a new {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -80,11 +82,13 @@ class RelationConvention(Convention):
             headers = dict()
             require_response_data(definition.func(**path_data))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 "",
                 None,
                 status_code=Operation.DeleteFor.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         delete.__doc__ = "Delete a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -117,11 +121,13 @@ class RelationConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 status_code=Operation.ReplaceFor.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -154,11 +160,13 @@ class RelationConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 status_code=Operation.UpdateFor.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -188,10 +196,12 @@ class RelationConvention(Convention):
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 headers=headers,
+                response_format=response_format,
             )
 
         retrieve.__doc__ = "Retrieve {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
@@ -226,7 +236,13 @@ class RelationConvention(Convention):
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
             definition.header_func(headers)
-            return dump_response_data(paginated_list_schema, response_data, headers=headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
+            return dump_response_data(
+                paginated_list_schema,
+                response_data,
+                headers=headers,
+                response_format=response_format,
+            )
 
         search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
 

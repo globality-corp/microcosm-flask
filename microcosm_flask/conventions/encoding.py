@@ -2,11 +2,12 @@
 Support for encoding and decoding request/response content.
 
 """
-from flask import jsonify, request
+from flask import request
 from inflection import camelize
 from werkzeug import Headers
 from werkzeug.exceptions import NotFound, UnprocessableEntity
 
+from microcosm_flask.enums import ResponseFormats
 from microcosm_flask.naming import name_for
 
 
@@ -113,7 +114,7 @@ def remove_null_values(data):
     return data
 
 
-def dump_response_data(response_schema, response_data, status_code=200, headers=None):
+def dump_response_data(response_schema, response_data, status_code=200, headers=None, response_format=None):
     """
     Dumps response data as JSON using the given schema.
 
@@ -126,20 +127,27 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
     if response_schema:
         response_data = response_schema.dump(response_data).data
 
-    return make_response(response_data, status_code, headers)
+    return make_response(response_data, response_schema, response_format, status_code, headers)
 
 
-def make_response(response_data, status_code=200, headers=None):
+def make_response(
+                  response_data,
+                  response_schema=None,
+                  response_format=None,
+                  status_code=200,
+                  headers=None,
+                  ):
+    if response_format is None:
+        response_format = ResponseFormats.JSON
+    formatter = response_format.value.formatter(response_schema)
+
     if request.headers.get("X-Response-Skip-Null"):
         # swagger does not currently support null values; remove these conditionally
         response_data = remove_null_values(response_data)
 
     headers = headers or {}
-    if "Content-Type" not in headers:
-        # Specify JSON as the response content type by default
-        headers["Content-Type"] = "application/json"
+    response, headers = formatter.make_response(response_data, headers)
 
-    response = jsonify(response_data)
     response.headers = Headers(headers)
     response.status_code = status_code
     return response
@@ -170,3 +178,32 @@ def require_response_data(response_data):
     if not response_data:
         raise NotFound
     return response_data
+
+
+def find_response_format(allowed_response_formats):
+    """
+    Basic content negotiation logic.
+
+    If the 'Accept' header doesn't exactly match a format we can handle, we return JSON
+
+    """
+    # allowed formats default to [] before this
+    if not allowed_response_formats:
+        allowed_response_formats = [ResponseFormats.JSON]
+
+    request_accept_content_type = request.headers.get("Accept")
+
+    if request_accept_content_type is None:
+        # Nothing specified, default to endpoint definition
+        if len(allowed_response_formats) > 0:
+            return allowed_response_formats[0]
+        # Finally, default to JSON
+        return ResponseFormats.JSON
+
+    for response_format in ResponseFormats:
+        if all([
+            response_format.value.content_type == request_accept_content_type,
+            response_format in allowed_response_formats
+        ]):
+            return response_format
+    return None

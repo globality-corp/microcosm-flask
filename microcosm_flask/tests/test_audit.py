@@ -17,7 +17,12 @@ from microcosm.api import create_object_graph
 from mock import MagicMock
 from werkzeug.exceptions import NotFound
 
-from microcosm_flask.audit import AuditOptions, RequestInfo, logging_levels
+from microcosm_flask.audit import (
+    AuditOptions,
+    RequestInfo,
+    logging_levels,
+    should_skip_logging,
+)
 
 
 def test_func(*args, **kwargs):
@@ -352,3 +357,14 @@ class TestRequestInfo(object):
             with logging_levels():
                 assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
         assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+
+    def test_disable_logging(self):
+        """
+        Disable logging per request.
+
+        """
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        with self.graph.flask.test_request_context("/", headers={"X-Request-NoLog": "true"}):
+            def func():
+                pass
+            assert_that(should_skip_logging(func), is_(equal_to(True)))

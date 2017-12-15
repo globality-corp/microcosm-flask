@@ -60,7 +60,13 @@ class CRUDConvention(Convention):
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
             definition.header_func(headers)
-            return dump_response_data(paginated_list_schema, response_data, headers=headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
+            return dump_response_data(
+                paginated_list_schema,
+                response_data,
+                headers=headers,
+                response_format=response_format,
+            )
 
         search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
 
@@ -86,7 +92,13 @@ class CRUDConvention(Convention):
             count = definition.func(**merge_data(path_data, request_data))
             headers = encode_count_header(count)
             definition.header_func(headers)
-            return dump_response_data(None, None, headers=headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
+            return dump_response_data(
+                None,
+                None,
+                headers=headers,
+                response_format=response_format,
+            )
 
         count.__doc__ = "Count the size of the collection of all {}".format(pluralize(ns.subject_name))
 
@@ -111,11 +123,13 @@ class CRUDConvention(Convention):
             response_data = definition.func(**merge_data(path_data, request_data))
             headers = encode_id_header(response_data)
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 status_code=Operation.Create.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         create.__doc__ = "Create a new {}".format(ns.subject_name)
@@ -143,11 +157,13 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 status_code=operation.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         update_batch.__doc__ = "Update a batch of {}".format(ns.subject_name)
@@ -175,10 +191,12 @@ class CRUDConvention(Convention):
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 headers=headers,
+                response_format=response_format,
             )
 
         retrieve.__doc__ = "Retrieve a {} by id".format(ns.subject_name)
@@ -201,11 +219,13 @@ class CRUDConvention(Convention):
             headers = dict()
             require_response_data(definition.func(**path_data))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 "",
                 None,
                 status_code=Operation.Delete.value.default_code,
                 headers=headers,
+                response_format=response_format,
             )
 
         delete.__doc__ = "Delete a {} by id".format(ns.subject_name)
@@ -234,10 +254,12 @@ class CRUDConvention(Convention):
             # will raise a 404.
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 headers=headers,
+                response_format=response_format,
             )
 
         replace.__doc__ = "Create or update a {} by id".format(ns.subject_name)
@@ -264,10 +286,12 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema, partial=True)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
                 response_data,
                 headers=headers,
+                response_format=response_format,
             )
 
         update.__doc__ = "Update some or all of a {} by id".format(ns.subject_name)
@@ -304,7 +328,13 @@ class CRUDConvention(Convention):
 
             response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
             definition.header_func(headers)
-            return dump_response_data(paginated_list_schema, response_data, headers=headers)
+            response_format = self.negotiate_response_content(definition.response_formats)
+            return dump_response_data(
+                paginated_list_schema,
+                response_data,
+                headers=headers,
+                response_format=response_format,
+            )
 
         create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))
 
@@ -323,6 +353,7 @@ def configure_crud(graph, ns, mappings):
             Operation.Create: (create_foo, NewFooSchema(), FooSchema()),
             Operation.Delete: (delete_foo,),
             Operation.Retrieve: (retrieve_foo, FooSchema()),
+            Operation.Search: (search_foo, SearchFooSchema(), FooSchema(), [ResponseFormats.CSV]),
         }
 
     """
