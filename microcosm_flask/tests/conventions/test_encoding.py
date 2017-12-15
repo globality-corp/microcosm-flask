@@ -1,4 +1,4 @@
-from hamcrest import assert_that, equal_to, is_, none
+from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 
 from microcosm_flask.conventions.encoding import find_response_format
@@ -16,7 +16,7 @@ class TestEncoding(object):
             # PDF is not allowed by endpoint, return None (which may raise 406 - Not Acceptable)
             assert_that(
                 find_response_format([ResponseFormats.JSON]),
-                is_(none()),
+                is_(ResponseFormats.JSON),
             )
 
         with self.graph.app.test_request_context(

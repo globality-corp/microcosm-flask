@@ -191,19 +191,19 @@ def find_response_format(allowed_response_formats):
     if not allowed_response_formats:
         allowed_response_formats = [ResponseFormats.JSON]
 
-    request_accept_content_type = request.headers.get("Accept")
-
-    if request_accept_content_type is None:
+    content_type = request.headers.get("Accept")
+    if content_type is None:
         # Nothing specified, default to endpoint definition
-        if len(allowed_response_formats) > 0:
+        if allowed_response_formats:
             return allowed_response_formats[0]
         # Finally, default to JSON
         return ResponseFormats.JSON
 
-    for response_format in ResponseFormats:
-        if all([
-            response_format.value.content_type == request_accept_content_type,
-            response_format in allowed_response_formats
-        ]):
+    for response_format in ResponseFormats.prioritized():
+        if response_format not in allowed_response_formats:
+            continue
+        if response_format.matches(content_type):
             return response_format
-    return None
+
+    # fallback for previous behavior
+    return ResponseFormats.JSON
