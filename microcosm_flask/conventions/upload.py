@@ -75,7 +75,8 @@ class UploadConvention(Convention):
         @self.add_route(path, operation, ns)
         @wraps(definition.func)
         def upload(**path_data):
-            request_data = load_query_string_data(request_schema, merge_data(request.args, request.form))
+            merged_data = merge_data(request.args.to_dict(), request.form.to_dict())
+            request_data = load_query_string_data(request_schema, merged_data)
 
             if not request.files:
                 raise BadRequest("No files were uploaded")
