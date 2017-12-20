@@ -6,10 +6,12 @@ from uuid import uuid4
 
 from hamcrest import (
     all_of,
+    anything,
     assert_that,
     contains,
     equal_to,
     has_entry,
+    has_entries,
     has_item,
     has_key,
     is_,
@@ -29,16 +31,6 @@ from microcosm_flask.swagger.definitions import build_path
 from microcosm_flask.tests.conventions.fixtures import Person
 
 
-def upload_file(files, extra):
-    pass
-
-
-def upload_file_for(files, person_id):
-    return dict(
-        id=person_id,
-    )
-
-
 class FileExtraSchema(Schema):
     extra = fields.String(missing="something")
 
@@ -47,19 +39,31 @@ class FileResponseSchema(Schema):
     id = fields.UUID(required=True)
 
 
-UPLOAD_MAPPINGS = {
-    Operation.Upload: EndpointDefinition(
-        func=upload_file,
-        request_schema=FileExtraSchema(),
-    ),
-}
+class FileController(object):
 
-UPLOAD_FOR_MAPPINGS = {
-    Operation.UploadFor: EndpointDefinition(
-        func=upload_file_for,
-        response_schema=FileResponseSchema(),
-    ),
-}
+    def __init__(self):
+        self.calls = []
+
+    def upload(self, files, extra):
+        self.calls.append(
+            dict(
+                files=files,
+                extra=extra,
+            ),
+        )
+
+    def upload_for_person(self, files, extra, person_id):
+        self.calls.append(
+            dict(
+                extra=extra,
+                files=files,
+                person_id=person_id,
+            ),
+        )
+
+        return dict(
+            id=person_id,
+        )
 
 
 class TestUpload(object):
@@ -69,6 +73,24 @@ class TestUpload(object):
 
         self.ns = Namespace(subject="file")
         self.relation_ns = Namespace(subject=Person, object_="file")
+
+        self.controller = FileController()
+
+        UPLOAD_MAPPINGS = {
+            Operation.Upload: EndpointDefinition(
+                func=self.controller.upload,
+                request_schema=FileExtraSchema(),
+            ),
+        }
+
+        UPLOAD_FOR_MAPPINGS = {
+            Operation.UploadFor: EndpointDefinition(
+                func=self.controller.upload_for_person,
+                request_schema=FileExtraSchema(),
+                response_schema=FileResponseSchema(),
+            ),
+        }
+
         configure_upload(self.graph, self.ns, UPLOAD_MAPPINGS)
         configure_upload(self.graph, self.relation_ns, UPLOAD_FOR_MAPPINGS)
         configure_swagger(self.graph)
@@ -117,13 +139,13 @@ class TestUpload(object):
         assert_that(
             upload["parameters"],
             has_item(
-                has_entry("name", "extra"),
+                has_entries(name="extra"),
             ),
         )
         assert_that(
             upload_for["parameters"],
             has_item(
-                is_not(has_entry("name", "extra")),
+                is_not(has_entries(name="extra")),
             ),
         )
 
@@ -153,6 +175,12 @@ class TestUpload(object):
             ),
         )
         assert_that(response.status_code, is_(equal_to(204)))
+        assert_that(self.controller.calls, contains(
+            has_entries(
+                files=contains(contains("file", anything(), "hello.txt")),
+                extra="something",
+            ),
+        ))
 
     def test_upload_for(self):
         person_id = uuid4()
@@ -167,3 +195,26 @@ class TestUpload(object):
         assert_that(response_data, is_(equal_to(dict(
             id=str(person_id),
         ))))
+        assert_that(self.controller.calls, contains(
+            has_entries(
+                files=contains(contains("file", anything(), "hello.txt")),
+                extra="something",
+                person_id=person_id,
+            ),
+        ))
+
+    def test_upload_multipart(self):
+        response = self.client.post(
+            "/api/file",
+            data=dict(
+                file=(BytesIO(b("Hello World\n")), "hello.txt"),
+                extra="special",
+            ),
+        )
+        assert_that(response.status_code, is_(equal_to(204)))
+        assert_that(self.controller.calls, contains(
+            has_entries(
+                files=contains(contains("file", anything(), "hello.txt")),
+                extra="special",
+            ),
+        ))
