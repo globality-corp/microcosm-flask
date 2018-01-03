@@ -5,8 +5,12 @@ Reports service health and basic information from the "/api/health" endpoint,
 using HTTP 200/503 status codes to indicate healthiness.
 
 """
+from distutils.util import strtobool
+from microcosm.api import defaults
+
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
+from microcosm_flask.conventions.build_info import BuildInfo
 from microcosm_flask.conventions.encoding import make_response
 from microcosm_flask.errors import extract_error_message
 from microcosm_flask.namespaces import Namespace
@@ -52,10 +56,16 @@ class Health(object):
     The overall health is OK if all checks are OK.
 
     """
-    def __init__(self, graph):
+    def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
-        self.checks = {}
+        if include_build_info:
+            self.checks = dict(
+                build_num=BuildInfo.check_build_num,
+                sha1=BuildInfo.check_sha1,
+            )
+        else:
+            self.checks = dict()
 
     def to_dict(self):
         """
@@ -82,9 +92,9 @@ class Health(object):
 
 class HealthConvention(Convention):
 
-    def __init__(self, graph):
+    def __init__(self, graph, include_build_info=False):
         super(HealthConvention, self).__init__(graph)
-        self.health = Health(graph)
+        self.health = Health(graph, include_build_info)
 
     def configure_retrieve(self, ns, definition):
 
@@ -96,6 +106,9 @@ class HealthConvention(Convention):
             return make_response(response_data, status_code=status_code)
 
 
+@defaults(
+    include_build_info="true",
+)
 def configure_health(graph):
     """
     Configure the health endpoint.
@@ -107,6 +120,7 @@ def configure_health(graph):
         subject=Health,
     )
 
-    convention = HealthConvention(graph)
+    include_build_info = strtobool(graph.config.health_convention.include_build_info)
+    convention = HealthConvention(graph, include_build_info)
     convention.configure(ns, retrieve=tuple())
     return convention.health
