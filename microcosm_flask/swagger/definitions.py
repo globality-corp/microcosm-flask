@@ -17,11 +17,10 @@ Note that:
 
 """
 from logging import getLogger
-from six import string_types
-from six.moves.urllib.parse import unquote
-from werkzeug.routing import BuildError
+from urllib.parse import unquote
 
 from openapi import model as swagger
+from werkzeug.routing import BuildError
 
 from microcosm_flask.conventions.registry import (
     get_qs_schema,
@@ -94,7 +93,7 @@ def add_definitions(definitions, operations):
 
     """
     for definition_schema in iter_definitions(definitions, operations):
-        if isinstance(definition_schema, string_types):
+        if isinstance(definition_schema, str):
             continue
         for name, schema in iter_schemas(definition_schema):
             definitions.setdefault(name, swagger.Schema(schema))
@@ -260,14 +259,14 @@ def add_responses(swagger_operation, operation, ns, func):
 
     # resource request
     request_resource = get_request_schema(func)
-    if isinstance(request_resource, string_types):
+    if isinstance(request_resource, str):
         if not hasattr(swagger_operation, "consumes"):
             swagger_operation.consumes = []
         swagger_operation.consumes.append(request_resource)
 
     # resources response
     response_resource = get_response_schema(func)
-    if isinstance(response_resource, string_types):
+    if isinstance(response_resource, str):
         if not hasattr(swagger_operation, "produces"):
             swagger_operation.produces = []
         swagger_operation.produces.append(response_resource)

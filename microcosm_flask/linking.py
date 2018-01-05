@@ -21,7 +21,7 @@ from microcosm_flask.namespaces import Namespace
 #    than to instantiate a schema instance in each case.
 
 
-class Links(object):
+class Links:
     """
     A collection of links organized by relation name.
 
@@ -50,7 +50,7 @@ class Links(object):
         }
 
 
-class Link(object):
+class Link:
     """
     A single link for a relation name.
 

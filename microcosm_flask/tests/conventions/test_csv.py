@@ -3,7 +3,7 @@ CRUD convention tests.
 
 """
 from csv import reader
-from six import StringIO
+from io import StringIO
 
 from enum import Enum
 
@@ -74,7 +74,7 @@ ADDRESS_MAPPINGS = {
 }
 
 
-class TestCSV(object):
+class TestCSV:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)

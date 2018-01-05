@@ -2,6 +2,7 @@
 Alias convention tests.
 
 """
+from io import BytesIO
 from uuid import uuid4
 
 from hamcrest import (
@@ -20,7 +21,6 @@ from hamcrest import (
 from json import loads
 from marshmallow import fields, Schema
 from microcosm.api import create_object_graph
-from six import b, BytesIO
 
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.conventions.base import EndpointDefinition
@@ -39,7 +39,7 @@ class FileResponseSchema(Schema):
     id = fields.UUID(required=True)
 
 
-class FileController(object):
+class FileController:
 
     def __init__(self):
         self.calls = []
@@ -66,7 +66,7 @@ class FileController(object):
         )
 
 
-class TestUpload(object):
+class TestUpload:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)
@@ -171,7 +171,7 @@ class TestUpload(object):
         response = self.client.post(
             "/api/file",
             data=dict(
-                file=(BytesIO(b("Hello World\n")), "hello.txt"),
+                file=(BytesIO(b"Hello World\n"), "hello.txt"),
             ),
         )
         assert_that(response.status_code, is_(equal_to(204)))
@@ -187,7 +187,7 @@ class TestUpload(object):
         response = self.client.post(
             "/api/person/{}/file".format(person_id),
             data=dict(
-                file=(BytesIO(b("Hello World\n")), "hello.txt"),
+                file=(BytesIO(b"Hello World\n"), "hello.txt"),
             ),
         )
         assert_that(response.status_code, is_(equal_to(200)))
@@ -207,7 +207,7 @@ class TestUpload(object):
         response = self.client.post(
             "/api/file",
             data=dict(
-                file=(BytesIO(b("Hello World\n")), "hello.txt"),
+                file=(BytesIO(b"Hello World\n"), "hello.txt"),
                 extra="special",
             ),
         )

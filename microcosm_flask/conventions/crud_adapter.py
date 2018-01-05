@@ -5,7 +5,7 @@ Adapter between conventional crud functions and the `microcosm_postgres.store.St
 from microcosm_flask.naming import name_for
 
 
-class CRUDStoreAdapter(object):
+class CRUDStoreAdapter:
     """
     Adapt the CRUD conventions callbacks to the `Store` interface.
 

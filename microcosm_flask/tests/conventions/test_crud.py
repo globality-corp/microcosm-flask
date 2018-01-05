@@ -80,7 +80,7 @@ ADDRESS_MAPPINGS = {
 }
 
 
-class TestCRUD(object):
+class TestCRUD:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)

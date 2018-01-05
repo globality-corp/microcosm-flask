@@ -95,7 +95,7 @@ class NewCloneSchema(Schema):
         }
 
 
-class DAGCloningController(object):
+class DAGCloningController:
 
     def __init__(self, store):
         self.store = store

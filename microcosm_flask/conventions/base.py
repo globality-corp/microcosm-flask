@@ -53,7 +53,7 @@ class EndpointDefinition(tuple):
         return self[4] or []
 
 
-class Convention(object):
+class Convention:
     """
     A convention is a recipe for applying Flask-compatible functions to a namespace.
 

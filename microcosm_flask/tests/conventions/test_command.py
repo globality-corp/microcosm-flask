@@ -47,7 +47,7 @@ def make_command(graph, ns, request_schema, response_schema):
         return dump_response_data(response_schema, response_data, Operation.Command.value.default_code)
 
 
-class TestCommand(object):
+class TestCommand:
 
     def setup(self):
         # override configuration to use "query" operations for swagger

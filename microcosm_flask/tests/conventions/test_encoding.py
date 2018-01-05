@@ -5,7 +5,7 @@ from microcosm_flask.conventions.encoding import find_response_format
 from microcosm_flask.enums import ResponseFormats
 
 
-class TestEncoding(object):
+class TestEncoding:
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)
 

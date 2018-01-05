@@ -15,7 +15,7 @@ from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
 
-class TestCreateCollectionConflict(object):
+class TestCreateCollectionConflict:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)

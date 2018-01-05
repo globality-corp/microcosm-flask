@@ -5,7 +5,6 @@ Hamcrest matching support for JSON responses.
 from json import dumps, loads
 
 from hamcrest.core.base_matcher import BaseMatcher
-from six import string_types
 
 from microcosm_flask.fields.uri_field import normalize_uri
 
@@ -19,7 +18,7 @@ def prettify(value):
     )
 
 
-class JSON(object):
+class JSON:
     """
     Dictionary wrapper with JSON pretty-printing for Hamcrest's description.
 
@@ -83,7 +82,7 @@ class URIMatcher(BaseMatcher):
         self.uri = uri
 
     def _matches(self, item):
-        if not isinstance(item, string_types):
+        if not isinstance(item, str):
             return False
 
         return normalize_uri(item) == normalize_uri(self.uri)

@@ -10,7 +10,7 @@ from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
 
-class BuildInfo(object):
+class BuildInfo:
 
     def __init__(self, build_num, sha1):
         self.build_num = build_num

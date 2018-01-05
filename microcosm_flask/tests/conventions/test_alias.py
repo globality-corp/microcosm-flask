@@ -42,7 +42,7 @@ PERSON_MAPPINGS = {
 }
 
 
-class TestAlias(object):
+class TestAlias:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)
