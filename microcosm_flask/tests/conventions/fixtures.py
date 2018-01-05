@@ -12,14 +12,14 @@ from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
 
-class Address(object):
+class Address:
     def __init__(self, id, person_id, address_line):
         self.id = id
         self.person_id = person_id
         self.address_line = address_line
 
 
-class Person(object):
+class Person:
     def __init__(self, id, first_name, last_name):
         self.id = id
         self.first_name = first_name

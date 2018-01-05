@@ -63,7 +63,7 @@ class OffsetLimitPageSchema(PageSchema):
     pass
 
 
-class PaginatedList(object):
+class PaginatedList:
     """
     A list of items with knowledge of a page.
 
@@ -144,7 +144,7 @@ class OffsetLimitPaginatedList(PaginatedList):
         return links
 
 
-class Page(object):
+class Page:
     """
     Encapsulates pagination information.
 

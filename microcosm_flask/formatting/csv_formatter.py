@@ -1,7 +1,7 @@
 from csv import writer, QUOTE_MINIMAL
+from io import StringIO
 
 from flask import Response
-from six import StringIO
 
 from microcosm_flask.formatting.base import BaseFormatter
 

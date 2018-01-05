@@ -10,10 +10,9 @@ from hamcrest import (
 )
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
-from six import b
 
 
-class TestForwarding(object):
+class TestForwarding:
 
     def init(self, loader):
         graph = create_object_graph("test", testing=True, loader=loader)
@@ -39,7 +38,7 @@ class TestForwarding(object):
         )
 
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(response.data, is_(equal_to(b("http://localhost:8080/"))))
+        assert_that(response.data, is_(equal_to(b"http://localhost:8080/")))
 
     def test_host_override(self):
         loader = load_from_dict(
@@ -57,4 +56,4 @@ class TestForwarding(object):
         )
 
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(response.data, is_(equal_to(b("http://service/"))))
+        assert_that(response.data, is_(equal_to(b"http://service/")))

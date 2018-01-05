@@ -3,7 +3,6 @@ Generate JSON Schema for Marshmallow schemas.
 
 """
 from logging import getLogger
-from six import string_types
 
 from marshmallow import fields
 
@@ -104,7 +103,7 @@ def resolve_enum_field(field):
         choice.value if field.by_value else choice.name
         for choice in enum
     ]
-    if all((isinstance(enum_value, string_types) for enum_value in enum_values)):
+    if all((isinstance(enum_value, str) for enum_value in enum_values)):
         return dict(
             type="string",
             enum=enum_values,

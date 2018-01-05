@@ -17,7 +17,7 @@ from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
 
-class HealthResult(object):
+class HealthResult:
     def __init__(self, error=None, result=None):
         self.error = error
         self.result = result or "ok"
@@ -46,7 +46,7 @@ class HealthResult(object):
             return cls(error=extract_error_message(error))
 
 
-class Health(object):
+class Health:
     """
     Wrapper around service health state.
 

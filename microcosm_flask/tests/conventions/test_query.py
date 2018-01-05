@@ -47,7 +47,7 @@ def make_query(graph, ns, request_schema, response_schema):
         return dump_response_data(response_schema, response_data, Operation.Query.value.default_code)
 
 
-class TestQuery(object):
+class TestQuery:
 
     def setup(self):
         # override configuration to use "query" operations for swagger

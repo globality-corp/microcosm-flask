@@ -41,7 +41,7 @@ FOO_MAPPINGS = {
 }
 
 
-class TestCreateCollection(object):
+class TestCreateCollection:
 
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)

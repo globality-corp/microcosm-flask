@@ -13,7 +13,7 @@ from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
 
-class TestRouteMetrics(object):
+class TestRouteMetrics:
 
     def setup(self):
         try:

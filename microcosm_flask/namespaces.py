@@ -6,9 +6,9 @@ which in turn provides a discovery mechanism API routes.
 
 """
 from re import match
+from urllib.parse import urlencode, urljoin
 
 from flask import request, url_for
-from six.moves.urllib.parse import urlencode, urljoin
 from werkzeug.exceptions import InternalServerError
 
 from microcosm_flask.naming import (
@@ -22,7 +22,7 @@ from microcosm_flask.naming import (
 from microcosm_flask.operations import Operation
 
 
-class Namespace(object):
+class Namespace:
     """
     Encapsulates the namespace for one or more operations.
 

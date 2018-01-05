@@ -29,7 +29,7 @@ def test_func(*args, **kwargs):
     pass
 
 
-class TestRequestInfo(object):
+class TestRequestInfo:
     """
     Test capturing of request data.
 

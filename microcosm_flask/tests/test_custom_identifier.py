@@ -70,7 +70,7 @@ PERSON_MAPPINGS = {
 }
 
 
-class TestIdentifierType(object):
+class TestIdentifierType:
 
     def setup(self):
         loader = load_from_dict(

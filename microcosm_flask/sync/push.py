@@ -5,10 +5,10 @@ Push resource definitions to an output destination.
 from json import dumps
 from logging import getLogger
 from sys import stdout
+from urllib.parse import urlparse, urlunparse
 
 import requests
 from requests.exceptions import ConnectionError, HTTPError
-from six.moves.urllib.parse import urlparse, urlunparse
 from yaml import safe_dump_all
 
 

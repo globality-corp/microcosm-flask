@@ -105,7 +105,7 @@ def audit(func):
     return wrapper
 
 
-class RequestInfo(object):
+class RequestInfo:
     """
     Capture of key information for requests.
 
