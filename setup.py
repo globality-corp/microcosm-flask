@@ -30,7 +30,7 @@ setup(
         "rfc3986>=1.1.0",
     ],
     extras_require={
-        "metrics": "microcosm-metrics>=0.2.3",
+        "metrics": "microcosm-metrics>=1.0.0",
     },
     setup_requires=[
         "nose>=1.3.6",
