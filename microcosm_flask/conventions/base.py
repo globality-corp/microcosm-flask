@@ -2,10 +2,11 @@
 Convention base class.
 
 """
+from enum import Enum
+
 from werkzeug.exceptions import NotAcceptable
 
 from microcosm_flask.conventions.encoding import find_response_format
-from microcosm_flask.operations import Operation
 
 
 def identity(x):
@@ -93,10 +94,10 @@ class Convention:
         """
         Find the function to use to configure the given operation.
 
-        The input might be an `Operation` enum or a string.
+        The input might be enum member or a string.
 
         """
-        if isinstance(operation, Operation):
+        if isinstance(operation, Enum):
             operation_name = operation.name.lower()
         else:
             operation_name = operation.lower()
