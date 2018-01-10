@@ -49,7 +49,7 @@ def test_offset_limit_page_to_paginated_list():
 
     ns = Namespace("foo")
 
-    @graph.flask.route("/", methods=["GET"], endpoint="foo.search.v1")
+    @graph.flask.route("/", methods=["GET"], endpoint="foo.search.v1.uuid")
     def search():
         pass
 

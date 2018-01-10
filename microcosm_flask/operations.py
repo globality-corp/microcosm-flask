@@ -15,8 +15,8 @@ OperationInfo = namedtuple("OperationInfo", ["name", "method", "pattern", "defau
 
 
 # NB: Namespace.parse_endpoint requires that operation is the second argument
-NODE_PATTERN = "{subject}.{operation}.{version}"
-EDGE_PATTERN = "{subject}.{operation}.{object_}.{version}"
+NODE_PATTERN = "{subject}.{operation}.{version}.{identifier_type}"
+EDGE_PATTERN = "{subject}.{operation}.{object_}.{version}.{identifier_type}"
 
 
 @unique
