@@ -93,6 +93,7 @@ class Namespace:
             prefix=self.prefix,
             qualifier=self.qualifier,
             version=self.version,
+            identifier_type=self.identifier_type,
         )
 
     @property
@@ -138,6 +139,7 @@ class Namespace:
             operation=operation.value.name,
             object_=self.object_name if self.object_ else None,
             version=self.version or "v1",
+            identifier_type=self.identifier_type,
         )
 
     @staticmethod

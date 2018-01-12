@@ -23,7 +23,7 @@ def test_endpoint_for():
     """
     ns = Namespace(subject="foo")
     endpoint = ns.endpoint_for(Operation.Search)
-    assert_that(endpoint, is_(equal_to("foo.search.v1")))
+    assert_that(endpoint, is_(equal_to("foo.search.v1.uuid")))
 
 
 def test_operation_naming_relation():
@@ -33,7 +33,7 @@ def test_operation_naming_relation():
     """
     ns = Namespace(subject="foo", object_="bar")
     endpoint = ns.endpoint_for(Operation.SearchFor)
-    assert_that(endpoint, is_(equal_to("foo.search_for.bar.v1")))
+    assert_that(endpoint, is_(equal_to("foo.search_for.bar.v1.uuid")))
 
 
 def test_parse_endpoint():
@@ -41,7 +41,7 @@ def test_parse_endpoint():
     Simple (subject-only) endpoints can be parsed.
 
     """
-    operation, ns = Namespace.parse_endpoint("foo.search.v1")
+    operation, ns = Namespace.parse_endpoint("foo.search.v1.uuid")
     assert_that(operation, is_(equal_to(Operation.Search)))
     assert_that(ns.subject, is_(equal_to("foo")))
     assert_that(ns.object_, is_(none()))
@@ -52,7 +52,7 @@ def test_parse_endpoint_relation():
     Complex (subject+object) endpoints can be parsed.
 
     """
-    operation, ns = Namespace.parse_endpoint("foo.search_for.bar.v1")
+    operation, ns = Namespace.parse_endpoint("foo.search_for.bar.v1.uuid")
     assert_that(operation, is_(equal_to(Operation.SearchFor)))
     assert_that(ns.subject, is_(equal_to("foo")))
     assert_that(ns.object_, is_(equal_to("bar")))
@@ -63,7 +63,7 @@ def test_parse_endpoint_swagger():
     Versioned discovery endpoint can be parsed.
 
     """
-    operation, ns = Namespace.parse_endpoint("swagger.discover.v2")
+    operation, ns = Namespace.parse_endpoint("swagger.discover.v2.uuid")
     assert_that(operation, is_(equal_to(Operation.Discover)))
     assert_that(ns.subject, is_(equal_to("swagger")))
     assert_that(ns.version, is_(equal_to("v2")))
