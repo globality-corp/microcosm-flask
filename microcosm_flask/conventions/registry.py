@@ -36,6 +36,7 @@ def iter_endpoints(graph, match_func):
                 func = graph.flask.view_functions[rule.endpoint]
                 yield operation, ns, rule, func
 
+
 def get_converter(rule):
     """
     Parse rule will extract the converter from the rule as a generator
@@ -49,6 +50,7 @@ def get_converter(rule):
         if converter is not None:
             return converter
     return None
+
 
 def request(schema):
     """
