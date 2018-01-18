@@ -141,7 +141,7 @@ class Namespace:
         )
 
     @staticmethod
-    def parse_endpoint(endpoint):
+    def parse_endpoint(endpoint, identifier_type=None):
         """
         Convert an endpoint name into an (operation, ns) tuple.
 
@@ -156,6 +156,8 @@ class Namespace:
             raise InternalServerError("Malformed operation endpoint: {}".format(endpoint))
         kwargs = matcher.groupdict()
         del kwargs["operation"]
+        if identifier_type is not None:
+            kwargs["identifier_type"] = identifier_type
         return operation, Namespace(**kwargs)
 
     def url_for(self, operation, _external=True, **kwargs):
