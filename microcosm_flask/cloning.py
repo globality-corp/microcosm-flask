@@ -72,7 +72,14 @@ class DAGSchema(Schema):
         ]
 
 
-class NewCloneSchema(Schema):
+class NewExplainSchema(Schema):
+    anonymize = fields.Boolean(
+        missing=False,
+        required=False,
+    )
+
+
+class NewCloneSchema(NewExplainSchema):
     commit = fields.Boolean(
         missing=True,
         required=False,
@@ -113,3 +120,6 @@ class DAGCloningController:
 
         """
         return self.store.clone(substitutions, **kwargs)
+
+    def replace_dag(self, commit=True, **kwargs):
+        return self.store.replace_dag(**kwargs)
