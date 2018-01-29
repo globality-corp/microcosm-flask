@@ -2,10 +2,14 @@ from collections import namedtuple
 from enum import Enum, unique
 
 from microcosm_flask.formatting import (
-    JSONFormatter,
     CSVFormatter,
-    JSON_CONTENT_TYPE,
+    JSONFormatter,
+    HTMLFormatter,
+    TextFormatter,
     CSV_CONTENT_TYPE,
+    HTML_CONTENT_TYPE,
+    JSON_CONTENT_TYPE,
+    TEXT_CONTENT_TYPE,
 )
 
 ResponseFormatSpec = namedtuple("ResponseFormatSpec", ["content_type", "formatter", "priority"])
@@ -23,6 +27,16 @@ class ResponseFormats(Enum):
         formatter=JSONFormatter,
         priority=1,
     )
+    HTML = ResponseFormatSpec(
+        content_type=HTML_CONTENT_TYPE,
+        formatter=HTMLFormatter,
+        priority=10,
+    )
+    TEXT = ResponseFormatSpec(
+        content_type=TEXT_CONTENT_TYPE,
+        formatter=TextFormatter,
+        priority=150,
+    )
 
     @property
     def content_type(self):
@@ -32,9 +46,15 @@ class ResponseFormats(Enum):
     def priority(self):
         return self.value.priority
 
-    def matches(self, content_type):
+    def matches(self, content_types):
+        for content_type in content_types.split(","):
+            if self.matches_content_type(content_type):
+                return True
+        return False
+
+    def matches_content_type(self, content_type):
         this = self.content_type.split("/", 1)
-        that = content_type.split("/", 1)
+        that = content_type.split(";", 1)[0].split("/", 1)
 
         for (this_part, that_part) in zip(this, that):
             if that_part != "*" and this_part != that_part:
