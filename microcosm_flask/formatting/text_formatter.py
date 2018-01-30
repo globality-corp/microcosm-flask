@@ -1,12 +1,13 @@
-from flask import Response
 from microcosm_flask.formatting.base import BaseFormatter
-
-
-TEXT_CONTENT_TYPE = "text/plain"
 
 
 class TextFormatter(BaseFormatter):
 
-    def make_response(self, response_data, headers):
-        response = Response(response_data, mimetype=TEXT_CONTENT_TYPE)
-        return response, headers
+    CONTENT_TYPE = "text/plain"
+
+    @property
+    def content_type(self):
+        return TextFormatter.CONTENT_TYPE
+
+    def format(self, response_data):
+        return response_data

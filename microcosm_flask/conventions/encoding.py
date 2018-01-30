@@ -4,7 +4,6 @@ Support for encoding and decoding request/response content.
 """
 from flask import request
 from inflection import camelize
-from werkzeug import Headers
 from werkzeug.exceptions import NotFound, UnprocessableEntity
 
 from microcosm_flask.enums import ResponseFormats
@@ -114,7 +113,11 @@ def remove_null_values(data):
     return data
 
 
-def dump_response_data(response_schema, response_data, status_code=200, headers=None, response_format=None):
+def dump_response_data(response_schema,
+                       response_data,
+                       status_code=200,
+                       headers=None,
+                       response_format=None):
     """
     Dumps response data as JSON using the given schema.
 
@@ -130,25 +133,23 @@ def dump_response_data(response_schema, response_data, status_code=200, headers=
     return make_response(response_data, response_schema, response_format, status_code, headers)
 
 
-def make_response(
-                  response_data,
+def make_response(response_data,
                   response_schema=None,
                   response_format=None,
                   status_code=200,
                   headers=None,
                   ):
+
     if response_format is None:
         response_format = ResponseFormats.JSON
+
     formatter = response_format.value.formatter(response_schema)
 
     if request.headers.get("X-Response-Skip-Null"):
         # swagger does not currently support null values; remove these conditionally
         response_data = remove_null_values(response_data)
 
-    headers = headers or {}
-    response, headers = formatter.make_response(response_data, headers)
-
-    response.headers = Headers(headers)
+    response = formatter(response_data, headers)
     response.status_code = status_code
     return response
 
