@@ -7,6 +7,7 @@ using HTTP 200/503 status codes to indicate healthiness.
 """
 from distutils.util import strtobool
 from microcosm.api import defaults
+from json import dumps, loads
 
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
@@ -34,7 +35,7 @@ class HealthResult:
     def to_dict(self):
         return {
             "ok": bool(self),
-            "message": str(self),
+            "message": self.result if self.error is None else self.error,
         }
 
     @classmethod
@@ -44,6 +45,15 @@ class HealthResult:
             return cls(result=result)
         except Exception as error:
             return cls(error=extract_error_message(error))
+
+def d_test(graph):
+    real_config = dict()
+    for key, value in graph.config.items():
+        if value != dict():
+            real_config[key] = value
+        
+    print(loads(dumps(real_config, skipkeys=True, default=lambda obj: None)))
+    return loads(dumps(real_config, skipkeys=True, default=lambda obj: None))
 
 
 class Health:
@@ -59,13 +69,19 @@ class Health:
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
+        self.checks = dict()
+
         if include_build_info:
-            self.checks = dict(
+            self.checks.update(dict(
                 build_num=BuildInfo.check_build_num,
                 sha1=BuildInfo.check_sha1,
-            )
-        else:
-            self.checks = dict()
+            ))
+
+        if self.graph.metadata.debug:
+            self.checks.update(dict(
+                config=d_test,
+            ))
+
 
     def to_dict(self):
         """
