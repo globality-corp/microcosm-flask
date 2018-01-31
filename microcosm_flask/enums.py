@@ -6,10 +6,6 @@ from microcosm_flask.formatting import (
     JSONFormatter,
     HTMLFormatter,
     TextFormatter,
-    CSV_CONTENT_TYPE,
-    HTML_CONTENT_TYPE,
-    JSON_CONTENT_TYPE,
-    TEXT_CONTENT_TYPE,
 )
 
 ResponseFormatSpec = namedtuple("ResponseFormatSpec", ["content_type", "formatter", "priority"])
@@ -18,22 +14,22 @@ ResponseFormatSpec = namedtuple("ResponseFormatSpec", ["content_type", "formatte
 @unique
 class ResponseFormats(Enum):
     CSV = ResponseFormatSpec(
-        content_type=CSV_CONTENT_TYPE,
+        content_type=CSVFormatter.CONTENT_TYPE,
         formatter=CSVFormatter,
         priority=100,
     )
     JSON = ResponseFormatSpec(
-        content_type=JSON_CONTENT_TYPE,
+        content_type=JSONFormatter.CONTENT_TYPE,
         formatter=JSONFormatter,
         priority=1,
     )
     HTML = ResponseFormatSpec(
-        content_type=HTML_CONTENT_TYPE,
+        content_type=HTMLFormatter.CONTENT_TYPE,
         formatter=HTMLFormatter,
         priority=10,
     )
     TEXT = ResponseFormatSpec(
-        content_type=TEXT_CONTENT_TYPE,
+        content_type=TextFormatter.CONTENT_TYPE,
         formatter=TextFormatter,
         priority=150,
     )
