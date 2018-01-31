@@ -11,6 +11,7 @@ from hamcrest import (
 
 from microcosm_flask.formatting import CSVFormatter
 from microcosm_flask.tests.conventions.fixtures import PersonCSVSchema
+from microcosm_flask.tests.formatting.base import etag_for
 
 
 def test_make_response():
@@ -26,6 +27,10 @@ def test_make_response():
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
+        ("ETag", etag_for(
+            md5_hash='"a2ead3516dd1be4a3c7f45716c0a0eb7"',
+            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+        )),
     ))
 
 
@@ -45,4 +50,8 @@ def test_make_response_ordered():
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
+        ("ETag", etag_for(
+            md5_hash='"4480bd6748cf93740490ebeee7eae1fe"',
+            spooky_hash='"0a7f40b47efb0a197b180444c4911b17"',
+        )),
     ))

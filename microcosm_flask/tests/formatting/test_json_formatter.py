@@ -12,6 +12,7 @@ from hamcrest import (
 from microcosm.api import create_object_graph
 
 from microcosm_flask.formatting import JSONFormatter
+from microcosm_flask.tests.formatting.base import etag_for
 
 
 def test_make_response():
@@ -25,4 +26,8 @@ def test_make_response():
     assert_that(response.content_type, is_(equal_to("application/json")))
     assert_that(response.headers, contains_inanyorder(
         ("Content-Type", "application/json"),
+        ("ETag", etag_for(
+            md5_hash='"a095a61c6e037bc3d4610645865ba35e"',
+            spooky_hash='"af072b51e1eb2a8d7b2ab84dab972674"',
+        )),
     ))

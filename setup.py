@@ -31,6 +31,7 @@ setup(
     ],
     extras_require={
         "metrics": "microcosm-metrics>=1.0.0",
+        "spooky": "spooky>=2.0.0",
     },
     setup_requires=[
         "nose>=1.3.6",
