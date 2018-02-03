@@ -9,6 +9,7 @@ from distutils.util import strtobool
 from microcosm.api import defaults
 from json import dumps, loads
 
+from microcosm.object_graph import config_report
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.build_info import BuildInfo
@@ -46,14 +47,19 @@ class HealthResult:
         except Exception as error:
             return cls(error=extract_error_message(error))
 
+def sanatized_dict(dct):
+    return loads(dumps(dct, skipkeys=True, default=lambda obj: None))
+
 def d_test(graph):
     real_config = dict()
     for key, value in graph.config.items():
         if value != dict():
             real_config[key] = value
         
-    print(loads(dumps(real_config, skipkeys=True, default=lambda obj: None)))
-    return loads(dumps(real_config, skipkeys=True, default=lambda obj: None))
+    return sanatized_dict(real_config)
+
+def sanatized_report(graph):
+    return sanatized_dict(config_report(graph))
 
 
 class Health:
@@ -80,6 +86,9 @@ class Health:
         if self.graph.metadata.debug:
             self.checks.update(dict(
                 config=d_test,
+            ))
+            self.checks.update(dict(
+                config_report=sanatized_report,
             ))
 
 
