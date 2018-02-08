@@ -7,9 +7,7 @@ using HTTP 200/503 status codes to indicate healthiness.
 """
 from distutils.util import strtobool
 from microcosm.api import defaults
-from json import dumps, loads
 
-from microcosm.object_graph import config_report
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.build_info import BuildInfo
@@ -36,7 +34,7 @@ class HealthResult:
     def to_dict(self):
         return {
             "ok": bool(self),
-            "message": self.result if self.error is None else self.error,
+            "message": str(self),
         }
 
     @classmethod
@@ -46,20 +44,6 @@ class HealthResult:
             return cls(result=result)
         except Exception as error:
             return cls(error=extract_error_message(error))
-
-def sanatized_dict(dct):
-    return loads(dumps(dct, skipkeys=True, default=lambda obj: None))
-
-def d_test(graph):
-    real_config = dict()
-    for key, value in graph.config.items():
-        if value != dict():
-            real_config[key] = value
-        
-    return sanatized_dict(real_config)
-
-def sanatized_report(graph):
-    return sanatized_dict(config_report(graph))
 
 
 class Health:
@@ -75,22 +59,13 @@ class Health:
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
-        self.checks = dict()
-
         if include_build_info:
-            self.checks.update(dict(
+            self.checks = dict(
                 build_num=BuildInfo.check_build_num,
                 sha1=BuildInfo.check_sha1,
-            ))
-
-        if self.graph.metadata.debug:
-            self.checks.update(dict(
-                config=d_test,
-            ))
-            self.checks.update(dict(
-                config_report=sanatized_report,
-            ))
-
+            )
+        else:
+            self.checks = dict()
 
     def to_dict(self):
         """

@@ -51,6 +51,7 @@ setup(
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",
             "health_convention = microcosm_flask.conventions.health:configure_health",
+            "config_convention = microcosm_flask.conventions.config:configure_config",
             "logging_level_convention = microcosm_flask.conventions.logging_level:configure_logging_level",
             "port_forwarding = microcosm_flask.forwarding:configure_port_forwarding",
             "request_context = microcosm_flask.context:configure_request_context",
