@@ -9,12 +9,9 @@ from distutils.util import strtobool
 from json import dumps, loads
 
 from microcosm.api import defaults
-from microcosm.object_graph import config_report
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.build_info import BuildInfo
 from microcosm_flask.conventions.encoding import make_response
-from microcosm_flask.errors import extract_error_message
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
@@ -77,7 +74,6 @@ def configure_config(graph):
     ns = Namespace(
         subject=Config,
     )
-    print(ns.singleton_path)
 
     convention = ConfigDiscoveryConvention(
         graph,
