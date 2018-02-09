@@ -6,9 +6,9 @@ locally with realistic config.
 
 """
 from distutils.util import strtobool
-from microcosm.api import defaults
 from json import dumps, loads
 
+from microcosm.api import defaults
 from microcosm.object_graph import config_report
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
