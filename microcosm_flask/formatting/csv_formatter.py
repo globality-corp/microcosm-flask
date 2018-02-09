@@ -1,24 +1,29 @@
+"""
+CSV response formatting.
+
+"""
 from csv import writer, QUOTE_MINIMAL
 from io import StringIO
 
-from flask import Response
-
 from microcosm_flask.formatting.base import BaseFormatter
-
-CSV_CONTENT_TYPE = "text/csv"
 
 
 class CSVFormatter(BaseFormatter):
-    def make_response(self, response_data, headers):
+
+    CONTENT_TYPE = "text/csv"
+
+    @property
+    def content_type(self):
+        return CSVFormatter.CONTENT_TYPE
+
+    def build_headers(self, headers, **kwargs):
         # TODO: pass in optional filename
         filename = "response.csv"
         headers["Content-Disposition"] = "attachment; filename=\"{}\"".format(filename)
-        headers["Content-Type"] = "{}; charset=utf-8".format(CSV_CONTENT_TYPE)
 
-        response = Response(self.csvify(response_data), mimetype=CSV_CONTENT_TYPE)
-        return response, headers
+        return headers
 
-    def csvify(self, response_data):
+    def format(self, response_data):
         """
         Make Flask `Response` object, with data returned as a generator for the CSV content
         The CSV is built from JSON-like object (Python `dict` or list of `dicts`)
@@ -37,6 +42,7 @@ class CSVFormatter(BaseFormatter):
             column_names = response_fields
         else:
             column_names = self.response_schema.csv_column_order
+
             # The column order be only partially specified
             column_names.extend([field_name for field_name in response_fields if field_name not in column_names])
 
