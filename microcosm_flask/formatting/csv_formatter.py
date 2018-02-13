@@ -23,17 +23,7 @@ class CSVFormatter(BaseFormatter):
 
         return headers
 
-    def format(self, response_data):
-        """
-        Make Flask `Response` object, with data returned as a generator for the CSV content
-        The CSV is built from JSON-like object (Python `dict` or list of `dicts`)
-
-        """
-        if "items" in response_data:
-            list_response_data = response_data["items"]
-        else:
-            list_response_data = [response_data]
-
+    def get_column_names(self, list_response_data):
         response_fields = list(list_response_data[0].keys())
 
         column_order = getattr(self.response_schema, "csv_column_order", None)
@@ -46,11 +36,33 @@ class CSVFormatter(BaseFormatter):
             # The column order be only partially specified
             column_names.extend([field_name for field_name in response_fields if field_name not in column_names])
 
+        return column_names
+
+    def format(self, response_data):
+        """
+        Make Flask `Response` object, with data returned as a generator for the CSV content
+        The CSV is built from JSON-like object (Python `dict` or list of `dicts`)
+
+        """
+        if "items" in response_data:
+            list_response_data = response_data["items"]
+        else:
+            list_response_data = [response_data]
+
+        write_column_names = type(list_response_data[0]) not in (tuple, list)
+
         output = StringIO()
         csv_writer = writer(output, quoting=QUOTE_MINIMAL)
-        csv_writer.writerow(column_names)
+
+        if write_column_names:
+            column_names = self.get_column_names(list_response_data)
+            csv_writer.writerow(column_names)
+
         for item in list_response_data:
-            csv_writer.writerow([item[column] for column in column_names])
+            csv_writer.writerow(
+                [item[column] for column in column_names] if write_column_names else list(item)
+            )
+
         # Ideally we'd want to `yield` each line to stream the content
         # But something downstream seems to break streaming
         yield output.getvalue()
