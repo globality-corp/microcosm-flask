@@ -9,6 +9,7 @@ from distutils.util import strtobool
 from json import dumps, loads
 
 from microcosm.api import defaults
+from microcosm.loaders.compose import PartitioningLoader
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response
@@ -24,21 +25,23 @@ class Config:
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
-        self.config = dict(
-            self.graph.config
-        )
 
     def to_dict(self):
         """
         Encode the name, the status of all checks, and the current overall status.
 
         """
+        if not isinstance(self.graph.loader, PartitioningLoader):
+            return dict(msg="Config sharing disabled for non-partioned loader")
+
+        if not hasattr(self.graph.loader, "secrets"):
+            return dict(msg="Config sharing disabled if no secrets are labelled")
+
         def remove_nulls(dct):
             return {key: value for key, value in dct.items() if value is not None}
 
-        # evaluate checks
         return loads(
-            dumps(self.config, skipkeys=True, default=lambda obj: None),
+            dumps(self.graph.loader.config, skipkeys=True, default=lambda obj: None),
             object_hook=remove_nulls,
         )
 
