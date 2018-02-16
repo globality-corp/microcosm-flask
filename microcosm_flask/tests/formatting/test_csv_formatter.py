@@ -34,6 +34,46 @@ def test_make_response():
     ))
 
 
+def test_make_response_tuples():
+    formatter = CSVFormatter()
+
+    response = formatter(dict(items=[
+        ("a", "b", "c"),
+        ("d", "e", "f"),
+    ]))
+
+    assert_that(response.data, is_(equal_to(b"a,b,c\r\nd,e,f\r\n")))
+    assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
+    assert_that(response.headers, contains_inanyorder(
+        ("Content-Disposition", "attachment; filename=\"response.csv\""),
+        ("Content-Type", "text/csv; charset=utf-8"),
+        ("ETag", etag_for(
+            md5_hash='"eb8bde290633452402b37aa580ca30e9"',
+            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+        )),
+    ))
+
+
+def test_make_response_list():
+    formatter = CSVFormatter()
+
+    response = formatter(dict(items=[
+        ["a", "b", "c"],
+        ["d", "e", "f"],
+    ]))
+
+    assert_that(response.data, is_(equal_to(b"a,b,c\r\nd,e,f\r\n")))
+    assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
+    assert_that(response.headers, contains_inanyorder(
+        ("Content-Disposition", "attachment; filename=\"response.csv\""),
+        ("Content-Type", "text/csv; charset=utf-8"),
+        ("ETag", etag_for(
+            md5_hash='"eb8bde290633452402b37aa580ca30e9"',
+            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+        )),
+    ))
+
+
 def test_make_response_ordered():
     formatter = CSVFormatter(PersonCSVSchema())
 
