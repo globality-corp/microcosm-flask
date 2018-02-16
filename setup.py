@@ -22,7 +22,7 @@ setup(
         "Flask-Cors>=3.0.3",
         "Flask-UUID>=0.2",
         "marshmallow>=2.15.0",
-        "microcosm>=2.0.0",
+        "microcosm>=2.4.0",
         "microcosm-logging>=1.0.0",
         "openapi>=1.0.0",
         "python-dateutil>=2.6.1",
