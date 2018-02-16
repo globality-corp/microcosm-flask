@@ -8,7 +8,7 @@ locally with realistic config.
 from distutils.util import strtobool
 from json import dumps, loads
 
-from microcosm.api import defaults
+from microcosm.api import defaults, typed, required
 from microcosm.loaders.compose import PartitioningLoader
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
@@ -66,7 +66,7 @@ class ConfigDiscoveryConvention(Convention):
 
 
 @defaults(
-    enabled="False",
+    enabled=typed(bool, default_value=False),
 )
 def configure_config(graph):
     """
