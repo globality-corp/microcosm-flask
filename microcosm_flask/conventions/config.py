@@ -5,10 +5,9 @@ Reports service config protected by basic auth for securely running services
 locally with realistic config.
 
 """
-from distutils.util import strtobool
 from json import dumps, loads
 
-from microcosm.api import defaults, typed, required
+from microcosm.api import defaults, typed
 from microcosm.loaders.compose import PartitioningLoader
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
@@ -80,7 +79,7 @@ def configure_config(graph):
 
     convention = ConfigDiscoveryConvention(
         graph,
-        enabled=strtobool(graph.config.config_convention.enabled),
+        enabled=graph.config.config_convention.enabled,
     )
     convention.configure(ns, retrieve=tuple())
     return convention.config_discovery
