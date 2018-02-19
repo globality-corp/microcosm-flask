@@ -15,6 +15,7 @@ def parse_args(graph):
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=default_port)
     parser.add_argument("--with-profiling", action="store_true", default=default_enable_profiling)
+    parser.add_argument("--debug", action="store_true", default=False)
     return parser.parse_args()
 
 
@@ -23,6 +24,9 @@ def main(graph):
 
     if args.with_profiling:
         enable_profiling(graph)
+
+    if args.debug:
+        graph.metadata.debug = True
 
     try:
         graph.flask.run(host=args.host, port=args.port)
