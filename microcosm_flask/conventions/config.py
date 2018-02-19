@@ -57,7 +57,6 @@ class ConfigDiscoveryConvention(Convention):
             return
 
         @self.add_route(ns.singleton_path, Operation.Retrieve, ns)
-        @self.graph.basic_auth.required
         @skip_logging
         def current_config_discovery():
             response_data = self.config_discovery.to_dict()
@@ -75,6 +74,7 @@ def configure_config(graph):
     """
     ns = Namespace(
         subject=Config,
+        enable_basic_auth=True,
     )
 
     convention = ConfigDiscoveryConvention(
