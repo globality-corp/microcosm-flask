@@ -7,7 +7,6 @@ locally with realistic config.
 """
 from json import dumps, loads
 
-from microcosm.api import defaults, typed
 from microcosm.loaders.compose import PartitioningLoader
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
@@ -47,15 +46,11 @@ class Config:
 
 class ConfigDiscoveryConvention(Convention):
 
-    def __init__(self, graph, enabled):
+    def __init__(self, graph):
         super(ConfigDiscoveryConvention, self).__init__(graph)
         self.config_discovery = Config(graph)
-        self.enabled = enabled
 
     def configure_retrieve(self, ns, definition):
-        if not self.enabled:
-            return
-
         @self.add_route(ns.singleton_path, Operation.Retrieve, ns)
         @skip_logging
         def current_config_discovery():
@@ -63,9 +58,6 @@ class ConfigDiscoveryConvention(Convention):
             return make_response(response_data, status_code=200)
 
 
-@defaults(
-    enabled=typed(bool, default_value=False),
-)
 def configure_config(graph):
     """
     Configure the health endpoint.
@@ -74,12 +66,10 @@ def configure_config(graph):
     """
     ns = Namespace(
         subject=Config,
-        enable_basic_auth=True,
     )
 
     convention = ConfigDiscoveryConvention(
         graph,
-        enabled=graph.config.config_convention.enabled,
     )
     convention.configure(ns, retrieve=tuple())
     return convention.config_discovery
