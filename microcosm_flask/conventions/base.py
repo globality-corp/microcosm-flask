@@ -23,9 +23,24 @@ class EndpointDefinition(tuple):
     """
     def __new__(cls, func=None, request_schema=None, response_schema=None, header_func=None, response_formats=None):
         """
+        Define an API endpoint.
+
+        Defines the behavior of an API endpoint in conjunction with a `Namespace` and an `Operation`.
+
+        Supports a callbable `func`, request and response (marshmallow) schemas, a header-modifying function, and
+        optional response formats.
+
+        The callable `func` should accept `**kwargs` and return a marshmallow-compatible object or dictionary.
+
+        The callable `header_func` (if any) should accept a `headers` dictionary and the return value from the
+        callable `func`.
+
         :param func: a function to process request data and return response data
         :param request_schema: a marshmallow schema to decode/validate request data
         :param response_schema: a marshmallow schema to encode response data
+        :param header_func: a header-modifying function
+        :param response_formats: an optional list of support response formats
+
         """
         return tuple.__new__(
             EndpointDefinition,
@@ -46,7 +61,7 @@ class EndpointDefinition(tuple):
 
     @property
     def header_func(self):
-        return self[3] or identity
+        return self[3] or (lambda headers, response_data: headers)
 
     @property
     def response_formats(self):

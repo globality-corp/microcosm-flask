@@ -52,7 +52,7 @@ class RelationConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             headers = encode_id_header(response_data)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -80,8 +80,9 @@ class RelationConvention(Convention):
         @wraps(definition.func)
         def delete(**path_data):
             headers = dict()
+            response_data = dict()
             require_response_data(definition.func(**path_data))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 "",
@@ -120,7 +121,7 @@ class RelationConvention(Convention):
             headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -159,7 +160,7 @@ class RelationConvention(Convention):
             headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -195,7 +196,7 @@ class RelationConvention(Convention):
             headers = dict()
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -235,7 +236,7 @@ class RelationConvention(Convention):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.SearchFor)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 paginated_list_schema,

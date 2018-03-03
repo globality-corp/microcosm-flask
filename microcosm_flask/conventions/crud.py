@@ -59,7 +59,7 @@ class CRUDConvention(Convention):
             page = self.page_cls.from_query_string(definition.request_schema)
             result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
             response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 paginated_list_schema,
@@ -89,9 +89,10 @@ class CRUDConvention(Convention):
         @wraps(definition.func)
         def count(**path_data):
             request_data = load_query_string_data(definition.request_schema)
+            response_data = dict()
             count = definition.func(**merge_data(path_data, request_data))
             headers = encode_count_header(count)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 None,
@@ -122,7 +123,7 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
             headers = encode_id_header(response_data)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -156,7 +157,7 @@ class CRUDConvention(Convention):
             headers = dict()
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -190,7 +191,7 @@ class CRUDConvention(Convention):
             headers = dict()
             request_data = load_query_string_data(request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -217,8 +218,8 @@ class CRUDConvention(Convention):
         @wraps(definition.func)
         def delete(**path_data):
             headers = dict()
-            require_response_data(definition.func(**path_data))
-            definition.header_func(headers)
+            response_data = require_response_data(definition.func(**path_data))
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 "",
@@ -253,7 +254,7 @@ class CRUDConvention(Convention):
             # enforce these semantics at the HTTP layer. If `func` returns falsey, we
             # will raise a 404.
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -285,7 +286,7 @@ class CRUDConvention(Convention):
             # NB: using partial here means that marshmallow will not validate required fields
             request_data = load_request_data(definition.request_schema, partial=True)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 definition.response_schema,
@@ -327,7 +328,7 @@ class CRUDConvention(Convention):
             ))
 
             response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
-            definition.header_func(headers)
+            definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
                 paginated_list_schema,
