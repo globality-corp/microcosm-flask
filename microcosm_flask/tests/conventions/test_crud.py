@@ -59,7 +59,7 @@ class SearchAddressPageSchema(OffsetLimitPageSchema):
     enum_param = EnumField(TestEnum)
 
 
-def add_request_id(headers):
+def add_request_id(headers, response_data):
     headers["X-Request-Id"] = "request-id"
 
 
