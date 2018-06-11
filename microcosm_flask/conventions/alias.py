@@ -6,6 +6,11 @@ from functools import wraps
 
 from flask import redirect
 from microcosm_flask.conventions.base import Convention
+from microcosm_flask.conventions.encoding import (
+    load_query_string_data,
+    merge_data,
+)
+from microcosm_flask.conventions.registry import qs
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation
 
@@ -27,9 +32,16 @@ class AliasConvention(Convention):
 
         """
         @self.add_route(ns.alias_path, Operation.Alias, ns)
+        @qs(definition.request_schema)
         @wraps(definition.func)
         def retrieve(**path_data):
-            resource = definition.func(**path_data)
+            # request_schema is optional for Alias
+            request_data = (
+                load_query_string_data(definition.request_schema)
+                if definition.request_schema
+                else dict()
+            )
+            resource = definition.func(**merge_data(path_data, request_data))
 
             kwargs = dict()
             identifier = "{}_id".format(name_for(ns.subject))

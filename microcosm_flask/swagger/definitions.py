@@ -271,7 +271,12 @@ def add_responses(swagger_operation, operation, ns, func):
             swagger_operation.produces = []
         swagger_operation.produces.append(response_resource)
     elif not response_resource:
-        swagger_operation.responses["204"] = build_response(
+        response_code = (
+            204
+            if operation.value.default_code == 200
+            else operation.value.default_code
+        )
+        swagger_operation.responses[str(response_code)] = build_response(
             description=description,
         )
     else:
