@@ -40,6 +40,9 @@ template = """
                 padding-bottom: 2%;
                 text-transform: capitalize;
             }
+            h3 {
+                text-align: center;
+            }
             iframe {
                 width: 100%;
                 height: 300px;
@@ -53,6 +56,7 @@ template = """
         </style>
         <body>
             <h1>{{ service_name }}</h1>
+            <h3>{{ version }}</h3>
             {%-if description -%}
                 <div class="section">
                     <h2>Description</h2>

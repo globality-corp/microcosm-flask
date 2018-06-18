@@ -38,7 +38,7 @@ def configure_landing(graph):
         return '. '.join([
             field
             for field in [properties.description, properties.long_description]
-            if field != "UNKNOWN"
+            if field is not None
         ])
 
     def get_swagger_versions():
