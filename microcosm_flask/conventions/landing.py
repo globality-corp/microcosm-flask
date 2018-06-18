@@ -4,26 +4,28 @@ Landing Page convention.
 """
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.templates.landing import template
+
+from distutils import dist
+from io import StringIO
 from jinja2 import Template
-from os.path import join
-from pkg_resources import working_set, Requirement
+from pkg_resources import get_distribution, DistributionNotFound
 
 
 def configure_landing(graph):
 
-    def get_properties():
+    def get_properties_and_version():
         """
         Parse the properties from the package information
 
         """
-        package = working_set.find(Requirement.parse(graph.metadata.name))
-        if not package:
-            return dict()
-        package_info = open(join(package.egg_info, 'PKG-INFO')).read().splitlines()
-        return dict(
-            info.split(": ")
-            for info in package_info
-        )
+        try:
+            distribution = get_distribution(graph.metadata.name)
+            metadata_str = distribution.get_metadata(distribution.PKG_INFO)
+            package_info = dist.DistributionMetadata()
+            package_info.read_pkg_file(StringIO(metadata_str))
+            return package_info
+        except DistributionNotFound:
+            return None
 
     def get_description(properties):
         """
@@ -35,7 +37,7 @@ def configure_landing(graph):
 
         return '. '.join([
             field
-            for field in [properties["Summary"], properties["Description"]]
+            for field in [properties.description, properties.long_description]
             if field != "UNKNOWN"
         ])
 
@@ -66,7 +68,7 @@ def configure_landing(graph):
         Render landing page
 
         """
-        properties = get_properties()
+        properties = get_properties_and_version()
         description = get_description(properties)
         swagger_versions = get_swagger_versions()
 
@@ -74,6 +76,6 @@ def configure_landing(graph):
             service_name=graph.metadata.name,
             swagger_versions=swagger_versions,
             description=description,
-            github=properties.get("Home-page"),
-            version=properties.get("Version"),
+            homepage=getattr(properties, 'url', None),
+            version=getattr(properties, 'version', None),
         )
