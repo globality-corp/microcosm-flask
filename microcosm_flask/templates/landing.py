@@ -67,9 +67,11 @@ template = """
                 <h2><a href="api/config">Config</a></h2>
                 <iframe src="/api/config"></iframe>
             </div>
-            <div class="section">
-                <h2><a href="api/{{ swagger_version }}/swagger">Swagger</a></h2>
-            </div>
+            {%- for swagger_version in swagger_versions -%}
+                <div class="section">
+                    <h2><a href="api/{{ swagger_version }}/swagger">Swagger ({{ swagger_version }})</a></h2>
+                </div>
+            {%- endfor -%}
             {%-if github -%}
                 <div class="section">
                     <h2><a href={{ github }}>GitHub</a></h2>
