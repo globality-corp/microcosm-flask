@@ -49,7 +49,7 @@ class AuthenticationError(HTTPException):
             "Content-Type": "application/json",
             "WWW-Authenticate": "Basic realm=outer-zone",
         }
- 
+
 
 def test_werkzeug_http_error():
     """
