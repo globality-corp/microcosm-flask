@@ -7,9 +7,10 @@ from json import loads
 from hamcrest import (
     assert_that,
     equal_to,
+    has_entry,
     is_,
 )
-from werkzeug.exceptions import InternalServerError, NotFound
+from werkzeug.exceptions import InternalServerError, NotFound, HTTPException
 
 from microcosm.api import create_object_graph
 
@@ -37,6 +38,17 @@ class MyConflictError(Exception):
 
 class NonNumericError(Exception):
     code = "foo"
+
+
+class AuthenticationError(HTTPException):
+    code = 401
+    description = "no trespassing"
+
+    def get_headers(self, environ=None):
+        return {
+            "Content-Type": "application/json",
+            "WWW-Authenticate": "Basic realm=outer-zone",
+        }
 
 
 def test_werkzeug_http_error():
@@ -244,3 +256,25 @@ def test_non_numeric_error():
         "retryable": False,
         "context": {"errors": []},
     })))
+
+
+def test_custom_headers():
+    """
+    Custom headers are sent to the client
+
+    """
+    graph = create_object_graph(name="example", testing=True)
+
+    @graph.app.route("/foo")
+    @graph.audit
+    def foo():
+        raise AuthenticationError()
+
+    client = graph.app.test_client()
+
+    response = client.get("/foo")
+    data = loads(response.get_data())
+    assert_that(data,
+                has_entry("message", AuthenticationError.description))
+    www_authenticate = response.headers.get('www-authenticate')
+    assert_that(www_authenticate, equal_to('Basic realm=outer-zone'))

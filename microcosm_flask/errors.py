@@ -101,7 +101,13 @@ def extract_headers(error):
     Extract HTTP headers to include in response.
 
     """
-    return getattr(error, "headers",  {})
+    try:
+        return error.headers
+    except AttributeError:
+        try:
+            return error.get_headers()
+        except AttributeError:
+            return {}
 
 
 def extract_include_stack_trace(error):
