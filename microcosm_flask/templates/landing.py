@@ -8,6 +8,11 @@ template = """
             <meta name="description" content="Landing">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+            <script
+                src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous">
+            </script>
         </head>
         <style>
             html {
@@ -43,12 +48,10 @@ template = """
             h3 {
                 text-align: center;
             }
-            iframe {
-                width: 100%;
-                height: 300px;
+            pre {
+                background-color: #E8E8E8;
                 border-style: solid;
                 border-width: 1px;
-                background-color: #E8E8E8;
             }
             .section {
                 margin: 0 100px;
@@ -65,7 +68,7 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/health">Health</a></h2>
-                <iframe src="/api/health"></iframe>
+                <pre id=health></pre>
             </div>
             {%- for swagger_version in swagger_versions -%}
                 <div class="section">
@@ -79,8 +82,16 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/config">Config</a></h2>
-                <iframe src="/api/config"></iframe>
+                <pre id=config></pre>
             </div>
+            <script>
+                $.getJSON("/api/config", success = d => {
+                    $( "pre#config" ).text(JSON.stringify(d, null, 2))
+                });
+                $.getJSON("/api/health", success = d => {
+                    $( "pre#health" ).text(JSON.stringify(d, null, 2))
+                });
+            </script>
         </body>
     </html>
 """
