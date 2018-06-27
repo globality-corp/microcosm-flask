@@ -43,12 +43,10 @@ template = """
             h3 {
                 text-align: center;
             }
-            iframe {
-                width: 100%;
-                height: 300px;
+            pre {
+                background-color: #E8E8E8;
                 border-style: solid;
                 border-width: 1px;
-                background-color: #E8E8E8;
             }
             .section {
                 margin: 0 100px;
@@ -65,7 +63,7 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/health">Health</a></h2>
-                <iframe src="/api/health"></iframe>
+                <pre id=health></pre>
             </div>
             {%- for swagger_version in swagger_versions -%}
                 <div class="section">
@@ -79,8 +77,38 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/config">Config</a></h2>
-                <iframe src="/api/config"></iframe>
+                <pre id=config></pre>
             </div>
+            <script>
+                processRequest('/api/config', configReqListener);
+                processRequest('/api/health', healthReqListener);
+
+                function processRequest(uri, reqListener) {
+                    var req = new XMLHttpRequest();
+                    req.onload = reqListener;
+                    req.onerror = reqError;
+                    req.open('get', uri, true);
+                    req.send();
+                }
+
+                function configReqListener() {
+                    var data = JSON.parse(this.responseText);
+                    document.getElementById("config").innerHTML = objectToString(data);
+                }
+
+                function healthReqListener() {
+                    var data = JSON.parse(this.responseText);
+                    document.getElementById("health").innerText = objectToString(data);
+                }
+
+                function objectToString(object) {
+                    return JSON.stringify(object, null, 2)
+                }
+
+                function reqError(err) {
+                    console.log('Fetch Error :-S', err);
+                }
+        </script>
         </body>
     </html>
 """
