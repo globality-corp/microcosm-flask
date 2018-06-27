@@ -51,6 +51,11 @@ template = """
             .section {
                 margin: 0 100px;
             }
+
+            #env-button {
+                float: right;
+                margin: 5px;
+            }
         </style>
         <body>
             <h1>{{ service_name }}</h1>
@@ -77,23 +82,26 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/config">Config</a></h2>
-                <pre id=config></pre>
+                <div>
+                    <button id="env-button" onclick="downloadEnv()">Download Env</button>
+                    <pre id=config></pre>
+                </div>
             </div>
             <script>
-                processRequest('/api/config', configReqListener);
-                processRequest('/api/health', healthReqListener);
+                processRequest("/api/config", configReqListener);
+                processRequest("/api/health", healthReqListener);
 
                 function processRequest(uri, reqListener) {
                     var req = new XMLHttpRequest();
                     req.onload = reqListener;
                     req.onerror = reqError;
-                    req.open('get', uri, true);
+                    req.open("get", uri, true);
                     req.send();
                 }
 
                 function configReqListener() {
                     var data = JSON.parse(this.responseText);
-                    document.getElementById("config").innerHTML = objectToString(data);
+                    document.getElementById("config").innerText = objectToString(data);
                 }
 
                 function healthReqListener() {
@@ -106,9 +114,42 @@ template = """
                 }
 
                 function reqError(err) {
-                    console.log('Fetch Error :-S', err);
+                    console.log("Fetch Error :-S", err);
                 }
-        </script>
+
+                function downloadEnv() {
+                    var config = JSON.parse(document.getElementById("config").innerText);
+                    var env = getEnvString(config);
+
+                    var element = document.createElement("a");
+                    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(env));
+                    element.setAttribute("download", "{{ service_name }}_env");
+
+                    element.style.display = "none";
+                    document.body.appendChild(element);
+
+                    element.click();
+
+                    document.body.removeChild(element);
+                }
+
+                function getEnvString(configObject, configKey, configString="") {
+                    for (key in configObject) {
+                        if (typeof configObject[key] == "object") {
+                            if(configKey) {
+                                configString = getEnvString(configObject[key], `${configKey}__${key}`, configString);
+                            }
+                            else {
+                                configString = getEnvString(configObject[key], key, configString);
+                            }
+                        }
+                        else {
+                            configString = `${configString}\nexport {{ service_name | upper }}__${configKey.toUpperCase()}__${key.toUpperCase()}='${configObject[key]}'`;
+                        }
+                    }
+                    return configString;
+                }
+            </script>
         </body>
     </html>
-"""
+"""  # noqa:E501
