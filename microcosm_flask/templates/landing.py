@@ -51,6 +51,10 @@ template = """
             .section {
                 margin: 0 100px;
             }
+            #env-button {
+                float: right;
+                margin: 5px;
+            }
         </style>
         <body>
             <h1>{{ service_name }}</h1>
@@ -63,7 +67,7 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/health">Health</a></h2>
-                <pre id=health></pre>
+                <pre id=health>{{ health }}</pre>
             </div>
             {%- for swagger_version in swagger_versions -%}
                 <div class="section">
@@ -77,38 +81,14 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/config">Config</a></h2>
-                <pre id=config></pre>
+                <div>
+                    <a id="env-button" href="data:text/plain;charset=utf-8,
+                    {%- for item in env | sort -%}
+                        {{ item | urlencode }}%0A
+                    {%- endfor %}" download="{{ service_name }}_env"><button>Download Env</button></a>
+                    <pre id=config>{{ config }}</pre>
+                </div>
             </div>
-            <script>
-                processRequest('/api/config', configReqListener);
-                processRequest('/api/health', healthReqListener);
-
-                function processRequest(uri, reqListener) {
-                    var req = new XMLHttpRequest();
-                    req.onload = reqListener;
-                    req.onerror = reqError;
-                    req.open('get', uri, true);
-                    req.send();
-                }
-
-                function configReqListener() {
-                    var data = JSON.parse(this.responseText);
-                    document.getElementById("config").innerHTML = objectToString(data);
-                }
-
-                function healthReqListener() {
-                    var data = JSON.parse(this.responseText);
-                    document.getElementById("health").innerText = objectToString(data);
-                }
-
-                function objectToString(object) {
-                    return JSON.stringify(object, null, 2)
-                }
-
-                function reqError(err) {
-                    console.log('Fetch Error :-S', err);
-                }
-        </script>
         </body>
     </html>
 """
