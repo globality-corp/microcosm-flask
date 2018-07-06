@@ -2,16 +2,17 @@
 Landing Page convention.
 
 """
-from microcosm_flask.conventions.registry import iter_endpoints
-from microcosm_flask.templates.landing import template
-
 from distutils import dist
 from io import StringIO
+from json import dumps
+
 from jinja2 import Template
-from pkg_resources import get_distribution, DistributionNotFound
+from microcosm_flask.conventions.registry import iter_endpoints
+from microcosm_flask.templates.landing import template
+from pkg_resources import DistributionNotFound, get_distribution
 
 
-def configure_landing(graph):
+def configure_landing(graph):   # noqa: C901
 
     def get_properties_and_version():
         """
@@ -62,6 +63,19 @@ def configure_landing(graph):
 
         return versions
 
+    def pretty_dict(dict_):
+        return dumps(dict_, sort_keys=True, indent=2, separators=(',', ': '))
+
+    def get_env_file_commands(config, conf_key, conf_string=None):
+        if conf_string is None:
+            conf_string = []
+        for key, value in config.items():
+            if isinstance(value, dict):
+                get_env_file_commands(value, "{}__{}".format(conf_key, key), conf_string)
+            else:
+                conf_string.append("export {}__{}='{}'".format(conf_key.upper(), key.upper(), value))
+        return conf_string
+
     @graph.flask.route("/")
     def render_landing_page():
         """
@@ -71,11 +85,17 @@ def configure_landing(graph):
         properties = get_properties_and_version()
         description = get_description(properties)
         swagger_versions = get_swagger_versions()
+        config = graph.config_convention.to_dict()
+        health = graph.health_convention.to_dict()
+        env = get_env_file_commands(config, graph.metadata.name)
 
         return Template(template).render(
+            config=pretty_dict(config),
+            description=description,
+            env=env,
+            health=pretty_dict(health),
+            homepage=getattr(properties, 'url', None),
             service_name=graph.metadata.name,
             swagger_versions=swagger_versions,
-            description=description,
-            homepage=getattr(properties, 'url', None),
             version=getattr(properties, 'version', None),
         )

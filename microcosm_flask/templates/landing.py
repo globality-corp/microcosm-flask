@@ -43,15 +43,17 @@ template = """
             h3 {
                 text-align: center;
             }
-            iframe {
-                width: 100%;
-                height: 300px;
+            pre {
+                background-color: #E8E8E8;
                 border-style: solid;
                 border-width: 1px;
-                background-color: #E8E8E8;
             }
             .section {
                 margin: 0 100px;
+            }
+            #env-button {
+                float: right;
+                margin: 5px;
             }
         </style>
         <body>
@@ -65,7 +67,7 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/health">Health</a></h2>
-                <iframe src="/api/health"></iframe>
+                <pre id=health>{{ health }}</pre>
             </div>
             {%- for swagger_version in swagger_versions -%}
                 <div class="section">
@@ -79,7 +81,13 @@ template = """
             {%- endif -%}
             <div class="section">
                 <h2><a href="api/config">Config</a></h2>
-                <iframe src="/api/config"></iframe>
+                <div>
+                    <a id="env-button" href="data:text/plain;charset=utf-8,
+                    {%- for item in env | sort -%}
+                        {{ item | urlencode }}%0A
+                    {%- endfor %}" download="{{ service_name }}_env"><button>Download Env</button></a>
+                    <pre id=config>{{ config }}</pre>
+                </div>
             </div>
         </body>
     </html>
