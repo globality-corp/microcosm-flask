@@ -5,7 +5,7 @@ Url fatories.
 from microcosm_flask.operations import Operation, NODE_PATTERN
 
 
-def basic_url_extractor_factory(ns=None, operation=Operation.Retrieve, query_args_extractors=None):
+def base_url_extractor_factory(ns=None, operation=Operation.Retrieve, query_args_extractors=None):
     """
     A factory that creates url extractors.
     url extractor is an (component, model) -> string function that can generates url for relevant resources
@@ -89,4 +89,4 @@ def url_extractor_factory(
             lambda component, model: getattr(model, model_identifier),
         ))
 
-    return basic_url_extractor_factory(ns, operation, query_args_extractors)
+    return base_url_extractor_factory(ns, operation, query_args_extractors)

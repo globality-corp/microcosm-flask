@@ -17,7 +17,7 @@ from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.url import url_extractor_factory
+from microcosm_flask.url import base_url_extractor_factory, url_extractor_factory
 
 
 class CompanyController:
@@ -173,3 +173,17 @@ class TestUriExtractorFactory:
         with self.graph.app.test_request_context():
             url = extractor(controller, model)
         assert_that(url), is_(equal_to("http://localhost/api/v1/user/ID"))
+
+    def test_base_extractor(self):
+        controller = CompanyController(self.graph)
+        model = controller.retrieve()
+
+        extractor = base_url_extractor_factory(
+            operation=Operation.Search,
+            query_args_extractors=[
+                (lambda ctrl, model: model.name, lambda ctrl, model: model.name),
+            ],
+        )
+        with self.graph.app.test_request_context():
+            url = extractor(controller, model)
+        assert_that(url), is_(equal_to("http://localhost/api/v1/company?Name=Name"))
