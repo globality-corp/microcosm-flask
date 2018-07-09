@@ -6,7 +6,7 @@ Url fatories.
 from microcosm_flask.operations import Operation, NODE_PATTERN
 
 
-def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier_key=None, **kwargs):
+def url_extractor_factory(ns=None, operation=Operation.Retrieve, use_model_id=None, identifier_key=None, **kwargs):
     """
     A factory that creates url extractors.
     url extractor is an (component, model) -> string function that can generates url for relevant resources
@@ -37,8 +37,7 @@ def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier
                        component.identifier_key will get used instead if set to None.
 
     """
-    operation_ = operation or Operation.Retrieve
-    use_model_id_ = use_model_id if use_model_id is not None else operation_.value.pattern == NODE_PATTERN
+    use_model_id_ = use_model_id if use_model_id is not None else operation.value.pattern == NODE_PATTERN
 
     if identifier_key and not use_model_id_:
         raise TypeError(f"No need to pass identifier_key if use_model_id is set to false")
@@ -56,5 +55,5 @@ def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier
                 raise TypeError(f"identifier_key is set to alredy set parameter {identifier_key_}")
             url_params[identifier_key_] = model.id
 
-        return ns_.url_for(operation_, **url_params)
+        return ns_.url_for(operation, **url_params)
     return extract
