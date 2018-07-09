@@ -11,6 +11,7 @@ from hamcrest import (
     raises,
 )
 from microcosm.api import binding, create_object_graph
+from werkzeug.routing import BuildError
 
 from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
@@ -116,7 +117,7 @@ class TestUriExtractorFactory:
         model = controller.retrieve()
 
         extractor = url_extractor_factory(
-            use_model_id=False,
+            use_model_identifier=False,
             company_id=lambda ctrl, model: model.name,
         )
         with self.graph.app.test_request_context():
@@ -130,14 +131,14 @@ class TestUriExtractorFactory:
 
         extractor = url_extractor_factory()
         with self.graph.app.test_request_context():
-            assert_that(calling(extractor).with_args(controller, model), raises(TypeError))
+            assert_that(calling(extractor).with_args(controller, model), raises(BuildError))
 
     def test_set_identifier_key(self):
         controller = CompanyController(self.graph)
         controller.identifier_key = None
         model = controller.retrieve()
 
-        extractor = url_extractor_factory(identifier_key="company_id")
+        extractor = url_extractor_factory(schema_identifier="company_id")
         with self.graph.app.test_request_context():
             url = extractor(controller, model)
         assert_that(url), is_(equal_to("http://localhost/api/v1/company/ID"))
@@ -168,7 +169,7 @@ class TestUriExtractorFactory:
         controller = CompanyController(self.graph)
         model = controller.retrieve()
 
-        extractor = url_extractor_factory(identifier_key="user_id", ns=Namespace(subject="user", version="v1"))
+        extractor = url_extractor_factory(schema_identifier="user_id", ns=Namespace(subject="user", version="v1"))
         with self.graph.app.test_request_context():
             url = extractor(controller, model)
         assert_that(url), is_(equal_to("http://localhost/api/v1/user/ID"))
