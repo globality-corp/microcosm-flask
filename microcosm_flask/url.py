@@ -6,7 +6,7 @@ Url fatories.
 from microcosm_flask.operations import Operation, NODE_PATTERN
 
 
-def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier_key=None, **url_string_args):
+def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier_key=None, **kwargs):
     """
     A factory that creates url extractors.
     url extractor is an (component, model) -> string function that can generates url for relevant resources
@@ -26,12 +26,10 @@ def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier
 
     :ns              - Model namespace. component.ns will get used instead if set to None.
     :operation       - microcosm_flask.operations.Operation, default is Operation.Retrieve
-    :url_string_args - Allow to specify query args to use
-                       Passed as a dictionary of {arg_name: lambda component, model: action}
-                       For example: {
-                           company_event_id: lambda component, company_event: company_event.id
-                           min_clock: lambda component, company_event: company_event.clock
-                        }
+    :kwargs          - Allow to specify query args to use
+                       Passed as a dictionary of strings or extractors (lambda component, model: action)
+                       Extractor xample:
+                       * min_clock: lambda component, company_event: company_event.clock
     :use_model_id    - Should use model.id to create the url.
                        If is None, will use set to True for node operation (such as Retrieve, unlike Search)
     :identifier_key  - Specify the object "id" schema key
@@ -47,7 +45,11 @@ def url_extractor_factory(ns=None, operation=None, use_model_id=None, identifier
 
     def extract(component, model):
         ns_ = ns or component.ns
-        url_params = {key: str(extractor(component, model)) for key, extractor in url_string_args.items()}
+        url_params = {
+            key: str((kwarg(component, model) if callable(kwarg) else kwarg))
+            for key, kwarg
+            in kwargs.items()
+        }
         if use_model_id_:
             identifier_key_ = identifier_key or component.identifier_key
             if identifier_key_ in url_params:

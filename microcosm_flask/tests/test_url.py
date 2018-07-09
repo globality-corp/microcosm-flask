@@ -61,23 +61,17 @@ def configure_user(graph):
     return ns
 
 
-class TestPublishDecorator:
+class TestUriExtractorFactory:
 
     def setup(self):
-        def loader(metadata):
-            return dict(
-                sns_topic_arns=dict(
-                    default="default",
-                )
-            )
-        self.graph = create_object_graph("example", testing=True, loader=loader)
+        self.graph = create_object_graph("example", testing=True)
         self.graph.use(
             "configure_company_v1",
             "configure_user_v1",
         )
         self.graph.lock()
 
-    def test_publish(self):
+    def test_default_extractor(self):
         controller = CompanyController(self.graph)
         model = controller.retrieve()
 
@@ -97,12 +91,11 @@ class TestPublishDecorator:
 
     def test_set_url_string_args(self):
         controller = CompanyController(self.graph)
-        setattr(controller, "limit", 1)
         model = controller.retrieve()
 
         extractor = url_extractor_factory(
             name=lambda ctrl, model: model.name,
-            limit=lambda ctrl, model: ctrl.limit,
+            limit=lambda ctrl, model: 1,
         )
         with self.graph.app.test_request_context():
             url = extractor(controller, model)
