@@ -28,20 +28,6 @@ def configure_landing(graph):   # noqa: C901
         except DistributionNotFound:
             return None
 
-    def get_description(properties):
-        """
-        Calculate the description based on the package properties
-
-        """
-        if not properties:
-            return None
-
-        return '. '.join([
-            field
-            for field in [properties.description, properties.long_description]
-            if field is not None
-        ])
-
     def get_swagger_versions():
         """
         Finds all swagger conventions that are bound to the graph
@@ -83,7 +69,6 @@ def configure_landing(graph):   # noqa: C901
 
         """
         properties = get_properties_and_version()
-        description = get_description(properties)
         swagger_versions = get_swagger_versions()
         config = graph.config_convention.to_dict()
         health = graph.health_convention.to_dict()
@@ -91,10 +76,11 @@ def configure_landing(graph):   # noqa: C901
 
         return Template(template).render(
             config=pretty_dict(config),
-            description=description,
+            description=properties.get("description") if properties else None,
             env=env,
             health=pretty_dict(health),
             homepage=getattr(properties, 'url', None),
+            links=graph.config.landing_convention.get("links", []),
             service_name=graph.metadata.name,
             swagger_versions=swagger_versions,
             version=getattr(properties, 'version', None),
