@@ -62,26 +62,38 @@ def configure_landing(graph):   # noqa: C901
                 conf_string.append("export {}__{}='{}'".format(conf_key.upper(), key.upper(), value))
         return conf_string
 
+    def get_links(swagger_versions, properties):
+        # add links set in config
+        links = {key: value for (key, value) in graph.config.landing_convention.get("links", {}).items()}
+
+        # add links for each swagger version
+        for swagger_version in swagger_versions:
+            links["swagger {}". format(swagger_version)] = "api/{}/swagger".format(swagger_version)
+
+        # add link to home page
+        if hasattr(properties, "url"):
+            links["home page"] = properties.url
+
+        return links
+
     @graph.flask.route("/")
     def render_landing_page():
         """
         Render landing page
 
         """
+        config = graph.config_convention.to_dict()
+        env = get_env_file_commands(config, graph.metadata.name)
+        health = graph.health_convention.to_dict()
         properties = get_properties_and_version()
         swagger_versions = get_swagger_versions()
-        config = graph.config_convention.to_dict()
-        health = graph.health_convention.to_dict()
-        env = get_env_file_commands(config, graph.metadata.name)
 
         return Template(template).render(
             config=pretty_dict(config),
-            description=properties.get("description") if properties else None,
+            description=properties.description if properties else None,
             env=env,
             health=pretty_dict(health),
-            homepage=getattr(properties, 'url', None),
-            links=graph.config.landing_convention.get("links", []),
+            links=get_links(swagger_versions, properties),
             service_name=graph.metadata.name,
-            swagger_versions=swagger_versions,
             version=getattr(properties, 'version', None),
         )
