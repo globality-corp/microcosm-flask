@@ -106,7 +106,7 @@ def extract_headers(error):
     except AttributeError:
         try:
             return error.get_headers()
-        except AttributeError:
+        except (AttributeError, TypeError):
             return {}
 
 
