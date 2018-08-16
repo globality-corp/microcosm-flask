@@ -35,22 +35,22 @@ def main():
     left_keys = set(left.keys())
     right_keys = set(right.keys())
     if left_keys != right_keys:
-        print "Only in left:"  # noqa
+        print("Only in left:")  # noqa
         for key in left_keys - right_keys:
             print " - {}".format(key)  # noqa
-        print "Only in right:"  # noqa
+        print("Only in right:")  # noqa
         for key in right_keys - left_keys:
-            print " - {}".format(key)  # noqa
+            print(" - {}".format(key))  # noqa
         exit(1)
 
     for key in left.keys():
         if left[key] != right[key]:
-            print "Different values for: {}".format(key)  # noqa
-            print "-" * 20  # noqa
-            print "Left:"  # noqa
-            print left[key]  # noqa
-            print "Right:"  # noqa
-            print right[key]  # noqa
+            print("Different values for: {}".format(key))  # noqa
+            print("-" * 20)  # noqa
+            print("Left:")  # noqa
+            print(left[key])  # noqa
+            print("Right:")  # noqa
+            print(right[key])  # noqa
             exit(1)
 
 
