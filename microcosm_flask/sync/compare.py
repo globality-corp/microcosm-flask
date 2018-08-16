@@ -37,7 +37,7 @@ def main():
     if left_keys != right_keys:
         print("Only in left:")  # noqa
         for key in left_keys - right_keys:
-            print " - {}".format(key)  # noqa
+            print(" - {}".format(key))  # noqa
         print("Only in right:")  # noqa
         for key in right_keys - left_keys:
             print(" - {}".format(key))  # noqa
