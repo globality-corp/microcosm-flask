@@ -2,8 +2,6 @@
 CRUD convention tests.
 
 """
-from json import dumps, loads
-
 from enum import Enum
 
 from hamcrest import (
@@ -98,7 +96,7 @@ class TestCRUD:
         if status_code == 204:
             response_data = None
         else:
-            response_data = loads(response.get_data().decode("utf-8"))
+            response_data = response.json
 
         # validate data if provided
         if response_data is not None and data is not None:
@@ -160,7 +158,7 @@ class TestCRUD:
     def test_reuse_search_self_link(self):
         uri = "/api/address?list_param=a,b,c&enum_param=A".format(PERSON_ID_1)
         response = self.client.get(uri)
-        response_data = loads(response.get_data().decode("utf-8"))
+        response_data = response.json
         response = self.client.get(response_data["_links"]["self"]["href"])
         self.assert_response(response, 200, {
             "count": 1,
@@ -187,7 +185,7 @@ class TestCRUD:
             "firstName": "Bob",
             "lastName": "Jones",
         }
-        response = self.client.post("/api/person", data=dumps(request_data))
+        response = self.client.post("/api/person", json=request_data)
         self.assert_response(response, 201, {
             "id": str(PERSON_ID_2),
             "firstName": "Bob",
@@ -204,7 +202,7 @@ class TestCRUD:
     def test_create_empty_object(self):
         response = self.client.post("/api/person", data='{}')
         self.assert_response(response, 422)
-        response_data = loads(response.get_data().decode("utf-8"))
+        response_data = response.json
         assert_that(response_data["context"]["errors"], contains_inanyorder(
             {
                 "message": "Could not validate field: lastName",
@@ -225,7 +223,7 @@ class TestCRUD:
         request_data = {
             "lastName": "Jones",
         }
-        response = self.client.post("/api/person", data=dumps(request_data))
+        response = self.client.post("/api/person", json=request_data)
         self.assert_response(response, 422, {
             "code": 422,
             "message": "Validation error",
@@ -248,7 +246,7 @@ class TestCRUD:
                 "lastName": "Jones",
             }],
         }
-        response = self.client.patch("/api/person", data=dumps(request_data))
+        response = self.client.patch("/api/person", json=request_data)
         self.assert_response(response, 200, {
             "items": [{
                 "id": str(PERSON_ID_2),
@@ -311,7 +309,7 @@ class TestCRUD:
             "firstName": "Bob",
             "lastName": "Jones",
         }
-        response = self.client.put(uri, data=dumps(request_data))
+        response = self.client.put(uri, json=request_data)
         self.assert_response(response, 200, {
             "id": str(PERSON_ID_1),
             "firstName": "Bob",
@@ -328,7 +326,7 @@ class TestCRUD:
         request_data = {
             "firstName": "Bob",
         }
-        response = self.client.patch(uri, data=dumps(request_data))
+        response = self.client.patch(uri, json=request_data)
         self.assert_response(response, 200, {
             "id": str(PERSON_ID_1),
             "firstName": "Bob",
@@ -345,5 +343,5 @@ class TestCRUD:
         request_data = {
             "firstName": "Bob",
         }
-        response = self.client.patch(uri, data=dumps(request_data))
+        response = self.client.patch(uri, json=request_data)
         self.assert_response(response, 404)
