@@ -186,12 +186,4 @@ def test_field_iso_timestamp():
 def test_field_one_of():
     parameter = build_parameter(TestSchema().fields["mixed"])
     assert_that(parameter, is_(equal_to({
-        "oneOf": [
-            {
-                "type": "integer",
-            },
-            {
-                "type": "string",
-            }
-        ],
     })))
