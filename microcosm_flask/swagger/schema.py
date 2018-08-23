@@ -82,7 +82,17 @@ def resolve_tagged_field(field):
     """
     field_type = getattr(field, SWAGGER_TYPE)
     field_format = getattr(field, SWAGGER_FORMAT, None)
-    if field_format:
+
+    if isinstance(field_type, list):
+        return dict(
+            oneOf=[
+                dict(
+                    type=item,
+                )
+                for item in field_type
+            ]
+        )
+    elif field_format:
         return dict(
             type=field_type,
             format=field_format,
