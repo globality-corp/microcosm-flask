@@ -84,14 +84,9 @@ def resolve_tagged_field(field):
     field_format = getattr(field, SWAGGER_FORMAT, None)
 
     if isinstance(field_type, list):
-        return dict(
-            oneOf=[
-                dict(
-                    type=item,
-                )
-                for item in field_type
-            ]
-        )
+        # Ideally we'd use oneOf here, but OpenAPI 2.0 uses the 0.4-draft jsonschema
+        # which doesn't include oneOf. Upgrading to OpenAPI 3.0 ought to suffice.
+        return dict()
     elif field_format:
         return dict(
             type=field_type,
