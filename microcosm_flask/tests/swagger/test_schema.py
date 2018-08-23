@@ -23,6 +23,10 @@ from microcosm_flask.swagger.schema import (
 from microcosm_flask.tests.conventions.fixtures import NewPersonSchema
 
 
+class MixedField(fields.Field):
+    __swagger_type__ = ["integer", "string"]
+
+
 @unique
 class Choices(Enum):
     Profit = "profit"
@@ -48,6 +52,7 @@ class TestSchema(Schema):
     datetime = fields.DateTime()
     unix_timestamp = TimestampField()
     iso_timestamp = TimestampField(use_isoformat=True)
+    mixed = MixedField()
 
 
 def test_schema_generation():
@@ -175,4 +180,18 @@ def test_field_iso_timestamp():
     assert_that(parameter, is_(equal_to({
         "type": "string",
         "format": "date-time",
+    })))
+
+
+def test_field_one_of():
+    parameter = build_parameter(TestSchema().fields["mixed"])
+    assert_that(parameter, is_(equal_to({
+        "oneOf": [
+            {
+                "type": "integer",
+            },
+            {
+                "type": "string",
+            }
+        ],
     })))
