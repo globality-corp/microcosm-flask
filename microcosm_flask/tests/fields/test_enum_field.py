@@ -7,6 +7,7 @@ from enum import Enum, IntEnum, unique
 from hamcrest import (
     assert_that,
     equal_to,
+    has_entries,
     is_,
 )
 from marshmallow import Schema
@@ -82,3 +83,16 @@ def test_load_int_enum_as_string():
     })
 
     assert_that(result.data["int_value"], is_(equal_to(TestIntEnum.Bar)))
+
+
+def test_dump_value_from_string():
+    schema = EnumSchema()
+    result = schema.dump({
+        "name": "foo",
+        "value": "bar",
+    })
+
+    assert_that(result.data, is_(has_entries(
+        name="foo",
+        value="bar",
+    )))

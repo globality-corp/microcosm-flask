@@ -28,6 +28,8 @@ class EnumField(Field):
     def _serialize(self, value, attr, obj):
         if value is None:
             return value
+        elif isinstance(value, str):
+            return value
         elif self.by_value:
             return value.value
         else:
