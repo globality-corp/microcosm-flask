@@ -4,6 +4,8 @@ Enum-valued field.
 Supports both by name (preferred) and by value (discouraged) encoding.
 
 """
+from enum import Enum
+
 from marshmallow.fields import Field
 
 
@@ -28,7 +30,7 @@ class EnumField(Field):
     def _serialize(self, value, attr, obj):
         if value is None:
             return value
-        elif isinstance(value, str):
+        elif isinstance(value, str) and not isinstance(value, Enum):
             return value
         elif self.by_value:
             return value.value
