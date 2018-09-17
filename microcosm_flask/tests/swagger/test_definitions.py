@@ -139,6 +139,7 @@ def test_build_swagger():
                     "lastName",
                 ],
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "lastName": {
                         "type": "string",
@@ -155,6 +156,7 @@ def test_build_swagger():
                     "lastName",
                 ],
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "lastName": {
                         "type": "string",
@@ -173,6 +175,7 @@ def test_build_swagger():
             },
             "UpdatePerson": {
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "lastName": {
                         "type": "string",
@@ -185,6 +188,7 @@ def test_build_swagger():
             "ErrorContext": {
                 "required": ["errors"],
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "errors": {
                         "items": {
@@ -197,6 +201,7 @@ def test_build_swagger():
             "SubError": {
                 "required": ["message"],
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "message": {
                         "type": "string",
@@ -210,6 +215,7 @@ def test_build_swagger():
                     "retryable",
                 ],
                 "type": "object",
+                "additionalProperties": {},
                 "properties": {
                     "message": {
                         "type": "string",
