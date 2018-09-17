@@ -67,6 +67,7 @@ def test_schema_generation():
                 "type": "string",
             },
         },
+        "additionalProperties": {},
         "required": [
             "firstName",
             "lastName",
