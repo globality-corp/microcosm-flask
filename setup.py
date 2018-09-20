@@ -39,10 +39,6 @@ setup(
     dependency_links=[
     ],
     entry_points={
-        "console_scripts": [
-            "compare-resources = microcosm_flask.sync.compare:main",
-            "sync-resources = microcosm_flask.sync.main:main",
-        ],
         "microcosm.factories": [
             "app = microcosm_flask.factories:configure_flask_app",
             "audit = microcosm_flask.audit:configure_audit_decorator",
