@@ -3,9 +3,9 @@ Conventions for canonical CRUD endpoints.
 
 """
 from functools import wraps
+
 from inflection import pluralize
 from marshmallow import Schema
-
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import (
     dump_response_data,
@@ -18,7 +18,7 @@ from microcosm_flask.conventions.encoding import (
 )
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import identity, OffsetLimitPage, OffsetLimitPageSchema
+from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema, identity
 
 
 class CRUDConvention(Convention):
@@ -214,11 +214,14 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
+        request_schema = definition.request_schema or Schema()
+
         @self.add_route(ns.instance_path, Operation.Delete, ns)
         @wraps(definition.func)
         def delete(**path_data):
             headers = dict()
-            response_data = require_response_data(definition.func(**path_data))
+            request_data = load_query_string_data(request_schema)
+            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
