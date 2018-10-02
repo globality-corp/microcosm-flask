@@ -106,7 +106,7 @@ class TestCommand:
                     "tags": ["foo"],
                     "responses": {
                         "default": {
-                            "description": "An error occcurred", "schema": {
+                            "description": "An error occurred", "schema": {
                                 "$ref": "#/definitions/Error",
                             }
                         },

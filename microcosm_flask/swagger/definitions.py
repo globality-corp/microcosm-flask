@@ -243,7 +243,7 @@ def add_responses(swagger_operation, operation, ns, func):
     """
     # default error
     swagger_operation.responses["default"] = build_response(
-        description="An error occcurred",
+        description="An error occurred",
         resource=type_name(name_for(ErrorSchema())),
     )
 
