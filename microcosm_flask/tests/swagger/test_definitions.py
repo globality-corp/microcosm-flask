@@ -57,7 +57,7 @@ def test_build_swagger():
                     "tags": ["person"],
                     "responses": {
                         "default": {
-                            "description": "An error occcurred", "schema": {
+                            "description": "An error occurred", "schema": {
                                 "$ref": "#/definitions/Error",
                             }
                         },
@@ -91,7 +91,7 @@ def test_build_swagger():
                     "tags": ["person"],
                     "responses": {
                         "default": {
-                            "description": "An error occcurred",
+                            "description": "An error occurred",
                             "schema": {
                                 "$ref": "#/definitions/Error",
                             },
