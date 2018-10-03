@@ -217,6 +217,7 @@ class CRUDConvention(Convention):
         request_schema = definition.request_schema or Schema()
 
         @self.add_route(ns.instance_path, Operation.Delete, ns)
+        @qs(request_schema)
         @wraps(definition.func)
         def delete(**path_data):
             headers = dict()
