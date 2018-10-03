@@ -5,9 +5,9 @@ Testing fixtures (e.g. for CRUD).
 from copy import copy
 from uuid import uuid4
 
-from marshmallow import fields, Schema
+from marshmallow import Schema, fields
 
-from microcosm_flask.linking import Links, Link
+from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 
@@ -66,6 +66,10 @@ class AddressSchema(AddressCSVSchema):
         return links.to_dict()
 
 
+class DeleteAddressSchema(Schema):
+    address_clock = fields.Int(required=True)
+
+
 class PersonCSVSchema(NewPersonSchema):
     # PersonSchema without the links
     id = fields.UUID(required=True)
@@ -110,6 +114,10 @@ ADDRESS_1 = Address(ADDRESS_ID_1, PERSON_ID_1, "21 Acme St., San Francisco CA 94
 
 def address_retrieve(id, address_id):
     return ADDRESS_1
+
+
+def address_delete(address_id, address_clock):
+    return address_id == ADDRESS_ID_1
 
 
 def address_search(offset, limit, list_param=None, enum_param=None):

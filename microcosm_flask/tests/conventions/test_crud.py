@@ -4,26 +4,30 @@ CRUD convention tests.
 """
 from enum import Enum
 
-from hamcrest import (
-    assert_that,
-    contains_inanyorder,
-    equal_to,
-    is_,
-)
-
+from hamcrest import assert_that, contains_inanyorder, equal_to, is_
 from marshmallow.fields import String
-
 from microcosm.api import create_object_graph
+
 from microcosm_flask.conventions.crud import configure_crud
+from microcosm_flask.fields import EnumField, QueryStringList
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPageSchema
-from microcosm_flask.fields import QueryStringList, EnumField
 from microcosm_flask.tests.conventions.fixtures import (
+    ADDRESS_ID_1,
+    PERSON_ID_1,
+    PERSON_ID_2,
+    PERSON_ID_3,
     Address,
     AddressSchema,
+    DeleteAddressSchema,
     NewPersonBatchSchema,
     NewPersonSchema,
+    Person,
+    PersonBatchSchema,
+    PersonLookupSchema,
+    PersonSchema,
+    address_delete,
     address_retrieve,
     address_search,
     person_create,
@@ -33,14 +37,6 @@ from microcosm_flask.tests.conventions.fixtures import (
     person_search,
     person_update,
     person_update_batch,
-    Person,
-    PersonBatchSchema,
-    PersonLookupSchema,
-    PersonSchema,
-    ADDRESS_ID_1,
-    PERSON_ID_1,
-    PERSON_ID_2,
-    PERSON_ID_3,
 )
 
 
@@ -73,6 +69,7 @@ PERSON_MAPPINGS = {
 
 
 ADDRESS_MAPPINGS = {
+    Operation.Delete: (address_delete, DeleteAddressSchema(), AddressSchema()),
     Operation.Retrieve: (address_retrieve, AddressSchema()),
     Operation.Search: (address_search, SearchAddressPageSchema(), AddressSchema()),
 }
@@ -179,6 +176,11 @@ class TestCRUD:
                 }
             }
         })
+
+    def test_delete_with_params(self):
+        uri = "/api/address/{}?address_clock=123".format(ADDRESS_ID_1)
+        response = self.client.delete(uri)
+        self.assert_response(response, 204)
 
     def test_create(self):
         request_data = {
