@@ -77,6 +77,7 @@ def configure_route_decorator(graph):
 
             if enable_metrics or ns.enable_metrics:
                 from microcosm_flask.metrics import StatusCodeClassifier
+                graph.use("datadog_statsd")
                 tags = [f"endpoint:{endpoint}", "backend_type:microcosm_flask"]
                 func = graph.metrics_counting(
                     "route",
