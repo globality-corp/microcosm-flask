@@ -3,6 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
+        "microcosm-metrics>=2.1.0",
 version = "1.16.0"
 
 setup(
