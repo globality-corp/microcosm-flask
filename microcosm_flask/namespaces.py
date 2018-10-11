@@ -46,7 +46,7 @@ class Namespace:
         """
         :param subject: the target resource (or resource name) of this namespace
         :param object_: the subject resource (or resource name) of this namespace (e.g. for relations)
-        :param path: the path prefix for this namespace
+        :param path: the (absolute) prefix for this namespace
         :param controller: the object responsible for implementations associated with this namespace.
         :param version: the version of this namespace
         :param enable_basic_auth: enable basic auth for this namespace if it's not enabled globally
@@ -55,7 +55,7 @@ class Namespace:
         """
         self.subject = subject
         self.object_ = object_
-        self.prefix = prefix or ""
+        self.prefix = prefix
         self.qualifier = qualifier
         self.controller = controller
         self.version = version
@@ -71,8 +71,6 @@ class Namespace:
 
         """
         return "/".join([
-            self.prefix,
-        ] + [
             part
             for part in [
                 self.version,

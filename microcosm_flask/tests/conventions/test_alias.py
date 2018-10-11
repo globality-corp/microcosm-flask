@@ -57,7 +57,9 @@ class TestAlias:
     def setup(self):
         self.graph = create_object_graph(name="example", testing=True)
 
-        self.ns = Namespace(subject=Person)
+        self.ns = Namespace(
+            subject=Person,
+        )
         configure_crud(self.graph, self.ns, PERSON_MAPPINGS)
         configure_alias(self.graph, self.ns, PERSON_MAPPINGS)
         self.graph.config.swagger_convention.operations.append("alias")

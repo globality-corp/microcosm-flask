@@ -30,7 +30,6 @@ from microcosm_flask.conventions.registry import (
 from microcosm_flask.errors import ErrorSchema, ErrorContextSchema, SubErrorSchema
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation
-from microcosm_flask.routing import make_path
 from microcosm_flask.swagger.naming import operation_name, type_name
 from microcosm_flask.swagger.schema import build_parameter, iter_schemas
 
@@ -43,7 +42,7 @@ def build_swagger(graph, ns, operations):
     Build out the top-level swagger definition.
 
     """
-    base_path = make_path(graph, ns.path)
+    base_path = graph.build_route_path(ns.path, ns.prefix)
     schema = swagger.Swagger(
         swagger="2.0",
         info=swagger.Info(

@@ -11,10 +11,6 @@ from microcosm.api import defaults
 from microcosm_logging.decorators import context_logger
 
 
-def make_path(graph, path):
-    return graph.config.route.path_prefix + path
-
-
 @defaults(
     converters=[
         "uuid",
@@ -24,7 +20,6 @@ def make_path(graph, path):
     enable_context_logger="true",
     enable_cors="true",
     enable_metrics="false",
-    path_prefix="/api",
 )
 def configure_route_decorator(graph):
     """
@@ -57,7 +52,7 @@ def configure_route_decorator(graph):
         """
         def decorator(func):
             endpoint = ns.endpoint_for(operation)
-            endpoint_path = make_path(graph, path)
+            endpoint_path = graph.build_route_path(path, ns.prefix)
 
             if enable_cors:
                 func = cross_origin(supports_credentials=True)(func)
