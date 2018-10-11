@@ -232,7 +232,6 @@ def build_schema(marshmallow_schema):
             field.dump_to or name: build_parameter(field)
             for name, field in fields
         },
-        "additionalProperties": {},
     }
     if required_fields:
         schema["required"] = required_fields
