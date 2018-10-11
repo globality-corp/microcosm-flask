@@ -12,7 +12,6 @@ from microcosm_flask.conventions.encoding import make_response
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.routing import make_path
 from microcosm_flask.swagger.definitions import build_swagger
 
 
@@ -35,7 +34,7 @@ class SwaggerConvention(Convention):
         def match_func(operation, ns, rule):
             # only expose endpoints that have the correct path prefix and operation
             return (
-                rule.rule.startswith(make_path(self.graph, swagger_ns.path)) and
+                rule.rule.startswith(self.graph.build_route_path(swagger_ns.path, swagger_ns.prefix)) and
                 operation in self.matching_operations
             )
 
