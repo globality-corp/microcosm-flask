@@ -9,6 +9,7 @@ from hamcrest import (
 )
 
 from microcosm.api import create_object_graph
+from microcosm.loaders import load_from_dict
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.operations import Operation
 from microcosm_flask.conventions.registry import iter_endpoints
@@ -30,6 +31,11 @@ PERSON_MAPPINGS = {
 }
 
 
+# match all (of the one) operations
+def match_function(operation, obj, rule):
+    return True
+
+
 def test_build_swagger():
     graph = create_object_graph(name="example", testing=True)
     ns = Namespace(
@@ -37,10 +43,6 @@ def test_build_swagger():
         version="v1",
     )
     configure_crud(graph, ns, PERSON_MAPPINGS)
-
-    # match all (of the one) operations
-    def match_function(operation, obj, rule):
-        return True
 
     with graph.flask.test_request_context():
         operations = list(iter_endpoints(graph, match_function))
@@ -235,3 +237,27 @@ def test_build_swagger():
             "application/json",
         ],
     })))
+
+
+def test_no_prefix_no_version_path():
+    loader = load_from_dict(dict(
+        # We want our routes to come directly after the root /
+        build_route_path=dict(
+            prefix=""
+        ),
+    ))
+    graph = create_object_graph(name="example", testing=True, loader=loader)
+
+    ns = Namespace(
+        subject=Person,
+        version="",
+    )
+    configure_crud(graph, ns, PERSON_MAPPINGS)
+
+    with graph.flask.test_request_context():
+        operations = list(iter_endpoints(graph, match_function))
+        swagger_schema = build_swagger(graph, ns, operations)
+
+    # Test that in a no prefix, no version case we still get a leading slash in our paths
+    assert_that("/person" in swagger_schema["paths"])
+    assert_that(swagger_schema["basePath"], equal_to("/"))

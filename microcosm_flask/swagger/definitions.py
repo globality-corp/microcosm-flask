@@ -80,8 +80,10 @@ def add_paths(paths, base_path, operations):
         if not path.startswith(base_path):
             continue
         method = operation.value.method.lower()
+        # if there's no version number or prefix, then the root slash is also part of the path suffix
+        suffix_start = 0 if len(base_path) == 1 else len(base_path)
         paths.setdefault(
-            path[len(base_path):],
+            path[suffix_start:],
             swagger.PathItem(),
         )[method] = build_operation(operation, ns, rule, func)
 
