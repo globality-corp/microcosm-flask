@@ -80,8 +80,12 @@ def add_paths(paths, base_path, operations):
         if not path.startswith(base_path):
             continue
         method = operation.value.method.lower()
+        # If there is no version number or prefix, we'd expect the base path to be ""
+        # However, OpenAPI requires the minimal base path to be "/"
+        # This means we need branching logic for that special case
+        suffix_start = 0 if len(base_path) == 1 else len(base_path)
         paths.setdefault(
-            path[len(base_path):],
+            path[suffix_start:],
             swagger.PathItem(),
         )[method] = build_operation(operation, ns, rule, func)
 
