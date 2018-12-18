@@ -2,7 +2,7 @@
 Conventions for file upload.
 
 """
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from functools import wraps
 from os.path import join
 from shutil import rmtree
@@ -21,9 +21,6 @@ from microcosm_flask.operations import Operation
 from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
 
-
-# Python3
-from contextlib import ExitStack
 
 @contextmanager
 def nested(*contexts):
