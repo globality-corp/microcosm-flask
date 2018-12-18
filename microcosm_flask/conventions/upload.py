@@ -22,24 +22,20 @@ from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
 
 
-try:
-    # Python 2
-    from contextlib import nested
-except ImportError:
-    # Python3
-    from contextlib import ExitStack
+# Python3
+from contextlib import ExitStack
 
-    @contextmanager
-    def nested(*contexts):
-        """
-        Reimplementation of nested in python 3.
-        """
-        with ExitStack() as stack:
-            results = [
-                stack.enter_context(context)
-                for context in contexts
-            ]
-            yield results
+@contextmanager
+def nested(*contexts):
+    """
+    Reimplementation of nested in python 3.
+    """
+    with ExitStack() as stack:
+        results = [
+            stack.enter_context(context)
+            for context in contexts
+        ]
+        yield results
 
 
 @contextmanager
