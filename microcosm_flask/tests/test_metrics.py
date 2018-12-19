@@ -6,7 +6,7 @@ from unittest import SkipTest
 from unittest.mock import ANY
 
 from hamcrest import assert_that, equal_to, is_
-from microcosm.api import create_object_graph
+from microcosm.api import create_object_graph, load_from_dict
 from werkzeug.exceptions import NotFound
 
 from microcosm_flask.namespaces import Namespace
@@ -17,11 +17,16 @@ class TestRouteMetrics:
 
     def setup(self):
         try:
-            import microcosm_metrics  # noqa
+            import microcosm_metrics  # noqa: F401
         except ImportError:
             raise SkipTest
 
-        self.graph = create_object_graph("example", testing=True)
+        self.loader = load_from_dict(
+            metrics=dict(
+                host="statsd",
+            ),
+        )
+        self.graph = create_object_graph("example", testing=True, loader=self.loader)
         self.graph.use(
             "metrics",
             "flask",
@@ -30,7 +35,6 @@ class TestRouteMetrics:
         self.client = self.graph.flask.test_client()
 
         self.ns = Namespace(
-            enable_metrics=True,
             subject="foo",
             version="v1",
         )

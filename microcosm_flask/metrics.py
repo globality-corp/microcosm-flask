@@ -2,25 +2,55 @@
 Metrics extensions for routes.
 
 """
-try:
-    from microcosm_metrics.classifier import Classifier
-except ImportError:
-    raise Exception("Route metrics require 'microcosm-metrics'")
+from microcosm.api import defaults, typed
+from microcosm.config.types import boolean
+from microcosm.errors import NotBoundError
 
 
-from microcosm_flask.audit import parse_response
-from microcosm_flask.errors import extract_status_code
+@defaults(
+    enabled=typed(boolean, default_value=True),
+)
+class RouteMetrics:
 
+    def __init__(self, graph):
+        self.metrics = self.get_metrics(graph)
+        self.enabled = bool(
+            self.metrics
+            and self.metrics.host != "localhost"
+            and graph.config.route_metrics.enabled
+        )
+        self.graph = graph
 
-class StatusCodeClassifier(Classifier):
-    """
-    Label route result/error with its status code.
+    def get_metrics(self, graph):
+        """
+        Fetch the metrics client from the graph.
 
-    """
-    def label_result(self, result):
-        _, status_code, _ = parse_response(result)
-        return str(status_code)
+        Metrics will be disabled if the not configured.
 
-    def label_error(self, error):
-        status_code = extract_status_code(error)
-        return str(status_code)
+        """
+        try:
+            return graph.metrics
+        except NotBoundError:
+            return None
+
+    def __call__(self, endpoint):
+        from microcosm_flask.metrics_classifier import StatusCodeClassifier
+
+        def decorator(func):
+            key = "route"
+            tags = [
+                f"endpoint:{endpoint}",
+                "backend_type:microcosm_flask",
+            ]
+            counting = self.graph.metrics_counting(
+                key,
+                tags=tags,
+                classifier_cls=StatusCodeClassifier,
+            )
+            timing = self.graph.metrics_timing(
+                key,
+                tags=tags,
+            )
+            return timing(counting(func))
+
+        return decorator
