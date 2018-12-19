@@ -4,10 +4,9 @@ Routing registration support.
 Intercepts Flask's normal route registration to inject conventions.
 
 """
-from distutils.util import strtobool
-
 from flask_cors import cross_origin
-from microcosm.api import defaults
+from microcosm.api import defaults, typed
+from microcosm.config.types import boolean
 from microcosm_logging.decorators import context_logger
 
 
@@ -15,11 +14,10 @@ from microcosm_logging.decorators import context_logger
     converters=[
         "uuid",
     ],
-    enable_audit="true",
-    enable_basic_auth="false",
-    enable_context_logger="true",
-    enable_cors="true",
-    enable_metrics="false",
+    enable_audit=typed(boolean, default_value=True),
+    enable_basic_auth=typed(boolean, default_value=False),
+    enable_context_logger=typed(boolean, default_value=True),
+    enable_cors=typed(boolean, default_value=True),
 )
 def configure_route_decorator(graph):
     """
@@ -35,11 +33,10 @@ def configure_route_decorator(graph):
             pass
 
     """
-    enable_audit = strtobool(graph.config.route.enable_audit)
-    enable_basic_auth = strtobool(graph.config.route.enable_basic_auth)
-    enable_context_logger = strtobool(graph.config.route.enable_context_logger)
-    enable_cors = strtobool(graph.config.route.enable_cors)
-    enable_metrics = strtobool(graph.config.route.enable_metrics)
+    enable_audit = graph.config.route.enable_audit
+    enable_basic_auth = graph.config.route.enable_basic_auth
+    enable_context_logger = graph.config.route.enable_context_logger
+    enable_cors = graph.config.route.enable_cors
 
     # routes depends on converters
     graph.use(*graph.config.route.converters)
@@ -49,6 +46,7 @@ def configure_route_decorator(graph):
         :param path: a URI path, possibly derived from a property of the `ns`
         :param operation: an `Operation` enum value
         :param ns: a `Namespace` instance
+
         """
         def decorator(func):
             endpoint = ns.endpoint_for(operation)
@@ -70,15 +68,8 @@ def configure_route_decorator(graph):
             # set the opaque component data_func to look at the flask request context
             func = graph.opaque.initialize(graph.request_context)(func)
 
-            if enable_metrics or ns.enable_metrics:
-                from microcosm_flask.metrics import StatusCodeClassifier
-                tags = [f"endpoint:{endpoint}", "backend_type:microcosm_flask"]
-                func = graph.metrics_counting(
-                    "route",
-                    tags=tags,
-                    classifier_cls=StatusCodeClassifier,
-                )(func)
-                func = graph.metrics_timing("route", tags=tags)(func)
+            if graph.route_metrics.enabled:
+                func = graph.route_metrics(endpoint)(func)
 
             # keep audit decoration last (before registering the route) so that
             # errors raised by other decorators are captured in the audit trail

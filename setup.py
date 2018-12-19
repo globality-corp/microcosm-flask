@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-
 project = "microcosm-flask"
-version = "1.19.0"
+version = "1.20.0"
 
 setup(
     name=project,
@@ -24,15 +23,15 @@ setup(
         "Flask-Cors>=3.0.3",
         "Flask-UUID>=0.2",
         "marshmallow>=2.15.0",
-        "microcosm>=2.4.0",
-        "microcosm-logging>=1.0.0",
+        "microcosm>=2.4.1",
+        "microcosm-logging>=1.3.0",
         "openapi>=1.0.0",
         "python-dateutil>=2.6.1",
         "PyYAML>=3.12",
         "rfc3986>=1.1.0",
     ],
     extras_require={
-        "metrics": "microcosm-metrics>=1.0.0",
+        "metrics": "microcosm-metrics>=2.2.0",
         "spooky": "spooky>=2.0.0",
     },
     setup_requires=[
@@ -57,6 +56,7 @@ setup(
             "port_forwarding = microcosm_flask.forwarding:configure_port_forwarding",
             "request_context = microcosm_flask.context:configure_request_context",
             "route = microcosm_flask.routing:configure_route_decorator",
+            "route_metrics = microcosm_flask.metrics:RouteMetrics",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
             "uuid = microcosm_flask.converters:configure_uuid",
         ],
