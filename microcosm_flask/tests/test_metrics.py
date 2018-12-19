@@ -3,10 +3,10 @@ Metrics tests.
 
 """
 from unittest import SkipTest
+from unittest.mock import ANY
 
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
-from mock import ANY
 from werkzeug.exceptions import NotFound
 
 from microcosm_flask.namespaces import Namespace

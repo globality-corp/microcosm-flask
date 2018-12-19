@@ -3,6 +3,7 @@ Audit structure tests.
 
 """
 from logging import DEBUG, NOTSET, getLogger
+from unittest.mock import MagicMock
 from uuid import uuid4
 
 from flask import g
@@ -14,7 +15,6 @@ from hamcrest import (
     none,
 )
 from microcosm.api import create_object_graph
-from mock import MagicMock
 from werkzeug.exceptions import NotFound
 
 from microcosm_flask.audit import (

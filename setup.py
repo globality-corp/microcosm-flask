@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "1.18.1"
+version = "1.19.0"
 
 setup(
     name=project,
@@ -15,6 +15,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
+    python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
         "enum34>=1.1.6",
@@ -62,7 +63,6 @@ setup(
     },
     tests_require=[
         "coverage>=3.7.1",
-        "mock>=1.0.1",
         "PyHamcrest>=1.8.5",
     ],
 )

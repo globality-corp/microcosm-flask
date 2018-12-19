@@ -8,7 +8,7 @@ from hamcrest import (
     is_,
     none,
 )
-from mock import Mock
+from unittest.mock import Mock
 
 from microcosm.api import create_object_graph
 from microcosm_flask.matchers import matches_uri
