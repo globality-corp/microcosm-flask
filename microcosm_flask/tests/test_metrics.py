@@ -23,7 +23,7 @@ class TestRouteMetrics:
 
         self.graph = create_object_graph("example", testing=True)
         self.graph.use(
-            "datadog_statsd",
+            "metrics",
             "flask",
             "route",
         )
@@ -48,11 +48,19 @@ class TestRouteMetrics:
         assert_that(response.status_code, is_(equal_to(200)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "undefined.example.foo.search.v1",
+            "route",
             ANY,
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "undefined.example.foo.search.v1.200.count",
+            "route.200.count",
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ],
         )
 
     def test_different_status_code_metrics(self):
@@ -68,11 +76,19 @@ class TestRouteMetrics:
         assert_that(response.status_code, is_(equal_to(204)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "undefined.example.foo.search.v1",
+            "route",
             ANY,
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "undefined.example.foo.search.v1.204.count",
+            "route.204.count",
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ],
         )
 
     def test_exception_metrics(self):
@@ -88,9 +104,17 @@ class TestRouteMetrics:
         assert_that(response.status_code, is_(equal_to(404)))
 
         self.graph.metrics.histogram.assert_called_with(
-            "undefined.example.foo.search.v1",
+            "route",
             ANY,
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ]
         )
         self.graph.metrics.increment.assert_called_with(
-            "undefined.example.foo.search.v1.404.count",
+            "route.404.count",
+            tags=[
+                "endpoint:foo.search.v1",
+                "backend_type:microcosm_flask",
+            ],
         )
