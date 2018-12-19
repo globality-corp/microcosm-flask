@@ -95,3 +95,5 @@ target/
 
 # Editor files
 *.swp
+
+.mypy_cache

@@ -57,6 +57,7 @@ setup(
             "port_forwarding = microcosm_flask.forwarding:configure_port_forwarding",
             "request_context = microcosm_flask.context:configure_request_context",
             "route = microcosm_flask.routing:configure_route_decorator",
+            "route_metrics = microcosm_flask.metrics:RouteMetrics",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
             "uuid = microcosm_flask.converters:configure_uuid",
         ],
