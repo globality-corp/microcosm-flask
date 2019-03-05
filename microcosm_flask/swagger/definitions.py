@@ -26,8 +26,8 @@ from microcosm_flask.conventions.registry import get_qs_schema, get_request_sche
 from microcosm_flask.errors import ErrorContextSchema, ErrorSchema, SubErrorSchema
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation
+from microcosm_flask.swagger.api import build_parameter, iter_schemas
 from microcosm_flask.swagger.naming import operation_name, type_name
-from microcosm_flask.swagger.schema import build_parameter, iter_schemas
 
 
 logger = getLogger("microcosm_flask.swagger")
@@ -92,8 +92,11 @@ def add_definitions(definitions, operations):
 
     """
     for definition_schema in iter_definitions(definitions, operations):
+        if definition_schema is None:
+            continue
         if isinstance(definition_schema, str):
             continue
+
         for name, schema in iter_schemas(definition_schema):
             definitions.setdefault(name, swagger.Schema(schema))
 

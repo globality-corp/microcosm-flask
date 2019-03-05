@@ -41,6 +41,14 @@ setup(
     dependency_links=[
     ],
     entry_points={
+        "microcosm_flask.swagger.parameters": [
+            "decorated = microcosm_flask.swagger.parameters.decorated:DecoratedParameterBuilder",
+            "enum = microcosm_flask.swagger.parameters.enum:EnumParameterBuilder",
+            "list = microcosm_flask.swagger.parameters.list:ListParameterBuilder",
+            "nested = microcosm_flask.swagger.parameters.nested:NestedParameterBuilder",
+            "numeric = microcosm_flask.swagger.parameters.numeric:NumericParameterBuilder",
+            "timestamp = microcosm_flask.swagger.parameters.timestamp:TimestampParameterBuilder",
+        ],
         "microcosm.factories": [
             "app = microcosm_flask.factories:configure_flask_app",
             "audit = microcosm_flask.audit:configure_audit_decorator",
