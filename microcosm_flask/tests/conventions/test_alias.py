@@ -2,26 +2,20 @@
 Health check convention tests.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    has_key,
-    is_,
-)
 from json import loads
-from marshmallow import fields, Schema
+
+from hamcrest import assert_that, equal_to, has_key, is_
+from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 
-from microcosm_flask.namespaces import Namespace
 from microcosm_flask.conventions.alias import configure_alias
 from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.conventions.swagger import configure_swagger
+from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_path
-from microcosm_flask.tests.conventions.fixtures import (
-    Person,
-)
+from microcosm_flask.tests.conventions.fixtures import Person
 
 
 class PersonSchema(Schema):

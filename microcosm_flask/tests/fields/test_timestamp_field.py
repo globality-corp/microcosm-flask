@@ -2,13 +2,9 @@
 Test timestamp field.
 
 """
+from hamcrest import assert_that, contains, equal_to, is_
 from marshmallow import Schema
-from hamcrest import (
-    assert_that,
-    contains,
-    equal_to,
-    is_,
-)
+
 from microcosm_flask.fields import TimestampField
 
 

@@ -2,11 +2,7 @@
 Test swagger naming conventions.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, equal_to, is_
 
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation

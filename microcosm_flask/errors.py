@@ -4,7 +4,7 @@ Generalized error handling.
 """
 from logging import getLogger
 
-from marshmallow import fields, Schema
+from marshmallow import Schema, fields
 from werkzeug.exceptions import default_exceptions
 
 from microcosm_flask.conventions.encoding import dump_response_data

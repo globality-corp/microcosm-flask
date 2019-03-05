@@ -2,24 +2,13 @@
 Test JSON Schema generation.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
-
 from enum import Enum, IntEnum, unique
+
+from hamcrest import assert_that, equal_to, is_
 from marshmallow import Schema, fields
 
-from microcosm_flask.fields import (
-    EnumField,
-    TimestampField,
-)
-from microcosm_flask.swagger.schema import (
-    build_schema,
-    build_parameter,
-    swagger_field,
-)
+from microcosm_flask.fields import EnumField, TimestampField
+from microcosm_flask.swagger.schema import build_parameter, build_schema, swagger_field
 from microcosm_flask.tests.conventions.fixtures import NewPersonSchema
 
 

@@ -5,7 +5,7 @@ Expose/manage logging levels.
 from collections import namedtuple
 from logging import PlaceHolder, root
 
-from marshmallow import fields, Schema
+from marshmallow import Schema, fields
 from microcosm.api import defaults
 
 from microcosm_flask.conventions.base import Convention, EndpointDefinition

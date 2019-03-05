@@ -2,17 +2,14 @@
 Test query string list.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
 from enum import Enum
-from werkzeug.datastructures import ImmutableMultiDict
+
+from hamcrest import assert_that, equal_to, is_
 from marshmallow import Schema
 from marshmallow.fields import String
+from werkzeug.datastructures import ImmutableMultiDict
 
-from microcosm_flask.fields import QueryStringList, EnumField
+from microcosm_flask.fields import EnumField, QueryStringList
 
 
 class QueryStringListSchema(Schema):

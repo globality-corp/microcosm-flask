@@ -6,13 +6,7 @@ from logging import getLogger
 
 from marshmallow import fields
 
-from microcosm_flask.fields import (
-    EnumField,
-    LanguageField,
-    QueryStringList,
-    TimestampField,
-    URIField,
-)
+from microcosm_flask.fields import EnumField, LanguageField, QueryStringList, TimestampField, URIField
 from microcosm_flask.naming import name_for
 from microcosm_flask.swagger.naming import type_name
 

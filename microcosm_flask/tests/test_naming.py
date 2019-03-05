@@ -2,18 +2,14 @@
 Naming tests.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, equal_to, is_
 
 from microcosm_flask.naming import (
     collection_path_for,
     instance_path_for,
     name_for,
-    singleton_path_for,
     relation_path_for,
+    singleton_path_for,
 )
 
 

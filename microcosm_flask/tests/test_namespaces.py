@@ -2,15 +2,11 @@
 Namespace tests.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-    none,
-)
 from unittest.mock import Mock
 
+from hamcrest import assert_that, equal_to, is_, none
 from microcosm.api import create_object_graph
+
 from microcosm_flask.matchers import matches_uri
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation

@@ -2,13 +2,9 @@
 Linking tests.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
-
+from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
+
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation

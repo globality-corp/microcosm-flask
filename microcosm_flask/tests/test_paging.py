@@ -4,11 +4,11 @@ Paging tests.
 """
 from hamcrest import assert_that, equal_to, has_entry, is_, is_not
 from marshmallow import Schema
-
 from microcosm.api import create_object_graph
+
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import OffsetLimitPageSchema, OffsetLimitPage
+from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema
 
 
 def test_default_values_for_offset_limit_page():

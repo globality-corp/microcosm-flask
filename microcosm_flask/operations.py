@@ -6,7 +6,6 @@ allowing easy construction of links or audit trails for external consumption.
 
 """
 from collections import namedtuple
-
 from enum import Enum, unique
 
 

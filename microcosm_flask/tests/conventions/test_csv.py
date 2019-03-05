@@ -3,37 +3,28 @@ CRUD convention tests.
 
 """
 from csv import reader
+from enum import Enum
 from io import StringIO
 
-from enum import Enum
-
-from hamcrest import (
-    assert_that,
-    contains,
-    equal_to,
-    has_length,
-    is_,
-    starts_with,
-)
-
+from hamcrest import assert_that, contains, equal_to, has_length, is_, starts_with
 from marshmallow.fields import String
-
 from microcosm.api import create_object_graph
-from microcosm_flask.enums import ResponseFormats
-from microcosm_flask.conventions.crud import configure_crud
+
 from microcosm_flask.conventions.base import EndpointDefinition
+from microcosm_flask.conventions.crud import configure_crud
+from microcosm_flask.enums import ResponseFormats
+from microcosm_flask.fields import EnumField, QueryStringList
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPageSchema
-from microcosm_flask.fields import QueryStringList, EnumField
 from microcosm_flask.tests.conventions.fixtures import (
+    PERSON_ID_1,
     Address,
     AddressCSVSchema,
-    address_search,
-    person_search,
     Person,
     PersonCSVSchema,
-    PERSON_ID_1,
+    address_search,
+    person_search,
 )
 
 

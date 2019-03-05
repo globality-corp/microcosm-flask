@@ -2,11 +2,7 @@
 Operation tests.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, equal_to, is_
 
 from microcosm_flask.operations import Operation
 

@@ -1,12 +1,8 @@
 from collections import namedtuple
 from enum import Enum, unique
 
-from microcosm_flask.formatting import (
-    CSVFormatter,
-    JSONFormatter,
-    HTMLFormatter,
-    TextFormatter,
-)
+from microcosm_flask.formatting import CSVFormatter, HTMLFormatter, JSONFormatter, TextFormatter
+
 
 ResponseFormatSpec = namedtuple("ResponseFormatSpec", ["content_type", "formatter", "priority"])
 

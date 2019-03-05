@@ -4,13 +4,9 @@ Basic Auth tests.
 """
 from json import loads
 
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
-
+from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
+
 from microcosm_flask.basic_auth import encode_basic_auth
 
 

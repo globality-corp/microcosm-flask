@@ -2,7 +2,7 @@
 CSV response formatting.
 
 """
-from csv import writer, QUOTE_MINIMAL
+from csv import QUOTE_MINIMAL, writer
 from io import StringIO
 
 from microcosm_flask.formatting.base import BaseFormatter

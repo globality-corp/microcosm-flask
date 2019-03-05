@@ -1,15 +1,8 @@
-from hamcrest import (
-    assert_that,
-    calling,
-    raises,
-)
+from hamcrest import assert_that, calling, raises
 from marshmallow import Schema
 from microcosm.api import create_object_graph
 
-from microcosm_flask.conventions.base import (
-    EndpointDefinition,
-    RouteAlreadyRegisteredException,
-)
+from microcosm_flask.conventions.base import EndpointDefinition, RouteAlreadyRegisteredException
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation

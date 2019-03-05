@@ -1,24 +1,18 @@
-from hamcrest import (
-    assert_that,
-    contains,
-    has_entries,
-    equal_to,
-    is_,
-)
-
+from hamcrest import assert_that, contains, equal_to, has_entries, is_
 from microcosm.api import create_object_graph
+
+from microcosm_flask.conventions.crud import configure_crud
+from microcosm_flask.conventions.saved_search import configure_saved_search
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPageSchema
-from microcosm_flask.conventions.crud import configure_crud
-from microcosm_flask.conventions.saved_search import configure_saved_search
 from microcosm_flask.tests.conventions.fixtures import (
-    person_retrieve,
-    person_search,
+    PERSON_ID_1,
     Person,
     PersonLookupSchema,
     PersonSchema,
-    PERSON_ID_1,
+    person_retrieve,
+    person_search,
 )
 
 

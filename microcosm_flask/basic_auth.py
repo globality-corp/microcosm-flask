@@ -13,9 +13,9 @@ Usage:
 from base64 import b64encode
 
 from flask_basicauth import BasicAuth
+from microcosm.api import defaults
 from werkzeug.exceptions import Unauthorized
 
-from microcosm.api import defaults
 from microcosm_flask.conventions.encoding import with_headers
 
 

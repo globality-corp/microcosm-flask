@@ -2,14 +2,9 @@
 Test URI field.
 
 """
-from hamcrest import (
-    assert_that,
-    calling,
-    equal_to,
-    is_,
-    raises,
-)
+from hamcrest import assert_that, calling, equal_to, is_, raises
 from marshmallow import Schema, ValidationError
+
 from microcosm_flask.fields import URIField
 from microcosm_flask.fields.uri_field import normalize_uri
 

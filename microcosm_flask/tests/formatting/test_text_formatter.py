@@ -2,12 +2,7 @@
 Test text formatting.
 
 """
-from hamcrest import (
-    assert_that,
-    contains_inanyorder,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, contains_inanyorder, equal_to, is_
 
 from microcosm_flask.formatting import TextFormatter
 from microcosm_flask.tests.formatting.base import etag_for
