@@ -3,13 +3,9 @@ Query operation tests.
 
 """
 from json import loads
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
 
-from marshmallow import fields, Schema
+from hamcrest import assert_that, equal_to, is_
+from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 
 from microcosm_flask.conventions.encoding import dump_response_data, load_query_string_data

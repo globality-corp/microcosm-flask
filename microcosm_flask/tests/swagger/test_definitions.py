@@ -2,26 +2,22 @@
 Test Swagger definition construction.
 
 """
-from hamcrest import (
-    assert_that,
-    equal_to,
-    is_,
-)
-
+from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
+
 from microcosm_flask.conventions.crud import configure_crud
-from microcosm_flask.operations import Operation
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.namespaces import Namespace
+from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_swagger
 from microcosm_flask.tests.conventions.fixtures import (
     NewPersonSchema,
-    person_create,
-    person_update,
     Person,
     PersonSchema,
     UpdatePersonSchema,
+    person_create,
+    person_update,
 )
 
 

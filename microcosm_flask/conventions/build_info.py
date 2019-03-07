@@ -3,6 +3,7 @@ Serve build information.
 
 """
 from microcosm.api import defaults
+
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response

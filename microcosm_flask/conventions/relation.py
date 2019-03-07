@@ -6,6 +6,7 @@ a subject and an object.
 
 """
 from functools import wraps
+
 from inflection import pluralize
 from marshmallow import Schema
 
@@ -20,7 +21,7 @@ from microcosm_flask.conventions.encoding import (
 )
 from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import identity, OffsetLimitPage
+from microcosm_flask.paging import OffsetLimitPage, identity
 
 
 class RelationConvention(Convention):

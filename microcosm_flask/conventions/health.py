@@ -6,6 +6,7 @@ using HTTP 200/503 status codes to indicate healthiness.
 
 """
 from distutils.util import strtobool
+
 from microcosm.api import defaults
 
 from microcosm_flask.audit import skip_logging

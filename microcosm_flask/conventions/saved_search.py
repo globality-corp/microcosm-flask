@@ -3,17 +3,14 @@ Saved search convention.
 
 """
 from functools import wraps
+
 from inflection import pluralize
 
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.encoding import (
-    dump_response_data,
-    load_request_data,
-    merge_data,
-)
+from microcosm_flask.conventions.encoding import dump_response_data, load_request_data, merge_data
 from microcosm_flask.conventions.registry import request, response
 from microcosm_flask.operations import Operation
-from microcosm_flask.paging import identity, OffsetLimitPage
+from microcosm_flask.paging import OffsetLimitPage, identity
 
 
 class SavedSearchConvention(Convention):

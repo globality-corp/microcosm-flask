@@ -37,8 +37,8 @@ Typical Usage:
     return dump_response_Data(paginated_list_schema, paginated_list, headers=headers)
 
 """
-from marshmallow import fields, Schema
 from flask import request
+from marshmallow import Schema, fields
 
 from microcosm_flask.conventions.encoding import encode_count_header, load_query_string_data
 from microcosm_flask.linking import Link, Links

@@ -3,13 +3,14 @@ A discovery endpoint provides links to other endpoints.
 
 """
 from microcosm.api import defaults
+
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
-from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema
 from microcosm_flask.operations import Operation
+from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema
 
 
 def iter_links(operations, page):

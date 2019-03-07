@@ -3,12 +3,7 @@ Factory tests.
 
 """
 from flask import Flask
-from hamcrest import (
-    assert_that,
-    instance_of,
-    is_,
-)
-
+from hamcrest import assert_that, instance_of, is_
 from microcosm.api import create_object_graph
 
 

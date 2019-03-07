@@ -2,9 +2,10 @@
 Support for registering function metadata.
 
 """
-from microcosm_flask.namespaces import Namespace
 from werkzeug.exceptions import InternalServerError
 from werkzeug.routing import parse_rule
+
+from microcosm_flask.namespaces import Namespace
 
 
 REQUEST = "__request__"

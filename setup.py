@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
+
 project = "microcosm-flask"
-version = "1.20.0"
+version = "1.21.0"
+
 
 setup(
     name=project,
@@ -17,29 +19,36 @@ setup(
     python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
-        "enum34>=1.1.6",
-        "Flask>=0.2.12",
+        "Flask>=1.0.2",
         "Flask-BasicAuth>=0.2.0",
-        "Flask-Cors>=3.0.3",
+        "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
-        "marshmallow>=2.15.0",
-        "microcosm>=2.4.1",
-        "microcosm-logging>=1.3.0",
-        "openapi>=1.0.0",
-        "python-dateutil>=2.6.1",
-        "PyYAML>=3.12",
-        "rfc3986>=1.1.0",
+        "marshmallow>=2.18.1",
+        "microcosm>=2.6.0",
+        "microcosm-logging>=1.5.0",
+        "openapi>=1.1.0",
+        "python-dateutil>=2.7.3",
+        "PyYAML>=3.13",
+        "rfc3986>=1.2.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
         "spooky": "spooky>=2.0.0",
     },
     setup_requires=[
-        "nose>=1.3.6",
+        "nose>=1.3.7",
     ],
     dependency_links=[
     ],
     entry_points={
+        "microcosm_flask.swagger.parameters": [
+            "decorated = microcosm_flask.swagger.parameters.decorated:DecoratedParameterBuilder",
+            "enum = microcosm_flask.swagger.parameters.enum:EnumParameterBuilder",
+            "list = microcosm_flask.swagger.parameters.list:ListParameterBuilder",
+            "nested = microcosm_flask.swagger.parameters.nested:NestedParameterBuilder",
+            "numeric = microcosm_flask.swagger.parameters.numeric:NumericParameterBuilder",
+            "timestamp = microcosm_flask.swagger.parameters.timestamp:TimestampParameterBuilder",
+        ],
         "microcosm.factories": [
             "app = microcosm_flask.factories:configure_flask_app",
             "audit = microcosm_flask.audit:configure_audit_decorator",
@@ -63,6 +72,6 @@ setup(
     },
     tests_require=[
         "coverage>=3.7.1",
-        "PyHamcrest>=1.8.5",
+        "PyHamcrest>=1.9.0",
     ],
 )

@@ -3,6 +3,7 @@ Alias convention tests.
 
 """
 from io import BytesIO
+from json import loads
 from uuid import uuid4
 
 from hamcrest import (
@@ -11,21 +12,20 @@ from hamcrest import (
     assert_that,
     contains,
     equal_to,
-    has_entry,
     has_entries,
+    has_entry,
     has_item,
     has_key,
     is_,
     is_not,
 )
-from json import loads
-from marshmallow import fields, Schema
+from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 
-from microcosm_flask.namespaces import Namespace
 from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.swagger import configure_swagger
 from microcosm_flask.conventions.upload import configure_upload
+from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_path
 from microcosm_flask.tests.conventions.fixtures import Person

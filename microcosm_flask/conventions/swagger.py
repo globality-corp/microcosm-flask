@@ -5,8 +5,8 @@ Exposes swagger definitions for matching operations.
 
 """
 from flask import g
-
 from microcosm.api import defaults
+
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response
 from microcosm_flask.conventions.registry import iter_endpoints

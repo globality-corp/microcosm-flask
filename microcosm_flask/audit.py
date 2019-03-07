@@ -6,21 +6,22 @@ from collections import namedtuple
 from contextlib import contextmanager
 from distutils.util import strtobool
 from functools import wraps
-from logging import DEBUG, getLogger
 from json import loads
+from logging import DEBUG, getLogger
 from traceback import format_exc
 from uuid import UUID
 
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults
+from microcosm_logging.timing import elapsed_time
+
 from microcosm_flask.errors import (
     extract_context,
     extract_error_message,
     extract_include_stack_trace,
     extract_status_code,
 )
-from microcosm_logging.timing import elapsed_time
 
 
 DEFAULT_INCLUDE_REQUEST_BODY = 400

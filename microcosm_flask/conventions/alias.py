@@ -5,11 +5,9 @@ Conventions for aliasing endpoints.
 from functools import wraps
 
 from flask import redirect
+
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.encoding import (
-    load_query_string_data,
-    merge_data,
-)
+from microcosm_flask.conventions.encoding import load_query_string_data, merge_data
 from microcosm_flask.conventions.registry import qs
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation

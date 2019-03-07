@@ -6,6 +6,7 @@ from functools import wraps
 
 from inflection import pluralize
 from marshmallow import Schema
+
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import (
     dump_response_data,

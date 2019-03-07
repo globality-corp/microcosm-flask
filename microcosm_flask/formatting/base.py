@@ -4,14 +4,16 @@ Response formatting base class.
 """
 from abc import ABCMeta, abstractmethod
 from binascii import hexlify
-try:
-    import spooky
-except ImportError:
-    spooky = None
 
 from flask import Response
 from werkzeug.http import quote_etag
 from werkzeug.utils import get_content_type
+
+
+try:
+    import spooky
+except ImportError:
+    spooky = None
 
 
 class BaseFormatter(metaclass=ABCMeta):

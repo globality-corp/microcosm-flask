@@ -2,12 +2,7 @@
 Test CSV formatting.
 
 """
-from hamcrest import (
-    assert_that,
-    contains_inanyorder,
-    equal_to,
-    is_,
-)
+from hamcrest import assert_that, contains_inanyorder, equal_to, is_
 
 from microcosm_flask.formatting import CSVFormatter
 from microcosm_flask.tests.conventions.fixtures import PersonCSVSchema
@@ -49,7 +44,7 @@ def test_make_response_tuples():
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
             md5_hash='"eb8bde290633452402b37aa580ca30e9"',
-            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+            spooky_hash='"63b989eb36315937ef68206fb9fc3104"',
         )),
     ))
 
@@ -69,7 +64,7 @@ def test_make_response_list():
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
             md5_hash='"eb8bde290633452402b37aa580ca30e9"',
-            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+            spooky_hash='"63b989eb36315937ef68206fb9fc3104"',
         )),
     ))
 

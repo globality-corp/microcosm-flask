@@ -4,15 +4,9 @@ Error handling tests.
 """
 from json import loads
 
-from hamcrest import (
-    assert_that,
-    equal_to,
-    has_entry,
-    is_,
-)
-from werkzeug.exceptions import InternalServerError, NotFound, HTTPException
-
+from hamcrest import assert_that, equal_to, has_entry, is_
 from microcosm.api import create_object_graph
+from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 
 
 class MyUnexpectedError(Exception):

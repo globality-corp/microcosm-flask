@@ -7,7 +7,7 @@ on a URI that is accessible to other services. This can be solved by configuring
 service URIs... or by resolving URIs using X-Forwarded headers.
 
 """
-from flask import request, _request_ctx_stack
+from flask import _request_ctx_stack, request  # type: ignore
 
 from microcosm_flask.session import register_session_factory
 

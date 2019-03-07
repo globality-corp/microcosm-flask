@@ -8,6 +8,7 @@ locally with realistic config.
 from json import dumps, loads
 
 from microcosm.loaders.compose import PartitioningLoader
+
 from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import make_response
