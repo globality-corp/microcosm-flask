@@ -14,7 +14,7 @@
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2.0.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2019.8.2548
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -28,7 +28,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2.0.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2019.8.2548
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -89,7 +89,6 @@ jobs:
             eval $(aws ecr get-login --no-include-email)
             docker pull ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1}
             docker run -it  --volumes-from service_tests ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1} test
-
   lint:
     <<: *defaults
 
@@ -108,7 +107,6 @@ jobs:
             docker pull ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1}
             docker run -it --volumes-from service_tests ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1} lint
 
-
   typehinting:
     <<: *defaults
 
@@ -126,7 +124,6 @@ jobs:
             eval $(aws ecr get-login --no-include-email)
             docker pull ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1}
             docker run -it --volumes-from service_tests ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1} typehinting
-
   deploy_pypi:
     <<: *defaults
     steps:
@@ -195,4 +192,5 @@ workflows:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*/
+
 
