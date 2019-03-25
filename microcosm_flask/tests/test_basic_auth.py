@@ -34,7 +34,7 @@ def test_basic_auth():
     data = loads(response.get_data().decode("utf-8"))
     assert_that(data, is_(equal_to({
         "code": 401,
-        "message": "The server could not verify that you are authorized to access the URL requested.  "
+        "message": "The server could not verify that you are authorized to access the URL requested. "
                    "You either supplied the wrong credentials (e.g. a bad password), or your browser "
                    "doesn't understand how to supply the credentials required.",
         "retryable": False,
@@ -63,7 +63,7 @@ def test_basic_auth_default_realm():
     data = loads(response.get_data().decode("utf-8"))
     assert_that(data, is_(equal_to({
         "code": 401,
-        "message": "The server could not verify that you are authorized to access the URL requested.  "
+        "message": "The server could not verify that you are authorized to access the URL requested. "
                    "You either supplied the wrong credentials (e.g. a bad password), or your browser "
                    "doesn't understand how to supply the credentials required.",
         "retryable": False,

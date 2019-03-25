@@ -64,7 +64,7 @@ def test_werkzeug_http_error():
     data = loads(response.get_data().decode("utf-8"))
     assert_that(data, is_(equal_to({
         "code": 404,
-        "message": "The requested URL was not found on the server.  "
+        "message": "The requested URL was not found on the server. "
                    "If you entered the URL manually please check your spelling and try again.",
         "retryable": False,
         "context": {"errors": []},
@@ -85,7 +85,7 @@ def test_no_route():
     data = loads(response.get_data().decode("utf-8"))
     assert_that(data, is_(equal_to({
         "code": 404,
-        "message": "The requested URL was not found on the server.  "
+        "message": "The requested URL was not found on the server. "
                    "If you entered the URL manually please check your spelling and try again.",
         "retryable": False,
         "context": {"errors": []},
