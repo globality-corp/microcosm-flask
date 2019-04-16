@@ -1,4 +1,10 @@
-from hamcrest import assert_that, contains, equal_to, has_entries, is_
+from hamcrest import (
+    assert_that,
+    contains,
+    equal_to,
+    has_entries,
+    is_,
+)
 from microcosm.api import create_object_graph
 
 from microcosm_flask.conventions.crud import configure_crud

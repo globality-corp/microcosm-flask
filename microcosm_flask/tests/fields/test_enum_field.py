@@ -4,7 +4,12 @@ Test fields.
 """
 from enum import Enum, IntEnum, unique
 
-from hamcrest import assert_that, equal_to, has_entries, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    is_,
+)
 from marshmallow import Schema
 
 from microcosm_flask.fields import EnumField

@@ -2,7 +2,12 @@
 Cloning resources.
 
 """
-from marshmallow import Schema, fields, post_load, pre_dump
+from marshmallow import (
+    Schema,
+    fields,
+    post_load,
+    pre_dump,
+)
 
 
 class EdgeSchema(Schema):

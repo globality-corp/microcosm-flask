@@ -2,7 +2,12 @@
 Error handling tests.
 
 """
-from hamcrest import assert_that, equal_to, has_entry, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entry,
+    is_,
+)
 from microcosm.api import create_object_graph
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
 

@@ -5,7 +5,12 @@ Identifier type may be overridden.
 from hashlib import sha256
 from json import dumps, loads
 
-from hamcrest import assert_that, contains_inanyorder, equal_to, is_
+from hamcrest import (
+    assert_that,
+    contains_inanyorder,
+    equal_to,
+    is_,
+)
 from microcosm.api import binding, create_object_graph
 from microcosm.loaders import load_from_dict
 from werkzeug.routing import BaseConverter
@@ -14,7 +19,12 @@ from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.tests.conventions.fixtures import PERSON_1, PERSON_2, Person, PersonSchema
+from microcosm_flask.tests.conventions.fixtures import (
+    PERSON_1,
+    PERSON_2,
+    Person,
+    PersonSchema,
+)
 
 
 class ContentBasedAddressConverter(BaseConverter):

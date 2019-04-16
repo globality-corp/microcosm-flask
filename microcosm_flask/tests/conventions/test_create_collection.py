@@ -1,6 +1,15 @@
 from json import dumps, loads
 
-from hamcrest import all_of, assert_that, equal_to, has_entry, has_items, has_key, is_, is_not
+from hamcrest import (
+    all_of,
+    assert_that,
+    equal_to,
+    has_entry,
+    has_items,
+    has_key,
+    is_,
+    is_not,
+)
 from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 

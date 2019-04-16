@@ -4,7 +4,13 @@ Logging level test convention.
 """
 from json import loads
 
-from hamcrest import assert_that, equal_to, has_entries, has_items, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    has_items,
+    is_,
+)
 from microcosm.api import create_object_graph
 
 

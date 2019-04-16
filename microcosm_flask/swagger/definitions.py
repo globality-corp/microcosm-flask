@@ -22,7 +22,11 @@ from urllib.parse import unquote
 from openapi import model as swagger
 from werkzeug.routing import BuildError
 
-from microcosm_flask.conventions.registry import get_qs_schema, get_request_schema, get_response_schema
+from microcosm_flask.conventions.registry import (
+    get_qs_schema,
+    get_request_schema,
+    get_response_schema,
+)
 from microcosm_flask.errors import ErrorContextSchema, ErrorSchema, SubErrorSchema
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation
