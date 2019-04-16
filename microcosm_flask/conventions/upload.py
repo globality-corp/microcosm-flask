@@ -14,7 +14,11 @@ from werkzeug.exceptions import BadRequest
 from werkzeug.utils import secure_filename
 
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.encoding import dump_response_data, load_query_string_data, merge_data
+from microcosm_flask.conventions.encoding import (
+    dump_response_data,
+    load_query_string_data,
+    merge_data,
+)
 from microcosm_flask.conventions.registry import qs, response
 from microcosm_flask.operations import Operation
 

@@ -4,7 +4,12 @@ CRUD convention tests.
 """
 from enum import Enum
 
-from hamcrest import assert_that, contains_inanyorder, equal_to, is_
+from hamcrest import (
+    assert_that,
+    contains_inanyorder,
+    equal_to,
+    is_,
+)
 from marshmallow.fields import String
 from microcosm.api import create_object_graph
 

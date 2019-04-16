@@ -7,11 +7,22 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 
 from flask import g
-from hamcrest import assert_that, equal_to, is_, is_not, none
+from hamcrest import (
+    assert_that,
+    equal_to,
+    is_,
+    is_not,
+    none,
+)
 from microcosm.api import create_object_graph
 from werkzeug.exceptions import NotFound
 
-from microcosm_flask.audit import AuditOptions, RequestInfo, logging_levels, should_skip_logging
+from microcosm_flask.audit import (
+    AuditOptions,
+    RequestInfo,
+    logging_levels,
+    should_skip_logging,
+)
 
 
 def test_func(*args, **kwargs):

@@ -4,7 +4,12 @@ Health check convention tests.
 """
 from json import loads
 
-from hamcrest import assert_that, equal_to, has_key, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_key,
+    is_,
+)
 from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 

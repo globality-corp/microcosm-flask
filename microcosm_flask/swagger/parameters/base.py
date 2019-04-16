@@ -1,5 +1,13 @@
 from abc import ABC
-from typing import Any, Callable, Iterable, Mapping, Optional, Sequence, Tuple
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+)
 
 from marshmallow import Schema
 from marshmallow.fields import Field

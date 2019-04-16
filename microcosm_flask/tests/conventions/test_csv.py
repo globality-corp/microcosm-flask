@@ -6,7 +6,14 @@ from csv import reader
 from enum import Enum
 from io import StringIO
 
-from hamcrest import assert_that, contains, equal_to, has_length, is_, starts_with
+from hamcrest import (
+    assert_that,
+    contains,
+    equal_to,
+    has_length,
+    is_,
+    starts_with,
+)
 from marshmallow.fields import String
 from microcosm.api import create_object_graph
 
