@@ -7,7 +7,7 @@ class EncryptableCRUDStoreAdapter(CRUDStoreAdapter):
 
     """
 
-    def update(self, **kwargs):
+    def update_and_reencrypt(self, **kwargs):
         """
         Support re-encryption by enforcing that every update triggers a
         new encryption call, even if the the original call does not update
