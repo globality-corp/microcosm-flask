@@ -2,7 +2,13 @@
 Paging tests.
 
 """
-from hamcrest import assert_that, equal_to, has_entry, is_, is_not
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entry,
+    is_,
+    is_not,
+)
 from marshmallow import Schema
 from microcosm.api import create_object_graph
 

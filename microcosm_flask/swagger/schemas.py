@@ -2,7 +2,13 @@
 Generate JSON Schema for Marshmallow schemas.
 
 """
-from typing import Any, Callable, Iterable, Mapping, Tuple
+from typing import (
+    Any,
+    Callable,
+    Iterable,
+    Mapping,
+    Tuple,
+)
 
 from marshmallow import Schema
 from marshmallow.fields import Field, List, Nested

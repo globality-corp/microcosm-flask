@@ -2,7 +2,12 @@
 API interfaces for swagger operations.
 
 """
-from typing import Any, Iterable, Mapping, Tuple
+from typing import (
+    Any,
+    Iterable,
+    Mapping,
+    Tuple,
+)
 
 from marshmallow import Schema
 from marshmallow.fields import Field

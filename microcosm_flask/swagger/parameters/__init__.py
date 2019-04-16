@@ -1,6 +1,11 @@
 from functools import lru_cache
 from pkg_resources import iter_entry_points
-from typing import Any, List, Mapping, Type
+from typing import (
+    Any,
+    List,
+    Mapping,
+    Type,
+)
 
 from marshmallow.fields import Field
 

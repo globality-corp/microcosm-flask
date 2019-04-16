@@ -4,7 +4,12 @@ Configuration discovery convention tests.
 """
 from json import loads
 
-from hamcrest import assert_that, equal_to, has_entries, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    is_,
+)
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
 from microcosm.loaders.compose import load_config_and_secrets
