@@ -36,12 +36,13 @@ class TestCRUD:
         uri = f"/api/v1/encryptable/{encryptable_id1}"
         request_data = {
             "value": "Chair",
+            "otherValue": "Apple",
         }
         response = self.client.patch(uri, json=request_data)
         self.assert_response(response, 200, {
             "id": str(encryptable_id1),
             "value": "Chair",
-            "otherValue": None,
+            "otherValue": "Apple",
         })
 
     def test_update_to_null(self):
