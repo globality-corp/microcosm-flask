@@ -57,3 +57,13 @@ class TestCRUD:
             "value": None,
             "otherValue": None,
         })
+
+    def test_empty_update(self):
+        encryptable_id1 = uuid4()
+        uri = f"/api/v1/encryptable/{encryptable_id1}"
+        response = self.client.patch(uri, json={})
+        self.assert_response(response, 200, {
+            "id": str(encryptable_id1),
+            "value": "current_value",
+            "otherValue": None,
+        })
