@@ -14,9 +14,9 @@ from uuid import UUID
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults
-from microcosm_flask.context import make_get_request_context, ALL_HEADER_LIST
 from microcosm_logging.timing import elapsed_time
 
+from microcosm_flask.context import ALL_HEADER_LIST, make_get_request_context
 from microcosm_flask.errors import (
     extract_context,
     extract_error_message,

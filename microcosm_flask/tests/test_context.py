@@ -20,6 +20,7 @@ def test_request_context():
         with graph.opaque.initialize(make_get_request_context()):
             assert_that(graph.opaque["X-Request-Id"], is_(equal_to("foo")))
 
+
 def test_make_get_request_context_respects_passed_headers():
     graph = create_object_graph(name="example", testing=True)
     graph.use(

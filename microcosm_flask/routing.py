@@ -7,8 +7,9 @@ Intercepts Flask's normal route registration to inject conventions.
 from flask_cors import cross_origin
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
-from microcosm_flask.context import make_get_request_context
 from microcosm_logging.decorators import context_logger
+
+from microcosm_flask.context import make_get_request_context
 
 
 @defaults(

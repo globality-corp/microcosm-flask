@@ -1,5 +1,6 @@
 from flask import request
 
+
 # This is the total set of Globality-proprietary headers
 ALL_HEADER_LIST = (
     "X-Request",  # These are values *invariant* to a user request, e.g. user-id, request-id, etc.
