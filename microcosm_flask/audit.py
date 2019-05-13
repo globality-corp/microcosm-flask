@@ -14,6 +14,7 @@ from uuid import UUID
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults
+from microcosm_flask.context import get_request_context, ALL_HEADER_LIST
 from microcosm_logging.timing import elapsed_time
 
 from microcosm_flask.errors import (
@@ -111,14 +112,14 @@ class RequestInfo:
     Capture of key information for requests.
 
     """
-    def __init__(self, options, func, request_context):
+    def __init__(self, options, func, request_info_func=get_request_context):
         self.options = options
         self.operation = request.endpoint
         self.func = func.__name__
         self.method = request.method
         self.args = request.args
         self.view_args = request.view_args
-        self.request_context = request_context
+        self.request_context = request_info_func
         self.timing = dict()
 
         self.error = None
@@ -136,6 +137,10 @@ class RequestInfo:
             method=self.method,
             **self.timing
         )
+
+        if self.request_context is not None:
+            dct.update(self.request_context())
+
         if self.options.include_path and self.view_args:
             dct.update({
                 key: value
@@ -147,9 +152,6 @@ class RequestInfo:
                 for key, values in self.args.lists()
                 if len(values) == 1 and is_uuid(values[0])
             })
-
-        if self.request_context is not None:
-            dct.update(self.request_context())
 
         if self.success is True:
             dct.update(
@@ -306,14 +308,14 @@ class RequestInfo:
             dct["{}_id".format(underscore(parts[1]))] = value
 
 
-def _audit_request(options, func, request_context, *args, **kwargs):  # noqa: C901
+def _audit_request(options, func, *args, **kwargs):  # noqa: C901
     """
     Run a request function under audit.
 
     """
     logger = getLogger("audit")
 
-    request_info = RequestInfo(options, func, request_context)
+    request_info = RequestInfo(options, func)
     response = None
 
     request_info.capture_request()
@@ -382,6 +384,6 @@ def configure_audit_decorator(graph):
                 include_path=include_path,
                 include_query_string=include_query_string,
             )
-            return _audit_request(options, func, graph.request_context, *args, **kwargs)
+            return _audit_request(options, func, *args, **kwargs)
         return wrapper
     return _audit

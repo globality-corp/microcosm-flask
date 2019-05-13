@@ -63,7 +63,6 @@ setup(
             "landing_convention = microcosm_flask.conventions.landing:configure_landing",
             "logging_level_convention = microcosm_flask.conventions.logging_level:configure_logging_level",
             "port_forwarding = microcosm_flask.forwarding:configure_port_forwarding",
-            "request_context = microcosm_flask.context:configure_request_context",
             "route = microcosm_flask.routing:configure_route_decorator",
             "route_metrics = microcosm_flask.metrics:RouteMetrics",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
