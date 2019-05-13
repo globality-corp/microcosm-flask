@@ -14,7 +14,7 @@ from uuid import UUID
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults
-from microcosm_flask.context import get_request_context, ALL_HEADER_LIST
+from microcosm_flask.context import make_get_request_context, ALL_HEADER_LIST
 from microcosm_logging.timing import elapsed_time
 
 from microcosm_flask.errors import (
@@ -112,7 +112,12 @@ class RequestInfo:
     Capture of key information for requests.
 
     """
-    def __init__(self, options, func, request_info_func=get_request_context):
+    def __init__(
+        self,
+        options,
+        func,
+        request_info_func=make_get_request_context(ALL_HEADER_LIST),
+    ):
         self.options = options
         self.operation = request.endpoint
         self.func = func.__name__

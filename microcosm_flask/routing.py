@@ -7,7 +7,7 @@ Intercepts Flask's normal route registration to inject conventions.
 from flask_cors import cross_origin
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
-from microcosm_flask.context import get_request_context
+from microcosm_flask.context import make_get_request_context
 from microcosm_logging.decorators import context_logger
 
 
@@ -61,13 +61,13 @@ def configure_route_decorator(graph):
 
             if enable_context_logger and ns.controller is not None:
                 func = context_logger(
-                    get_request_context,
+                    make_get_request_context(),
                     func,
                     parent=ns.controller,
                 )
 
             # set the opaque component data_func to look at the flask request context
-            func = graph.opaque.initialize(get_request_context)(func)
+            func = graph.opaque.initialize(make_get_request_context())(func)
 
             if graph.route_metrics.enabled:
                 func = graph.route_metrics(endpoint)(func)
