@@ -1,13 +1,14 @@
 from flask import request
 
 
-# This is the total set of Globality-proprietary headers
+# Special headers reserved for use in `microcosm-` based applications:
 ALL_HEADER_LIST = (
-    "X-Request",  # These are values *invariant* to a user request, e.g. user-id, request-id, etc.
+    "X-Request",  # These are values *invariant* to a user request from UI
+                  # perspective, e.g. user-id, request-id, etc.
     "X-Client",  # These are values *specific* to a single HTTP Client call to a web service
 )
 
-# This is the list of internal Globality Headers we use which are safe for logging.
+# This is the list of internal Headers which should always be logged.
 LOGGABLE_HEADER_WHITE_LIST = ("X-Request")
 
 
