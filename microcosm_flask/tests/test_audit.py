@@ -38,7 +38,6 @@ class TestRequestInfo:
         self.graph = create_object_graph("example", testing=True, debug=True)
         self.graph.use(
             "flask",
-            "request_context",
         )
 
         self.graph.flask.route("/")(test_func)
@@ -74,7 +73,7 @@ class TestRequestInfo:
 
         """
         with self.graph.flask.test_request_context("/", headers={"X-Request-Id": "request-id"}):
-            request_info = RequestInfo(self.options, test_func, self.graph.request_context)
+            request_info = RequestInfo(self.options, test_func)
             dct = request_info.to_dict()
             request_id = dct.pop("X-Request-Id")
             assert_that(request_id, is_(equal_to("request-id")))
