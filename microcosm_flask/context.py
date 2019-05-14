@@ -5,7 +5,7 @@ from flask import request
 ALL_HEADER_LIST = (
     "X-Request",  # These are values *invariant* to a user request from UI
                   # perspective, e.g. user-id, request-id, etc.
-    "X-Client",  # These are values *specific* to a single HTTP Client call to a web service
+    "X-Client",   # These are values *specific* to a single HTTP Client call to a web service
 )
 
 # This is the list of internal Headers which should always be logged.
