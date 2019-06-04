@@ -9,8 +9,6 @@ from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
 from microcosm_logging.decorators import context_logger
 
-from microcosm_flask.context import make_get_request_context
-
 
 @defaults(
     converters=[
@@ -62,13 +60,13 @@ def configure_route_decorator(graph):
 
             if enable_context_logger and ns.controller is not None:
                 func = context_logger(
-                    make_get_request_context(),
+                    graph.request_context,
                     func,
                     parent=ns.controller,
                 )
 
             # set the opaque component data_func to look at the flask request context
-            func = graph.opaque.initialize(make_get_request_context())(func)
+            func = graph.opaque.initialize(graph.request_context)(func)
 
             if graph.route_metrics.enabled:
                 func = graph.route_metrics(endpoint)(func)
