@@ -13,7 +13,8 @@ from uuid import UUID
 
 from flask import current_app, g, request
 from inflection import underscore
-from microcosm.api import defaults
+from microcosm.api import defaults, typed
+from microcosm.config.types import boolean
 from microcosm_logging.timing import elapsed_time
 
 from microcosm_flask.errors import (
@@ -33,6 +34,7 @@ AuditOptions = namedtuple("AuditOptions", [
     "include_response_body",
     "include_path",
     "include_query_string",
+    "log_as_debug",
 ])
 
 
@@ -183,7 +185,10 @@ class RequestInfo:
                 logger.warning(dct)
         else:
             # usually log at INFO; a raised exception can be an error or expected behavior (e.g. 404)
-            logger.info(self.to_dict())
+            if self.options.log_as_debug:
+                logger.debug(self.to_dict())
+            else:
+                logger.info(self.to_dict())
 
     def capture_request(self):
         if not current_app.debug:
@@ -353,10 +358,11 @@ def parse_response(response):
 
 
 @defaults(
-    include_request_body=DEFAULT_INCLUDE_REQUEST_BODY,
-    include_response_body=DEFAULT_INCLUDE_RESPONSE_BODY,
-    include_path="true",
-    include_query_string="true",
+    include_request_body=typed(type=int, default_value=DEFAULT_INCLUDE_REQUEST_BODY),
+    include_response_body=typed(type=int, default_value=DEFAULT_INCLUDE_RESPONSE_BODY),
+    include_path=typed(type=boolean),
+    include_query_string=typed(type=boolean),
+    log_as_debug=typed(type=boolean, default_value=False),
 )
 def configure_audit_decorator(graph):
     """
@@ -368,19 +374,15 @@ def configure_audit_decorator(graph):
         def login(username, password):
             ...
     """
-    include_request_body = int(graph.config.audit.include_request_body)
-    include_response_body = int(graph.config.audit.include_response_body)
-    include_path = strtobool(graph.config.audit.include_path)
-    include_query_string = strtobool(graph.config.audit.include_query_string)
-
     def _audit(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             options = AuditOptions(
-                include_request_body=include_request_body,
-                include_response_body=include_response_body,
-                include_path=include_path,
-                include_query_string=include_query_string,
+                include_request_body=graph.config.audit.include_request_body,
+                include_response_body=graph.config.audit.include_response_body,
+                include_path=graph.config.audit.include_path,
+                include_query_string=graph.config.audit.include_query_string,
+                log_as_debug=graph.config.audit.log_as_debug,
             )
             return _audit_request(options, func, graph.request_context, *args, **kwargs)
         return wrapper
