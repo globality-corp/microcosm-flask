@@ -184,11 +184,12 @@ class RequestInfo:
             else:
                 logger.warning(dct)
         else:
-            # usually log at INFO; a raised exception can be an error or expected behavior (e.g. 404)
-            if self.options.log_as_debug:
-                logger.debug(self.to_dict())
-            else:
+            # usually log at INFO; a raised exception can be an error or
+            # expected behavior (e.g. 404)
+            if not self.options.log_as_debug:
                 logger.info(self.to_dict())
+            else:
+                logger.debug(self.to_dict())
 
     def capture_request(self):
         if not current_app.debug:
