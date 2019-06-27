@@ -49,6 +49,7 @@ class TestRequestInfo:
             include_response_body=True,
             include_path=True,
             include_query_string=True,
+            log_as_debug=False,
         )
 
     def test_base_info(self):
@@ -302,6 +303,32 @@ class TestRequestInfo:
                 method="GET",
                 func="test_func",
             ))
+            logger.warning.assert_not_called()
+
+    def test_log_debug(self):
+        """
+        Log at DEBUG when configured to.
+
+        """
+        debug_options = AuditOptions(
+            include_request_body=True,
+            include_response_body=True,
+            include_path=True,
+            include_query_string=True,
+            log_as_debug=True,
+        )
+
+        with self.graph.flask.test_request_context("/"):
+            request_info = RequestInfo(debug_options, test_func, None)
+
+            logger = MagicMock()
+            request_info.log(logger)
+            logger.debug.assert_called_with(dict(
+                operation="test_func",
+                method="GET",
+                func="test_func",
+            ))
+            logger.info.assert_not_called()
             logger.warning.assert_not_called()
 
     def test_log_path(self):
