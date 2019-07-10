@@ -1,11 +1,10 @@
 from flask import request
 from microcosm.api import defaults
+from microcosm.tracing import TRACE_ID, SPAN_NAME
 
 
 X_REQUEST = "X-Request"
-JAEGER_TRACE_ID = "Uber-Trace-Id"
-
-HEADER_PREFIXES = [X_REQUEST, JAEGER_TRACE_ID]
+HEADER_PREFIXES = [X_REQUEST, TRACE_ID]
 
 
 def context_wrapper(include_header_prefixes):
@@ -14,11 +13,11 @@ def context_wrapper(include_header_prefixes):
             header: value
             for header, value in request.headers.items()
             if any([
-                header.startswith(prefix)
+                header.lower().startswith(prefix.lower())
                 for prefix in include_header_prefixes
             ])
         }
-        context["span_name"] = str(request)
+        context[SPAN_NAME] = str(request)
         return context
     return retrieve_context
 
