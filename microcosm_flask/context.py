@@ -3,15 +3,22 @@ from microcosm.api import defaults
 
 
 X_REQUEST = "X-Request"
+JAEGER_TRACE_ID = "Uber-Trace-Id"
+
+HEADER_PREFIXES = [X_REQUEST, JAEGER_TRACE_ID]
 
 
 def context_wrapper(include_header_prefix):
     def retrieve_context():
-        return {
+        context = {
             header: value
             for header, value in request.headers.items()
-            if header.startswith(include_header_prefix)
+            if any([
+                header.startswith(prefix)
+                for prefix in HEADER_PREFIXES
+            ])
         }
+        return context
 
     return retrieve_context
 
