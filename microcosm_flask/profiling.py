@@ -3,6 +3,8 @@ from os import makedirs
 from os.path import exists, expanduser, join
 
 from flask import g
+
+
 try:
     from pyinstrument import Profiler
 except ImportError:
