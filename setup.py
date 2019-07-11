@@ -30,11 +30,11 @@ setup(
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
-        "pyinstrument>=3.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
         "spooky": "spooky>=2.0.0",
+        "profiling": "pyinstrument>=3.0",
     },
     setup_requires=[
         "nose>=1.3.7",

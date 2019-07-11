@@ -3,7 +3,10 @@ from os import makedirs
 from os.path import exists, expanduser, join
 
 from flask import g
-from pyinstrument import Profiler
+try:
+    from pyinstrument import Profiler
+except ImportError:
+    raise Exception("Profiling requires 'pyinstrument'.")
 
 
 def default_profile_dir(name):
