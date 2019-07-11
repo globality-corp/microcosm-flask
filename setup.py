@@ -30,6 +30,7 @@ setup(
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
+        "pyinstrument>=3.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
