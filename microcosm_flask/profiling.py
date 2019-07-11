@@ -1,6 +1,7 @@
 from datetime import datetime
 from os import makedirs
 from os.path import exists, expanduser, join
+import sys
 
 from flask import g
 
@@ -8,7 +9,7 @@ from flask import g
 try:
     from pyinstrument import Profiler
 except ImportError:
-    raise Exception("Profiling requires 'pyinstrument'.")
+    pass
 
 
 def default_profile_dir(name):
@@ -16,6 +17,9 @@ def default_profile_dir(name):
 
 
 def enable_profiling(graph):
+    if "pyinstrument.profiler" not in sys.modules:
+        raise Exception("Profiling requires 'pyinstrument'. Make sure it is installed.")
+
     profile_dir = graph.config.flask.profile_dir or default_profile_dir(name=graph.metadata.name)
     if not exists(profile_dir):
         makedirs(profile_dir)
