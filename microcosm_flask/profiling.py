@@ -1,9 +1,9 @@
+from datetime import datetime
 from os import makedirs
 from os.path import exists, expanduser, join
 
-from pyinstrument import Profiler
 from flask import g
-from datetime import datetime
+from pyinstrument import Profiler
 
 
 def default_profile_dir(name):
