@@ -1,7 +1,7 @@
+import sys
 from datetime import datetime
 from os import makedirs
 from os.path import exists, expanduser, join
-import sys
 
 from flask import g
 
