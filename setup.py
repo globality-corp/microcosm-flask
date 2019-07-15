@@ -34,6 +34,7 @@ setup(
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
         "spooky": "spooky>=2.0.0",
+        "profiling": "pyinstrument>=3.0",
     },
     setup_requires=[
         "nose>=1.3.7",
