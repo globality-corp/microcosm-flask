@@ -1,23 +1,30 @@
 from flask import request
+from jaeger_client.constants import TRACE_ID_HEADER
 from microcosm.api import defaults
+from microcosm.tracing import SPAN_NAME
 
 
 X_REQUEST = "X-Request"
+HEADER_PREFIXES = [X_REQUEST, TRACE_ID_HEADER]
 
 
-def context_wrapper(include_header_prefix):
+def context_wrapper(include_header_prefixes):
     def retrieve_context():
-        return {
+        context = {
             header: value
             for header, value in request.headers.items()
-            if header.startswith(include_header_prefix)
+            if any([
+                header.lower().startswith(prefix.lower())
+                for prefix in include_header_prefixes
+            ])
         }
-
+        context[SPAN_NAME] = str(request)
+        return context
     return retrieve_context
 
 
 @defaults(
-    include_header_prefix=X_REQUEST,
+    include_header_prefixes=HEADER_PREFIXES,
 )
 def configure_request_context(graph):
     """
@@ -28,5 +35,5 @@ def configure_request_context(graph):
         graph.request_context()
 
     """
-    include_header_prefix = graph.config.request_context.include_header_prefix
-    return context_wrapper(include_header_prefix)
+    include_header_prefixes = graph.config.request_context.include_header_prefixes
+    return context_wrapper(include_header_prefixes)
