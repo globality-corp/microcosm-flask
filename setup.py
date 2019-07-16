@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "1.25.0"
+version = "1.26.0"
 
 
 setup(
@@ -34,6 +34,7 @@ setup(
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
         "spooky": "spooky>=2.0.0",
+        "profiling": "pyinstrument>=3.0",
     },
     setup_requires=[
         "nose>=1.3.7",
