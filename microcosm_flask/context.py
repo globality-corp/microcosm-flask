@@ -1,10 +1,11 @@
 from flask import request
+from jaeger_client.constants import TRACE_ID_HEADER
 from microcosm.api import defaults
-from microcosm.tracing import TRACE_ID, SPAN_NAME
+from microcosm.tracing import SPAN_NAME
 
 
 X_REQUEST = "X-Request"
-HEADER_PREFIXES = [X_REQUEST, TRACE_ID]
+HEADER_PREFIXES = [X_REQUEST, TRACE_ID_HEADER]
 
 
 def context_wrapper(include_header_prefixes):
