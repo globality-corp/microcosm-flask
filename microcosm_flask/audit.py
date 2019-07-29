@@ -361,8 +361,8 @@ def parse_response(response):
 @defaults(
     include_request_body=typed(type=int, default_value=DEFAULT_INCLUDE_REQUEST_BODY),
     include_response_body=typed(type=int, default_value=DEFAULT_INCLUDE_RESPONSE_BODY),
-    include_path=typed(type=boolean),
-    include_query_string=typed(type=boolean),
+    include_path=typed(type=boolean, default_value=False),
+    include_query_string=typed(type=boolean, default_value=False),
     log_as_debug=typed(type=boolean, default_value=False),
 )
 def configure_audit_decorator(graph):
