@@ -72,7 +72,7 @@ def configure_route_decorator(graph):
                 func = graph.route_metrics(endpoint)(func)
 
             if graph.memory_profiler.enabled:
-                func = graph.memory_profiler.take_snapshot(func)
+                func = graph.memory_profiler.snapshot_at_intervals(func)
 
             # keep audit decoration last (before registering the route) so that
             # errors raised by other decorators are captured in the audit trail
