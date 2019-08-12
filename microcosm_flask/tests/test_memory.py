@@ -29,7 +29,6 @@ class TestMemorySampling:
         self.now = datetime.now()
         self.last_sampling_time = self.now - timedelta(minutes=5)
         self.graph.memory_profiler.last_sampling_time = self.last_sampling_time
-        print(self.graph.memory_profiler.last_sampling_time_delta)
 
     def test_should_take_snapshot(self):
         with patch.object(self.graph.memory_profiler, "get_now") as get_now:
