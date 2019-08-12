@@ -69,6 +69,7 @@ setup(
             "route_metrics = microcosm_flask.metrics:RouteMetrics",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
             "uuid = microcosm_flask.converters:configure_uuid",
+            "memory_profiler = microcosm_flask.memory:MemoryProfiler",
         ],
     },
     tests_require=[
