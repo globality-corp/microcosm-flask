@@ -18,7 +18,8 @@ def context_wrapper(include_header_prefixes):
                 for prefix in include_header_prefixes
             ])
         }
-        context[SPAN_NAME] = str(request)
+        span_name = f"{request.method} {request.path}"
+        context[SPAN_NAME] = span_name
         return context
     return retrieve_context
 
