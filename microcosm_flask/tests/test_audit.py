@@ -85,7 +85,7 @@ class TestRequestInfo:
                     operation="test_func",
                     method="GET",
                     func="test_func",
-                    span_name="<Request 'http://localhost/' [GET]>"
+                    span_name="GET /"
                 ))),
             )
 
