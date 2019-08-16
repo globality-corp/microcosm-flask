@@ -42,6 +42,7 @@ class TestRouteMetrics:
     def test_success_metrics(self):
         """
         A standard 200 response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
@@ -72,6 +73,7 @@ class TestRouteMetrics:
     def test_different_status_code_metrics(self):
         """
         A different status code response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
@@ -102,6 +104,7 @@ class TestRouteMetrics:
     def test_exception_metrics(self):
         """
         An exception response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
