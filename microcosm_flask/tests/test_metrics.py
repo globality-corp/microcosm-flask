@@ -57,13 +57,15 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:200",
             ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.200.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:200",
             ],
         )
 
@@ -85,13 +87,15 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:204",
             ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.204.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:204",
             ],
         )
 
@@ -113,12 +117,14 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:404",
             ]
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.404.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:404",
             ],
         )
