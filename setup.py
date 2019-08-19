@@ -25,6 +25,7 @@ setup(
         "Flask-UUID>=0.2",
         # Temporary upper cap; 3.0 has several backwards-incompatible changes
         # that we still need to account for
+        # Internal tracking ticket: https://globality.atlassian.net/browse/GLOB-35427
         "marshmallow>=2.18.1,<3.0.0",
         "microcosm>=2.12.0",
         "microcosm-logging>=1.5.0",
