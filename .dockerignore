@@ -1,6 +1,6 @@
 *
 !microcosm_flask
-microcosm_flask/test*
+microcosm_flask/tests
 !dist/*-none-any.whl
 !entrypoint.sh
 !MANIFEST.in
