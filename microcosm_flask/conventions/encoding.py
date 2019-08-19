@@ -97,7 +97,13 @@ def load_query_string_data(request_schema, query_string_data=None):
     if query_string_data is None:
         query_string_data = request.args
 
-    return request_schema.load(query_string_data)
+    try:
+        return request_schema.load(query_string_data)
+    except ValidationError as error:
+        raise with_context(
+            UnprocessableEntity("Validation error"),
+            error.messages,
+        )
 
 
 def remove_null_values(data):
