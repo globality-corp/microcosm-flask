@@ -11,8 +11,8 @@ from hamcrest import (
     raises,
 )
 from marshmallow import Schema
-from marshmallow.exceptions import ValidationError
 from microcosm.api import create_object_graph
+from werkzeug.exceptions import UnprocessableEntity
 
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
@@ -55,7 +55,7 @@ def test_offset_limit_page_rejects_unknown_queries():
     with graph.flask.test_request_context(query_string="offset=1&foo=bar"):
         assert_that(
             calling(OffsetLimitPage.from_query_string).with_args(OffsetLimitPageSchema()),
-            raises(ValidationError),
+            raises(UnprocessableEntity),
         )
 
 
