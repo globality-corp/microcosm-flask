@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "1.29.1"
+version = "1.29.2"
 
 
 setup(
@@ -23,7 +23,10 @@ setup(
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
-        "marshmallow>=2.18.1",
+        # Temporary upper cap; 3.0 has several backwards-incompatible changes
+        # that we still need to account for
+        # Internal tracking ticket: https://globality.atlassian.net/browse/GLOB-35427
+        "marshmallow>=2.18.1,<3.0.0",
         "microcosm>=2.12.0",
         "microcosm-logging>=1.5.0",
         "openapi>=1.1.0",
