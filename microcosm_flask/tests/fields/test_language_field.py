@@ -26,33 +26,33 @@ VALID_LANGUAGES = [
 
 
 def test_dump():
-    schema = LanguageSchema(strict=True)
+    schema = LanguageSchema()
 
     for case in VALID_LANGUAGES:
         result = schema.dump(dict(
             language=case,
         ))
         assert_that(
-            result.data["language"],
+            result["language"],
             is_(equal_to(case)),
         )
 
 
 def test_load():
-    schema = LanguageSchema(strict=True)
+    schema = LanguageSchema()
 
     for case in VALID_LANGUAGES:
         result = schema.load(dict(
             language=case,
         ))
         assert_that(
-            result.data["language"],
+            result["language"],
             is_(equal_to(case)),
         )
 
 
 def test_dump_invalid():
-    schema = LanguageSchema(strict=True)
+    schema = LanguageSchema()
     assert_that(
         calling(schema.dump).with_args(dict(
             language="english",
@@ -62,7 +62,7 @@ def test_dump_invalid():
 
 
 def test_load_invalid():
-    schema = LanguageSchema(strict=True)
+    schema = LanguageSchema()
     assert_that(
         calling(schema.load).with_args(dict(
             language="english",

@@ -21,7 +21,7 @@ class TimestampField(Field):
         self.use_isoformat = use_isoformat
         super(TimestampField, self).__init__(*args, **kwargs)
 
-    def _serialize(self, value, attr, obj):
+    def _serialize(self, value, attr, obj, **kwargs):
         """
         Serialize value as a timestamp, either as a Unix timestamp (in float second) or a UTC isoformat string.
 
@@ -34,7 +34,7 @@ class TimestampField(Field):
         else:
             return value
 
-    def _deserialize(self, value, attr, obj):
+    def _deserialize(self, value, attr, obj, **kwargs):
         """
         Deserialize value as a Unix timestamp (in float seconds).
 

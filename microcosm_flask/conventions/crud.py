@@ -288,8 +288,7 @@ class CRUDConvention(Convention):
         @wraps(definition.func)
         def update(**path_data):
             headers = dict()
-            # NB: using partial here means that marshmallow will not validate required fields
-            request_data = load_request_data(definition.request_schema, partial=True)
+            request_data = load_request_data(definition.request_schema)
             response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
             definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
@@ -320,9 +319,7 @@ class CRUDConvention(Convention):
         @wraps(definition.func)
         def create_collection(**path_data):
             request_data = load_request_data(definition.request_schema)
-            # NB: if we don't filter the request body through an explicit page schema,
-            # we will leak other request arguments into the pagination query strings
-            page = self.page_cls.from_query_string(self.page_schema(), request_data)
+            page = self.page_cls.from_query_string(self.page_schema(), {})
 
             result = definition.func(**merge_data(
                 path_data,

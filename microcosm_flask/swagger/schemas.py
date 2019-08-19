@@ -62,7 +62,8 @@ class Schemas:
         """
         for name in sorted(schema.fields.keys()):
             field = schema.fields[name]
-            yield field.dump_to or name, field
+            # XXX: dump_to was removed; it wasn't being used anywhere? double-check
+            yield name, field
 
     def iter_schemas(self, schema: Schema) -> Iterable[Tuple[str, Any]]:
         """
@@ -81,9 +82,9 @@ class Schemas:
                 yield self.to_tuple(field.schema)
                 yield from self.iter_schemas(field.schema)
 
-            if isinstance(field, List) and isinstance(field.container, Nested):
-                yield self.to_tuple(field.container.schema)
-                yield from self.iter_schemas(field.container.schema)
+            if isinstance(field, List) and isinstance(field.inner, Nested):
+                yield self.to_tuple(field.inner.schema)
+                yield from self.iter_schemas(field.inner.schema)
 
     def to_tuple(self, schema: Schema) -> Tuple[str, Any]:
         return type_name(name_for(schema)), self.build(schema)

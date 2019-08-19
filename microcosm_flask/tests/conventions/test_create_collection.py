@@ -1,5 +1,3 @@
-from json import dumps, loads
-
 from hamcrest import (
     all_of,
     assert_that,
@@ -22,7 +20,7 @@ from microcosm_flask.swagger.definitions import build_path
 
 
 def create_collection(text, offset, limit):
-    return dict(text=text), 1
+    return [dict(text=text)], 1
 
 
 class FooRequestSchema(Schema):
@@ -69,7 +67,7 @@ class TestCreateCollection:
     def test_swagger(self):
         response = self.client.get("/api/swagger")
         assert_that(response.status_code, is_(equal_to(200)))
-        data = loads(response.data)["paths"]["/foo"]["post"]
+        data = response.json["paths"]["/foo"]["post"]
 
         assert_that(
             data["parameters"],
@@ -109,11 +107,11 @@ class TestCreateCollection:
         text = "Some text..."
         response = self.client.post(
             "/api/foo",
-            data=dumps({"text": text}),
+            json={"text": text},
         )
 
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(loads(response.data), is_(equal_to({
+        assert_that(response.json, is_(equal_to({
             "count": 1,
             "offset": 0,
             "limit": 20,

@@ -123,11 +123,13 @@ def address_delete(address_id, address_clock):
 def address_search(offset, limit, list_param=None, enum_param=None):
     if list_param is None or enum_param is None:
         return [ADDRESS_1], 1
-    return Address(
-        ADDRESS_ID_1,
-        PERSON_ID_1,
-        ",".join(list_param) + str(len(list_param)) + enum_param.value
-    ), 1
+    return [
+        Address(
+            ADDRESS_ID_1,
+            PERSON_ID_1,
+            ",".join(list_param) + str(len(list_param)) + enum_param.value
+        ),
+    ], 1
 
 
 def person_create(**kwargs):
