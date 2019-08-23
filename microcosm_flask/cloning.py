@@ -66,7 +66,7 @@ class DAGSchema(Schema):
     )
 
     @pre_dump
-    def unflatten(self, obj):
+    def unflatten(self, obj, **kwargs):
         """
         Translate substitutions dictionary into objects.
 
@@ -75,6 +75,7 @@ class DAGSchema(Schema):
             dict(from_id=key, to_id=value)
             for key, value in getattr(obj, "substitutions", {}).items()
         ]
+        return obj
 
 
 class NewCloneSchema(Schema):
@@ -89,7 +90,7 @@ class NewCloneSchema(Schema):
     )
 
     @post_load
-    def flatten(self, obj):
+    def flatten(self, obj, **kwargs):
         """
         Translate substitutions into a dictionary.
 
@@ -98,6 +99,7 @@ class NewCloneSchema(Schema):
             item["from_id"]: item["to_id"]
             for item in obj["substitutions"]
         }
+        return obj
 
 
 class DAGCloningController:
