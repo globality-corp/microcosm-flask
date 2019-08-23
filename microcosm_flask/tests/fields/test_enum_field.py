@@ -47,10 +47,10 @@ def test_load_enums():
         "int_value": TestIntEnum.Bar.value,
     })
 
-    assert_that(result.data["name"], is_(equal_to(TestEnum.Foo)))
-    assert_that(result.data["value"], is_(equal_to(TestEnum.Bar)))
-    assert_that(result.data["int_name"], is_(equal_to(TestIntEnum.Foo)))
-    assert_that(result.data["int_value"], is_(equal_to(TestIntEnum.Bar)))
+    assert_that(result["name"], is_(equal_to(TestEnum.Foo)))
+    assert_that(result["value"], is_(equal_to(TestEnum.Bar)))
+    assert_that(result["int_name"], is_(equal_to(TestIntEnum.Foo)))
+    assert_that(result["int_value"], is_(equal_to(TestIntEnum.Bar)))
 
 
 def test_dump_enums():
@@ -66,10 +66,10 @@ def test_dump_enums():
         "int_value": TestIntEnum.Bar,
     })
 
-    assert_that(result.data["name"], is_(equal_to(TestEnum.Foo.name)))
-    assert_that(result.data["value"], is_(equal_to(TestEnum.Bar.value)))
-    assert_that(result.data["int_name"], is_(equal_to(TestIntEnum.Foo.name)))
-    assert_that(result.data["int_value"], is_(equal_to(TestIntEnum.Bar.value)))
+    assert_that(result["name"], is_(equal_to(TestEnum.Foo.name)))
+    assert_that(result["value"], is_(equal_to(TestEnum.Bar.value)))
+    assert_that(result["int_name"], is_(equal_to(TestIntEnum.Foo.name)))
+    assert_that(result["int_value"], is_(equal_to(TestIntEnum.Bar.value)))
 
 
 def test_load_int_enum_as_string():
@@ -82,7 +82,7 @@ def test_load_int_enum_as_string():
         "int_value": str(TestIntEnum.Bar.value),
     })
 
-    assert_that(result.data["int_value"], is_(equal_to(TestIntEnum.Bar)))
+    assert_that(result["int_value"], is_(equal_to(TestIntEnum.Bar)))
 
 
 def test_dump_value_from_string():
@@ -92,7 +92,7 @@ def test_dump_value_from_string():
         "value": "bar",
     })
 
-    assert_that(result.data, is_(has_entries(
+    assert_that(result, is_(has_entries(
         name="foo",
         value="bar",
     )))

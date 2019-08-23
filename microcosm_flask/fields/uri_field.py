@@ -74,12 +74,12 @@ class URIField(Field):
     Marshmallow field for a normalized URI.
 
     """
-    def _serialize(self, value, attr, obj):
+    def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
         return self.normalize(value)
 
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr, data, **kwargs):
         if value is None:
             return None
         return self.normalize(value)

@@ -4,6 +4,7 @@ Support for encoding and decoding request/response content.
 """
 from flask import request
 from inflection import camelize
+from marshmallow.exceptions import ValidationError
 from werkzeug.exceptions import NotFound, UnprocessableEntity
 
 from microcosm_flask.enums import ResponseFormats
@@ -55,7 +56,7 @@ def encode_headers(resource):
     return {}
 
 
-def load_request_data(request_schema, partial=False):
+def load_request_data(request_schema):
     """
     Load request data as JSON using the given schema.
 
@@ -68,20 +69,22 @@ def load_request_data(request_schema, partial=False):
     try:
         json_data = request.get_json(force=True) or {}
     except Exception:
-        # if `simplpejson` is installed, simplejson.scanner.JSONDecodeError will be raised
+        # if `simplejson` is installed, simplejson.scanner.JSONDecodeError will be raised
         # on malformed JSON, where as built-in `json` returns None
         json_data = {}
-    request_data = request_schema.load(json_data, partial=partial)
-    if request_data.errors:
-        # pass the validation errors back in the context
+    try:
+        return request_schema.load(json_data)
+    except ValidationError as error:
         raise with_context(
-            UnprocessableEntity("Validation error"), [{
-                "message": "Could not validate field: {}".format(field),
-                "field": field,
-                "reasons": reasons
-            } for field, reasons in request_data.errors.items()],
+            UnprocessableEntity("Validation error"),
+            [
+                {
+                    "message": "Could not validate field: {}".format(field),
+                    "field": field,
+                    "reasons": reasons,
+                } for field, reasons in error.messages.items()
+            ],
         )
-    return request_data.data
 
 
 def load_query_string_data(request_schema, query_string_data=None):
@@ -94,11 +97,13 @@ def load_query_string_data(request_schema, query_string_data=None):
     if query_string_data is None:
         query_string_data = request.args
 
-    request_data = request_schema.load(query_string_data)
-    if request_data.errors:
-        # pass the validation errors back in the context
-        raise with_context(UnprocessableEntity("Validation error"), dict(errors=request_data.errors))
-    return request_data.data
+    try:
+        return request_schema.load(query_string_data)
+    except ValidationError as error:
+        raise with_context(
+            UnprocessableEntity("Validation error"),
+            error.messages,
+        )
 
 
 def remove_null_values(data):
@@ -128,7 +133,7 @@ def dump_response_data(response_schema,
 
     """
     if response_schema:
-        response_data = response_schema.dump(response_data).data
+        response_data = response_schema.dump(response_data)
 
     return make_response(response_data, response_schema, response_format, status_code, headers)
 

@@ -27,7 +27,7 @@ class EnumField(Field):
         self.by_value = by_value
         super(EnumField, self).__init__(*args, **kwargs)
 
-    def _serialize(self, value, attr, obj):
+    def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return value
         elif isinstance(value, str) and not isinstance(value, Enum):
@@ -37,7 +37,7 @@ class EnumField(Field):
         else:
             return value.name
 
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr, data, **kwargs):
         if value is None:
             return value
         elif self.by_value:

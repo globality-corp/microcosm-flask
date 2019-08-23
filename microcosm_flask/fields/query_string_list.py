@@ -11,7 +11,7 @@ class PrintableList(list):
 
 
 class QueryStringList(List):
-    def _deserialize(self, value, attr, obj):
+    def _deserialize(self, value, attr, obj, **kwargs):
         """
         _deserialize handles multiple formats of query string parameter lists
         including:
