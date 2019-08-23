@@ -4,11 +4,13 @@ Test timestamp field.
 """
 from hamcrest import (
     assert_that,
-    contains,
+    calling,
     equal_to,
     is_,
+    raises,
 )
 from marshmallow import Schema
+from marshmallow.exceptions import ValidationError
 
 from microcosm_flask.fields import TimestampField
 
@@ -37,8 +39,8 @@ def test_load_from_unix_timestamp_float():
         "iso": TIMESTAMP,
     })
 
-    assert_that(result.data["unix"], is_(equal_to(TIMESTAMP)))
-    assert_that(result.data["iso"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["unix"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["iso"], is_(equal_to(TIMESTAMP)))
 
 
 def test_load_from_unix_timestamp_int():
@@ -52,8 +54,8 @@ def test_load_from_unix_timestamp_int():
         "iso": int(TIMESTAMP),
     })
 
-    assert_that(result.data["unix"], is_(equal_to(int(TIMESTAMP))))
-    assert_that(result.data["iso"], is_(equal_to(int(TIMESTAMP))))
+    assert_that(result["unix"], is_(equal_to(int(TIMESTAMP))))
+    assert_that(result["iso"], is_(equal_to(int(TIMESTAMP))))
 
 
 def test_load_from_naive_isoformat():
@@ -67,8 +69,8 @@ def test_load_from_naive_isoformat():
         "iso": ISOFORMAT_NAIVE,
     })
 
-    assert_that(result.data["unix"], is_(equal_to(TIMESTAMP)))
-    assert_that(result.data["iso"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["unix"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["iso"], is_(equal_to(TIMESTAMP)))
 
 
 def test_load_from_naive_isoformat_extra_precision():
@@ -82,8 +84,8 @@ def test_load_from_naive_isoformat_extra_precision():
         "iso": ISOFORMAT_NAIVE_EXTRA_PRECISION,
     })
 
-    assert_that(result.data["unix"], is_(equal_to(TIMESTAMP_EXTRA_PRECISION)))
-    assert_that(result.data["iso"], is_(equal_to(TIMESTAMP_EXTRA_PRECISION)))
+    assert_that(result["unix"], is_(equal_to(TIMESTAMP_EXTRA_PRECISION)))
+    assert_that(result["iso"], is_(equal_to(TIMESTAMP_EXTRA_PRECISION)))
 
 
 def test_load_from_utc_isoformat():
@@ -97,8 +99,8 @@ def test_load_from_utc_isoformat():
         "iso": ISOFORMAT_UTC,
     })
 
-    assert_that(result.data["unix"], is_(equal_to(TIMESTAMP)))
-    assert_that(result.data["iso"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["unix"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["iso"], is_(equal_to(TIMESTAMP)))
 
 
 def test_load_from_non_utc_isoformat():
@@ -107,13 +109,17 @@ def test_load_from_non_utc_isoformat():
 
     """
     schema = TimestampSchema()
-    result = schema.load({
-        "unix": ISOFORMAT_NON_UTC,
-        "iso": ISOFORMAT_NON_UTC,
-    })
 
-    assert_that(result.errors["unix"], contains("Timestamps must be defined in UTC"))
-    assert_that(result.errors["iso"], contains("Timestamps must be defined in UTC"))
+    assert_that(
+        calling(schema.load).with_args(
+            dict(
+                foo="example",
+                unix=ISOFORMAT_NON_UTC,
+                iso=ISOFORMAT_NON_UTC,
+            ),
+        ),
+        raises(ValidationError),
+    )
 
 
 def test_dump():
@@ -127,5 +133,5 @@ def test_dump():
         "iso": TIMESTAMP,
     })
 
-    assert_that(result.data["unix"], is_(equal_to(TIMESTAMP)))
-    assert_that(result.data["iso"], is_(equal_to(ISOFORMAT_NAIVE)))
+    assert_that(result["unix"], is_(equal_to(TIMESTAMP)))
+    assert_that(result["iso"], is_(equal_to(ISOFORMAT_NAIVE)))

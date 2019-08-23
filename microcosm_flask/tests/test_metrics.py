@@ -42,6 +42,7 @@ class TestRouteMetrics:
     def test_success_metrics(self):
         """
         A standard 200 response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
@@ -57,19 +58,22 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:200",
             ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.200.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:200",
             ],
         )
 
     def test_different_status_code_metrics(self):
         """
         A different status code response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
@@ -85,19 +89,22 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:204",
             ],
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.204.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:204",
             ],
         )
 
     def test_exception_metrics(self):
         """
         An exception response has both timing and counting metrics.
+        Classifier tag comes from StatusCodeClassifier
 
         """
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
@@ -113,12 +120,14 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:404",
             ]
         )
         self.graph.metrics.increment.assert_called_with(
-            "route.404.count",
+            "route.call.count",
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
+                "classifier:404",
             ],
         )

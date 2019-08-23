@@ -21,9 +21,9 @@ class LanguageField(String):
             self.fail("invalid_language")
         return value
 
-    def _serialize(self, value, attr, obj):
+    def _serialize(self, value, attr, obj, **kwargs):
         validated = str(self._validated(value)) if value is not None else None
         return super(LanguageField, self)._serialize(validated, attr, obj)
 
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr, data, **kwargs):
         return self._validated(value)

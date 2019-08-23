@@ -31,7 +31,7 @@ def test_query_list_deserialize_items():
         ImmutableMultiDict([("foo_ids", "A,B")]),
     )
 
-    assert_that(result.data["foo_ids"], is_(equal_to([TestEnum.A, TestEnum.B])))
+    assert_that(result["foo_ids"], is_(equal_to([TestEnum.A, TestEnum.B])))
 
 
 def test_query_list_load_with_comma_separated_single_keys():
@@ -43,7 +43,7 @@ def test_query_list_load_with_comma_separated_single_keys():
         ImmutableMultiDict([("foo_ids", "a,b")]),
     )
 
-    assert_that(result.data["foo_ids"], is_(equal_to(["a", "b"])))
+    assert_that(result["foo_ids"], is_(equal_to(["a", "b"])))
 
 
 def test_query_list_load_with_duplicate_keys():
@@ -55,7 +55,7 @@ def test_query_list_load_with_duplicate_keys():
         ImmutableMultiDict([("foo_ids", "a"), ("foo_ids", "b")]),
     )
 
-    assert_that(result.data["foo_ids"], is_(equal_to(["a", "b"])))
+    assert_that(result["foo_ids"], is_(equal_to(["a", "b"])))
 
 
 def test_query_list_dump():
@@ -64,4 +64,4 @@ def test_query_list_dump():
         "foo_ids": ["a"],
     })
 
-    assert_that(result.data["foo_ids"], is_(equal_to(["a"])))
+    assert_that(result["foo_ids"], is_(equal_to(["a"])))

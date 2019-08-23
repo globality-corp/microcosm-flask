@@ -41,15 +41,15 @@ def test_normalize_uri():
 
 
 def test_uri_dump():
-    schema = URISchema(strict=True)
+    schema = URISchema()
     result = schema.dump(dict(
         foo="http://example.com",
     ))
-    assert_that(result.data["foo"], is_(equal_to("http://example.com")))
+    assert_that(result["foo"], is_(equal_to("http://example.com")))
 
 
 def test_uri_dump_malformed():
-    schema = URISchema(strict=True)
+    schema = URISchema()
     assert_that(
         calling(schema.dump).with_args(
             dict(
@@ -61,15 +61,15 @@ def test_uri_dump_malformed():
 
 
 def test_uri_load():
-    schema = URISchema(strict=True)
+    schema = URISchema()
     result = schema.load(dict(
         foo="http://example.com",
     ))
-    assert_that(result.data["foo"], is_(equal_to("http://example.com")))
+    assert_that(result["foo"], is_(equal_to("http://example.com")))
 
 
 def test_uri_load_malformed():
-    schema = URISchema(strict=True)
+    schema = URISchema()
     assert_that(
         calling(schema.load).with_args(
             dict(

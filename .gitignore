@@ -97,3 +97,5 @@ target/
 *.swp
 
 .mypy_cache
+
+/coverage/

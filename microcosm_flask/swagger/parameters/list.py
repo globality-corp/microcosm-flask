@@ -18,7 +18,7 @@ class ListParameterBuilder(ParameterBuilder):
         Parse the child item type for list fields, if any.
 
         """
-        return self.build_parameter(field.container)
+        return self.build_parameter(field.inner)
 
     def parse_type(self, field: Field) -> str:
         return "array"

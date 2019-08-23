@@ -32,6 +32,7 @@ from microcosm_flask.tests.conventions.fixtures import (
     PersonBatchSchema,
     PersonLookupSchema,
     PersonSchema,
+    UpdatePersonSchema,
     address_delete,
     address_retrieve,
     address_search,
@@ -69,7 +70,7 @@ PERSON_MAPPINGS = {
     Operation.Replace: (person_replace, NewPersonSchema(), PersonSchema()),
     Operation.Retrieve: (person_retrieve, PersonLookupSchema(), PersonSchema()),
     Operation.Search: (person_search, OffsetLimitPageSchema(), PersonSchema()),
-    Operation.Update: (person_update, NewPersonSchema(), PersonSchema()),
+    Operation.Update: (person_update, UpdatePersonSchema(), PersonSchema()),
 }
 
 
