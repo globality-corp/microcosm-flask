@@ -62,7 +62,6 @@ class Schemas:
         """
         for name in sorted(schema.fields.keys()):
             field = schema.fields[name]
-            # XXX: dump_to was removed; it wasn't being used anywhere? double-check
             yield name, field
 
     def iter_schemas(self, schema: Schema) -> Iterable[Tuple[str, Any]]:
