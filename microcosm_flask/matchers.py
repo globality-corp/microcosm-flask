@@ -58,7 +58,7 @@ class JSONMatcher(BaseMatcher):
     def __init__(self, resource):
         self.resource = resource
         self.schema = self.schema_class()
-        self.expected = self.schema.dump(self.resource).data
+        self.expected = self.schema.dump(self.resource)
 
     @property
     def schema_class(self):
