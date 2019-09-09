@@ -5,8 +5,10 @@ Error handling tests.
 from hamcrest import (
     assert_that,
     equal_to,
+    has_entries,
     has_entry,
     is_,
+    starts_with,
 )
 from microcosm.api import create_object_graph
 from werkzeug.exceptions import HTTPException, InternalServerError, NotFound
@@ -65,15 +67,14 @@ def test_werkzeug_http_error():
     response = client.get("/not_found")
     assert_that(response.status_code, is_(equal_to(404)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 404,
-        "context": {
+    assert_that(data, has_entries(dict(
+        code=404,
+        context={
             "errors": [],
         },
-        "message": "The requested URL was not found on the server. "
-                   "If you entered the URL manually please check your spelling and try again.",
-        "retryable": False,
-    })))
+        message=starts_with("The requested URL was not found on the server."),
+        retryable=False,
+    )))
 
 
 def test_no_route():
@@ -88,13 +89,12 @@ def test_no_route():
     response = client.get("/no_route")
     assert_that(response.status_code, is_(equal_to(404)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 404,
-        "message": "The requested URL was not found on the server. "
-                   "If you entered the URL manually please check your spelling and try again.",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=404,
+        message=starts_with("The requested URL was not found on the server."),
+        retryable=False,
+        context={"errors": []},
+    )))
 
 
 def test_werkzeug_http_error_custom_message():
@@ -114,12 +114,12 @@ def test_werkzeug_http_error_custom_message():
     response = client.get("/why_me")
     assert_that(response.status_code, is_(equal_to(500)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 500,
-        "message": "Why me?",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=500,
+        message="Why me?",
+        retryable=False,
+        context={"errors": []},
+    )))
 
 
 def test_custom_error():
@@ -139,12 +139,12 @@ def test_custom_error():
     response = client.get("/unexpected")
     assert_that(response.status_code, is_(equal_to(500)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 500,
-        "message": "unexpected",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=500,
+        message="unexpected",
+        retryable=False,
+        context={"errors": []},
+    )))
 
 
 def test_custom_error_status_code():
@@ -164,12 +164,12 @@ def test_custom_error_status_code():
     response = client.get("/malformed_syntax")
     assert_that(response.status_code, is_(equal_to(400)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 400,
-        "message": "MyValidationError",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=400,
+        message="MyValidationError",
+        retryable=False,
+        context={"errors": []},
+    )))
 
 
 def test_custom_error_retryable():
@@ -189,16 +189,16 @@ def test_custom_error_retryable():
     response = client.get("/conflict")
     assert_that(response.status_code, is_(equal_to(409)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 409,
-        "message": "Conflict",
-        "retryable": True,
-        "context": {
+    assert_that(data, has_entries(dict(
+        code=409,
+        message="Conflict",
+        retryable=True,
+        context={
             "errors": [{
                 "message": "Banana!",
             }]
         },
-    })))
+    )))
 
 
 def test_error_wrap():
@@ -224,12 +224,12 @@ def test_error_wrap():
     response = client.get("/wrap")
     assert_that(response.status_code, is_(equal_to(500)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 500,
-        "message": "fail",
-        "retryable": False,
-        "context": {"errors": []}
-    })))
+    assert_that(data, has_entries(dict(
+        code=500,
+        message="fail",
+        retryable=False,
+        context={"errors": []}
+    )))
 
 
 def test_non_numeric_error():
@@ -249,12 +249,12 @@ def test_non_numeric_error():
     response = client.get("/foo")
     assert_that(response.status_code, is_(equal_to(500)))
     data = response.json
-    assert_that(data, is_(equal_to({
-        "code": 500,
-        "message": "Hello",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=500,
+        message="Hello",
+        retryable=False,
+        context={"errors": []},
+    )))
 
 
 def test_custom_headers():

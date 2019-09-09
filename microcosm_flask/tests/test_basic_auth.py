@@ -4,7 +4,13 @@ Basic Auth tests.
 """
 from json import loads
 
-from hamcrest import assert_that, equal_to, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    is_,
+    starts_with,
+)
 from microcosm.api import create_object_graph
 
 from microcosm_flask.basic_auth import encode_basic_auth
@@ -32,14 +38,12 @@ def test_basic_auth():
     response = client.get("/unauthorized")
     assert_that(response.status_code, is_(equal_to(401)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to({
-        "code": 401,
-        "message": "The server could not verify that you are authorized to access the URL requested. "
-                   "You either supplied the wrong credentials (e.g. a bad password), or your browser "
-                   "doesn't understand how to supply the credentials required.",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=401,
+        message=starts_with("The server could not verify that you are authorized to access the URL requested"),
+        retryable=False,
+        context={"errors": []},
+    )))
     assert_that(response.headers["WWW-Authenticate"], is_(equal_to('Basic realm="microcosm"')))
 
 
@@ -61,14 +65,12 @@ def test_basic_auth_default_realm():
     response = client.get("/unauthorized")
     assert_that(response.status_code, is_(equal_to(401)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to({
-        "code": 401,
-        "message": "The server could not verify that you are authorized to access the URL requested. "
-                   "You either supplied the wrong credentials (e.g. a bad password), or your browser "
-                   "doesn't understand how to supply the credentials required.",
-        "retryable": False,
-        "context": {"errors": []},
-    })))
+    assert_that(data, has_entries(dict(
+        code=401,
+        message=starts_with("The server could not verify that you are authorized to access the URL requested"),
+        retryable=False,
+        context={"errors": []},
+    )))
     assert_that(response.headers["WWW-Authenticate"], is_(equal_to('Basic realm="example"')))
 
 
