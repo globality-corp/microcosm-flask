@@ -13,7 +13,7 @@ class NestedParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return isinstance(field, Nested)
 
-    def parse_ref(self, field: Field) -> str:
+    def parse_ref(self, field: Nested) -> str:
         """
         Parse the reference type for nested fields, if any.
 

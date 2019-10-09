@@ -13,7 +13,7 @@ class ListParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return isinstance(field, List)
 
-    def parse_items(self, field: Field) -> Mapping[str, Any]:
+    def parse_items(self, field: List) -> Mapping[str, Any]:
         """
         Parse the child item type for list fields, if any.
 
