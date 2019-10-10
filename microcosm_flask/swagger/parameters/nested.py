@@ -13,12 +13,12 @@ class NestedParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return isinstance(field, Nested)
 
-    def parse_ref(self, field: Nested) -> str:
+    def parse_ref(self, field: Field) -> str:
         """
         Parse the reference type for nested fields, if any.
 
         """
-        ref_name = type_name(name_for(field.schema))
+        ref_name = type_name(name_for(field.schema))  # type:ignore
         return f"#/definitions/{ref_name}"
 
     def parse_type(self, field: Field) -> None:

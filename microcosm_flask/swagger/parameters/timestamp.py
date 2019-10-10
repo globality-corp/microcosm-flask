@@ -12,12 +12,12 @@ class TimestampParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return isinstance(field, TimestampField)
 
-    def parse_format(self, field: TimestampField) -> str:
-        if field.use_isoformat:
+    def parse_format(self, field: Field) -> str:
+        if isinstance(field, TimestampField) and field.use_isoformat:
             return "date-time"
         return "timestamp"
 
-    def parse_type(self, field: TimestampField) -> str:
-        if field.use_isoformat:
+    def parse_type(self, field: Field) -> str:
+        if isinstance(field, TimestampField) and field.use_isoformat:
             return "string"
         return "float"

@@ -25,7 +25,7 @@ class ErrorSchema(Schema):
     message = fields.String(required=True, default="Unknown Error")
     code = fields.Integer(required=True, default=500)
     retryable = fields.Boolean(required=True, default=False)
-    context = fields.Nested(ErrorContextSchema, required=False)
+    context = fields.Nested(ErrorContextSchema, required=False)  # type: ignore
 
 
 def as_retryable(error):
