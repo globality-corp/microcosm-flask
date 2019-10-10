@@ -25,7 +25,7 @@ class EnumField(Field):
     def __init__(self, enum, by_value=False, *args, **kwargs):
         self.enum = enum
         self.by_value = by_value
-        super(EnumField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:

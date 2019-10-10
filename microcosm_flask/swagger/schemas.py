@@ -22,7 +22,7 @@ class Schemas:
     Swagger schema builder.
 
     """
-    def __init__(self, build_parameter: Callable[[Schema], Mapping[str, Any]]):
+    def __init__(self, build_parameter: Callable[[Field], Mapping[str, Any]]):
         self.build_parameter = build_parameter
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
