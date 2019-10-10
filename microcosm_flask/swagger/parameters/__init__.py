@@ -36,7 +36,7 @@ class Parameters:
 
         builders: List[ParameterBuilder] = [
             builder_type(
-                build_parameter=self.build,
+                build_parameter=self.build,  # type: ignore
             )
             for builder_type in builder_types
         ]

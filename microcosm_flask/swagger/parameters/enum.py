@@ -1,7 +1,8 @@
-from typing import Sequence
+from typing import Optional, Sequence
 
 from marshmallow.fields import Field
 
+from microcosm_flask.fields import EnumField
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
@@ -22,7 +23,9 @@ class EnumParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return bool(getattr(field, "enum", None))
 
-    def parse_format(self, field: Field) -> None:
+    def parse_format(self, field: Field) -> Optional[str]:
+        if isinstance(field, EnumField):
+            return "enum"
         return None
 
     def parse_type(self, field: Field) -> str:
@@ -38,6 +41,6 @@ class EnumParameterBuilder(ParameterBuilder):
     def parse_enum_values(self, field: Field) -> Sequence:
         enum = getattr(field, "enum", None)
         return [
-            choice.value if field.by_value else choice.name
+            choice.value if field.by_value else choice.name  # type: ignore
             for choice in enum
         ]

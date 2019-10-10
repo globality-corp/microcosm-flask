@@ -26,6 +26,7 @@ class TestSchema(Schema):
 def test_field_enum():
     parameter = build_parameter(TestSchema().fields["choice"])
     assert_that(parameter, is_(equal_to({
+        "format": "enum",
         "type": "string",
         "enum": [
             "Profit",
@@ -36,6 +37,7 @@ def test_field_enum():
 def test_field_int_enum():
     parameter = build_parameter(TestSchema().fields["value"])
     assert_that(parameter, is_(equal_to({
+        "format": "enum",
         "type": "integer",
         "enum": [
             1,
