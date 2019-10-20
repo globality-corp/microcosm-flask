@@ -136,7 +136,7 @@ class TestCRUD:
         assert_that(response.headers["X-Total-Count"], is_(equal_to(str(1))))
 
     def test_search_with_context(self):
-        uri = "/api/address".format(PERSON_ID_1)
+        uri = "/api/address"
         response = self.client.get(uri)
         self.assert_response(response, 200, {
             "count": 1,
@@ -159,7 +159,7 @@ class TestCRUD:
         })
 
     def test_reuse_search_self_link(self):
-        uri = "/api/address?list_param=a,b,c&enum_param=A".format(PERSON_ID_1)
+        uri = "/api/address?list_param=a,b,c&enum_param=A"
         response = self.client.get(uri)
         response_data = response.json
         response = self.client.get(response_data["_links"]["self"]["href"])
