@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from marshmallow import Schema, fields
 
+from microcosm_flask.decorators.schemas import add_associated_schema
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
@@ -33,6 +34,7 @@ class NewAddressSchema(Schema):
 class NewPersonSchema(Schema):
     firstName = fields.Str(attribute="first_name", required=True)
     lastName = fields.Str(attribute="last_name", required=True)
+    email = fields.Email()
 
     @property
     def csv_column_order(self):
@@ -81,6 +83,13 @@ class PersonCSVSchema(NewPersonSchema):
         return column_order
 
 
+@add_associated_schema(
+    "Foo",
+    [
+        "email",
+        "firstName",
+    ]
+)
 class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 

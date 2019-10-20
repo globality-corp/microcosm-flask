@@ -19,6 +19,10 @@ def test_schema_generation():
             "lastName": {
                 "type": "string",
             },
+            "email": {
+                "format": "email",
+                "type": "string",
+            },
         },
         "required": [
             "firstName",

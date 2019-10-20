@@ -2,7 +2,7 @@
 Test Swagger definition construction.
 
 """
-from hamcrest import assert_that, equal_to, is_
+from hamcrest import assert_that, equal_to, has_entries
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
 
@@ -44,12 +44,12 @@ def test_build_swagger():
         operations = list(iter_endpoints(graph, match_function))
         swagger_schema = build_swagger(graph, ns, operations)
 
-    assert_that(swagger_schema, is_(equal_to({
-        "info": {
+    assert_that(swagger_schema, has_entries(
+        info={
             "version": "v1",
             "title": "example",
         },
-        "paths": {
+        paths={
             "/person": {
                 "post": {
                     "tags": ["person"],
@@ -127,17 +127,21 @@ def test_build_swagger():
                 },
             },
         },
-        "produces": [
+        produces=[
             "application/json",
         ],
-        "definitions": {
-            "NewPerson": {
-                "required": [
+        definitions=has_entries(
+            NewPerson=has_entries(
+                required=[
                     "firstName",
                     "lastName",
                 ],
-                "type": "object",
-                "properties": {
+                type="object",
+                properties={
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                    },
                     "lastName": {
                         "type": "string",
                     },
@@ -145,15 +149,19 @@ def test_build_swagger():
                         "type": "string",
                     }
                 }
-            },
-            "Person": {
-                "required": [
+            ),
+            Person=has_entries(
+                required=[
                     "firstName",
                     "id",
                     "lastName",
                 ],
-                "type": "object",
-                "properties": {
+                type="object",
+                properties={
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                    },
                     "lastName": {
                         "type": "string",
                     },
@@ -168,10 +176,26 @@ def test_build_swagger():
                         "type": "string",
                     },
                 },
-            },
-            "UpdatePerson": {
-                "type": "object",
-                "properties": {
+            ),
+            PersonFoo=has_entries(
+                type="object",
+                properties={
+                    "email": {
+                        "format": "email",
+                        "type": "string",
+                    },
+                    "firstName": {
+                        "type": "string",
+                    },
+                },
+                required=[
+                    "email",
+                    "firstName",
+                ],
+            ),
+            UpdatePerson=dict(
+                type="object",
+                properties={
                     "lastName": {
                         "type": "string",
                     },
@@ -179,36 +203,15 @@ def test_build_swagger():
                         "type": "string",
                     }
                 }
-            },
-            "ErrorContext": {
-                "required": ["errors"],
-                "type": "object",
-                "properties": {
-                    "errors": {
-                        "items": {
-                            "$ref": "#/definitions/SubError",
-                        },
-                        "type": "array",
-                    },
-                },
-            },
-            "SubError": {
-                "required": ["message"],
-                "type": "object",
-                "properties": {
-                    "message": {
-                        "type": "string",
-                    },
-                },
-            },
-            "Error": {
-                "required": [
+            ),
+            Error=has_entries(
+                required=[
                     "code",
                     "message",
                     "retryable",
                 ],
-                "type": "object",
-                "properties": {
+                type="object",
+                properties={
                     "message": {
                         "type": "string",
                         "default": "Unknown Error",
@@ -225,14 +228,35 @@ def test_build_swagger():
                         "type": "boolean",
                     },
                 },
-            },
-        },
-        "basePath": "/api/v1",
-        "swagger": "2.0",
-        "consumes": [
+            ),
+            ErrorContext=has_entries(
+                required=["errors"],
+                type="object",
+                properties={
+                    "errors": {
+                        "items": {
+                            "$ref": "#/definitions/SubError",
+                        },
+                        "type": "array",
+                    },
+                },
+            ),
+            SubError=has_entries(
+                required=["message"],
+                type="object",
+                properties={
+                    "message": {
+                        "type": "string",
+                    },
+                },
+            ),
+        ),
+        basePath="/api/v1",
+        swagger="2.0",
+        consumes=[
             "application/json",
         ],
-    })))
+    ))
 
 
 def test_no_prefix_no_version_path():
