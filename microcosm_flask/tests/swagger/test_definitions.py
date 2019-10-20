@@ -204,6 +204,27 @@ def test_build_swagger():
                     }
                 }
             ),
+            ErrorContext=has_entries(
+                required=["errors"],
+                type="object",
+                properties={
+                    "errors": {
+                        "items": {
+                            "$ref": "#/definitions/SubError",
+                        },
+                        "type": "array",
+                    },
+                },
+            ),
+            SubError=has_entries(
+                required=["message"],
+                type="object",
+                properties={
+                    "message": {
+                        "type": "string",
+                    },
+                },
+            ),
             Error=has_entries(
                 required=[
                     "code",
@@ -226,27 +247,6 @@ def test_build_swagger():
                     },
                     "retryable": {
                         "type": "boolean",
-                    },
-                },
-            ),
-            ErrorContext=has_entries(
-                required=["errors"],
-                type="object",
-                properties={
-                    "errors": {
-                        "items": {
-                            "$ref": "#/definitions/SubError",
-                        },
-                        "type": "array",
-                    },
-                },
-            ),
-            SubError=has_entries(
-                required=["message"],
-                type="object",
-                properties={
-                    "message": {
-                        "type": "string",
                     },
                 },
             ),
