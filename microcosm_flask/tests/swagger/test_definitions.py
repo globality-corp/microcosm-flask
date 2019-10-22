@@ -177,7 +177,7 @@ def test_build_swagger():
                     },
                 },
             ),
-            PersonFoo=has_entries(
+            PersonPubsubMessage=has_entries(
                 type="object",
                 properties={
                     "email": {

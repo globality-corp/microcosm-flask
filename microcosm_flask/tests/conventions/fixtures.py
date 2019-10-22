@@ -83,13 +83,19 @@ class PersonCSVSchema(NewPersonSchema):
         return column_order
 
 
-@add_associated_schema(
-    "Foo",
-    [
-        "email",
-        "firstName",
-    ]
-)
+def pubsub_schema(fields):
+    """
+    Example usage of `add_associated_schema`, creating an additional decorator
+    that adds syntactic sugar and makes the intent clear
+
+    """
+    return add_associated_schema("PubsubMessage", fields)
+
+
+@pubsub_schema([
+    "email",
+    "firstName",
+])
 class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 
