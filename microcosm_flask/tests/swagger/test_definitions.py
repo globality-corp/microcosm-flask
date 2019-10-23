@@ -193,6 +193,21 @@ def test_build_swagger():
                     "firstName",
                 ],
             ),
+            PersonFoo=has_entries(
+                type="object",
+                properties={
+                    "email": {
+                        "format": "email",
+                        "type": "string",
+                    },
+                    "firstName": {
+                        "type": "string",
+                    },
+                },
+                required=[
+                    "email",
+                ],
+            ),
             UpdatePerson=dict(
                 type="object",
                 properties={

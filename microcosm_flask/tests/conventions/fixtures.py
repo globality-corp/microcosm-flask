@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from marshmallow import Schema, fields
 
-from microcosm_flask.decorators.schemas import add_associated_schema
+from microcosm_flask.decorators.schemas import SelectedField, add_associated_schema
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
@@ -96,6 +96,14 @@ def pubsub_schema(fields):
     "email",
     "firstName",
 ])
+# Other example not using the shorthand
+@add_associated_schema(
+    "Foo",
+    [
+        SelectedField("email", required=True),
+        SelectedField("firstName", required=False)
+    ]
+)
 class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
 

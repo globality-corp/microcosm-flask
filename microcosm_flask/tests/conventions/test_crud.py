@@ -159,10 +159,18 @@ class TestCRUD:
         })
 
     def test_reuse_search_self_link(self):
-        uri = "/api/address?list_param=a,b,c&enum_param=A"
-        response = self.client.get(uri)
+        uri = "/api/address"
+        response = self.client.get(
+            uri,
+            query_string=dict(
+                list_param="a,b,c",
+                enum_param="A",
+            ),
+        )
         response_data = response.json
-        response = self.client.get(response_data["_links"]["self"]["href"])
+        response = self.client.get(
+            response_data["_links"]["self"]["href"],
+        )
         self.assert_response(response, 200, {
             "count": 1,
             "offset": 0,
@@ -184,8 +192,11 @@ class TestCRUD:
         })
 
     def test_delete_with_params(self):
-        uri = "/api/address/{}?address_clock=123".format(ADDRESS_ID_1)
-        response = self.client.delete(uri)
+        uri = f"/api/address/{ADDRESS_ID_1}"
+        response = self.client.delete(
+            uri,
+            query_string=dict(address_clock=123),
+        )
         self.assert_response(response, 204)
 
     def test_create(self):

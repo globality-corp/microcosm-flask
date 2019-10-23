@@ -1,4 +1,5 @@
 from copy import deepcopy
+from dataclasses import dataclass
 
 from inflection import camelize, underscore
 from marshmallow import Schema
@@ -7,12 +8,20 @@ from microcosm_flask.naming import name_for
 from microcosm_flask.swagger.naming import type_name
 
 
+@dataclass
+class SelectedField:
+    name: str
+    required: bool = True
+
+
 def _get_fields_and_make_required(schema_cls, selected_fields):
     associated_fields = {}
-    for field_name in selected_fields:
-        field = deepcopy(schema_cls._declared_fields[field_name])
-        field.required = True
-        associated_fields[field_name] = field
+    for selected_field in selected_fields:
+        if isinstance(selected_field, str):
+            selected_field = SelectedField(selected_field)
+        schema_field = deepcopy(schema_cls._declared_fields[selected_field.name])
+        schema_field.required = selected_field.required
+        associated_fields[selected_field.name] = schema_field
 
     return associated_fields
 
@@ -29,9 +38,13 @@ def add_associated_schema(name_suffix, selected_fields=()):
     """
     Derive a schema as a subset of fields from the schema class being decorated,
     and add that derived schema as an attribute on the decorated schema.
-    All fields from the derived schema are marked as required.
 
     This allows us to expose the derived schema in the swagger definition.
+
+    :name_suffix: Suffix that will added to the decorator schema's definition name to give the
+                  name of the exposed definition
+    :selected_fields: List of `SelectedField` instances. As a shorthand a list of strings can also
+                      be passed, which will make all sected field required
 
     """
     def decorator(schema_cls):
