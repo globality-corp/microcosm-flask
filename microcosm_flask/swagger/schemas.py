@@ -13,6 +13,7 @@ from typing import (
 from marshmallow import Schema
 from marshmallow.fields import Field, List, Nested
 
+from microcosm_flask.decorators.schemas import associated_schemas_attr_name
 from microcosm_flask.naming import name_for
 from microcosm_flask.swagger.naming import type_name
 
@@ -75,6 +76,9 @@ class Schemas:
             return
 
         yield self.to_tuple(schema)
+
+        for associated_schema in getattr(schema, associated_schemas_attr_name(schema.__class__), []):
+            yield self.to_tuple(associated_schema())
 
         for name, field in self.iter_fields(schema):
             if isinstance(field, Nested):
