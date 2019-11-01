@@ -77,7 +77,7 @@ class Schemas:
 
         yield self.to_tuple(schema)
 
-        for associated_schema in getattr(schema, associated_schemas_attr_name(schema.__class__), []):
+        for associated_schema in getattr(schema, associated_schemas_attr_name(schema.__class__), {}).values():
             yield self.to_tuple(associated_schema())
 
         for name, field in self.iter_fields(schema):
