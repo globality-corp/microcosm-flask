@@ -34,6 +34,13 @@ def associated_schema_name(schema_cls, name_suffix):
     return f"{type_name(name_for(schema_cls))}{camelize(name_suffix)}Schema"
 
 
+def get_associated_schema(schema_cls, name_suffix):
+    associated_schemas = getattr(schema_cls, associated_schemas_attr_name(schema_cls), {})
+    if name_suffix in associated_schemas:
+        return associated_schemas[name_suffix]
+    raise KeyError(f"Schema {schema_cls} does not have an associated schema with suffix {name_suffix}")
+
+
 def add_associated_schema(name_suffix, selected_fields=()):
     """
     Derive a schema as a subset of fields from the schema class being decorated,
@@ -58,12 +65,15 @@ def add_associated_schema(name_suffix, selected_fields=()):
             associated_fields,
         )
         try:
-            getattr(schema_cls, attr_name).append(associated_schema)
+            associated_schemas = getattr(schema_cls, attr_name)
+            if name_suffix in associated_schemas:
+                raise ValueError(f"Schema {schema_cls} already has an associated schema for suffix {name_suffix}")
+            associated_schemas[name_suffix] = associated_schema
         except AttributeError:
             setattr(
                 schema_cls,
                 attr_name,
-                [associated_schema],
+                {name_suffix: associated_schema},
             )
         return schema_cls
 
