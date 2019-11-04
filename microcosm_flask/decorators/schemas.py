@@ -14,7 +14,7 @@ class SelectedField:
     required: bool = True
 
 
-def _get_fields_and_make_required(schema_cls, selected_fields):
+def _get_fields_from_schema(schema_cls, selected_fields):
     associated_fields = {}
     for selected_field in selected_fields:
         if isinstance(selected_field, str):
@@ -41,7 +41,7 @@ def get_associated_schema(schema_cls, name_suffix):
     raise KeyError(f"Schema {schema_cls} does not have an associated schema with suffix {name_suffix}")
 
 
-def add_associated_schema(name_suffix, selected_fields=()):
+def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema,)):
     """
     Derive a schema as a subset of fields from the schema class being decorated,
     and add that derived schema as an attribute on the decorated schema.
@@ -55,13 +55,14 @@ def add_associated_schema(name_suffix, selected_fields=()):
 
     """
     def decorator(schema_cls):
-        associated_fields = _get_fields_and_make_required(schema_cls, selected_fields)
+        associated_fields = _get_fields_from_schema(schema_cls, selected_fields)
 
         # Use the class name in the attribute name to avoid sharing with children classes
         attr_name = associated_schemas_attr_name(schema_cls)
+
         associated_schema = type(
             associated_schema_name(schema_cls, name_suffix),
-            (Schema,),
+            inherits_from,
             associated_fields,
         )
         try:

@@ -2,8 +2,10 @@ from hamcrest import (
     assert_that,
     calling,
     equal_to,
+    has_key,
     raises,
 )
+from marshmallow import Schema, fields
 
 from microcosm_flask.decorators.schemas import (
     add_associated_schema,
@@ -42,6 +44,22 @@ class TestDecorators:
         assert_that(
             associated_schema_name(PersonSchema, "Suffix"),
             equal_to("PersonSuffixSchema"),
+        )
+
+    def test_override_inheritance(self):
+        """
+        Registering an associated schema with an already-used suffix should raise
+
+        """
+        class ParentSchema(Schema):
+            someField = fields.String(attribute="some_field")
+
+        add_associated_schema("Bar", [], (ParentSchema,))(PersonSchema)
+        associated_schema = get_associated_schema(PersonSchema, "Bar")
+
+        assert_that(
+            associated_schema._declared_fields,
+            has_key("someField"),
         )
 
     def test_raise_on_duplicate_suffix(self):
