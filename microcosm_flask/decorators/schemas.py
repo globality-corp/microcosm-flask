@@ -62,6 +62,14 @@ def set_associated_schema(target_cls, name_suffix, associated_schema):
         )
 
 
+def build_associated_schema(schema_cls, name_suffix, inherits_from, associated_fields):
+    return type(
+        associated_schema_name(schema_cls, name_suffix),
+        inherits_from,
+        associated_fields,
+    )
+
+
 def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema,)):
     """
     Derive a schema as a subset of fields from the schema class being decorated,
@@ -78,8 +86,9 @@ def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema
     def decorator(schema_cls):
         associated_fields = _get_fields_from_schema(schema_cls, selected_fields)
 
-        associated_schema = type(
-            associated_schema_name(schema_cls, name_suffix),
+        associated_schema = build_associated_schema(
+            schema_cls,
+            name_suffix,
             inherits_from,
             associated_fields,
         )
