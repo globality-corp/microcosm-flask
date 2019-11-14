@@ -83,6 +83,7 @@ def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema
             inherits_from,
             associated_fields,
         )
+
         set_associated_schema(schema_cls, name_suffix, associated_schema)
         return schema_cls
 
