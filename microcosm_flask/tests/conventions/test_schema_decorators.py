@@ -3,6 +3,7 @@ from hamcrest import (
     calling,
     equal_to,
     has_key,
+    has_length,
     raises,
 )
 from marshmallow import Schema, fields
@@ -11,6 +12,7 @@ from microcosm_flask.decorators.schemas import (
     add_associated_schema,
     associated_schema_name,
     get_associated_schema,
+    get_fields_from_schema,
     set_associated_schema,
 )
 from microcosm_flask.tests.conventions.fixtures import PersonSchema
@@ -20,6 +22,15 @@ class TestDecorators:
 
     def setup(self):
         pass
+
+    def test_get_fields_from_schema(self):
+        class SomeSchema(Schema):
+            someField = fields.String(attribute="some_field")
+            anotherField = fields.Integer(attribute="another_field")
+
+        selected_fields = get_fields_from_schema(SomeSchema, ["someField"])
+        assert_that(selected_fields, has_length(1))
+        assert_that(selected_fields, has_key("someField"))
 
     def test_get_associated_schema(self):
         """

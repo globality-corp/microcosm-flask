@@ -14,7 +14,7 @@ class SelectedField:
     required: bool = True
 
 
-def _get_fields_from_schema(schema_cls, selected_fields):
+def get_fields_from_schema(schema_cls, selected_fields):
     associated_fields = {}
     for selected_field in selected_fields:
         if isinstance(selected_field, str):
@@ -84,7 +84,7 @@ def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema
 
     """
     def decorator(schema_cls):
-        associated_fields = _get_fields_from_schema(schema_cls, selected_fields)
+        associated_fields = get_fields_from_schema(schema_cls, selected_fields)
 
         associated_schema = build_associated_schema(
             schema_cls,
