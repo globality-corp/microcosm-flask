@@ -11,6 +11,7 @@ from microcosm_flask.decorators.schemas import (
     add_associated_schema,
     associated_schema_name,
     get_associated_schema,
+    set_associated_schema,
 )
 from microcosm_flask.tests.conventions.fixtures import PersonSchema
 
@@ -71,4 +72,18 @@ class TestDecorators:
         assert_that(
             calling(decorator).with_args(PersonSchema),
             raises(ValueError),
+        )
+
+    def test_set_associated_schema(self):
+        class SomeSchema(Schema):
+            someField = fields.String(attribute="some_field")
+
+        class AnotherSchema(Schema):
+            anotherField = fields.Integer(attribute="another_field")
+
+        set_associated_schema(SomeSchema, "Suffix", AnotherSchema)
+
+        assert_that(
+            get_associated_schema(SomeSchema, "Suffix")._declared_fields,
+            has_key("anotherField"),
         )

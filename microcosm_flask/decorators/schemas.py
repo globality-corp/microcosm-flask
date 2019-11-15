@@ -41,6 +41,35 @@ def get_associated_schema(schema_cls, name_suffix):
     raise KeyError(f"Schema {schema_cls} does not have an associated schema with suffix {name_suffix}")
 
 
+def set_associated_schema(target_cls, name_suffix, associated_schema):
+    """
+    Add a derived schema as an attribute to a schema class, using conventions
+    that will result in the associated schema being exposed in the OpenAPI definition of the service.
+
+    """
+    # Use the class name in the attribute name to avoid sharing with children classes
+    attr_name = associated_schemas_attr_name(target_cls)
+    try:
+        associated_schemas = getattr(target_cls, attr_name)
+        if name_suffix in associated_schemas:
+            raise ValueError(f"Schema {target_cls} already has an associated schema for suffix {name_suffix}")
+        associated_schemas[name_suffix] = associated_schema
+    except AttributeError:
+        setattr(
+            target_cls,
+            attr_name,
+            {name_suffix: associated_schema},
+        )
+
+
+def build_associated_schema(schema_cls, name_suffix, inherits_from, associated_fields):
+    return type(
+        associated_schema_name(schema_cls, name_suffix),
+        inherits_from,
+        associated_fields,
+    )
+
+
 def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema,)):
     """
     Derive a schema as a subset of fields from the schema class being decorated,
@@ -57,25 +86,14 @@ def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema
     def decorator(schema_cls):
         associated_fields = _get_fields_from_schema(schema_cls, selected_fields)
 
-        # Use the class name in the attribute name to avoid sharing with children classes
-        attr_name = associated_schemas_attr_name(schema_cls)
-
-        associated_schema = type(
-            associated_schema_name(schema_cls, name_suffix),
+        associated_schema = build_associated_schema(
+            schema_cls,
+            name_suffix,
             inherits_from,
             associated_fields,
         )
-        try:
-            associated_schemas = getattr(schema_cls, attr_name)
-            if name_suffix in associated_schemas:
-                raise ValueError(f"Schema {schema_cls} already has an associated schema for suffix {name_suffix}")
-            associated_schemas[name_suffix] = associated_schema
-        except AttributeError:
-            setattr(
-                schema_cls,
-                attr_name,
-                {name_suffix: associated_schema},
-            )
+
+        set_associated_schema(schema_cls, name_suffix, associated_schema)
         return schema_cls
 
     return decorator

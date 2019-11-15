@@ -18,6 +18,10 @@ from microcosm_flask.naming import name_for
 from microcosm_flask.swagger.naming import type_name
 
 
+def definition_name_for_schema(schema_cls):
+    return type_name(name_for(schema_cls))
+
+
 class Schemas:
     """
     Swagger schema builder.
@@ -90,4 +94,4 @@ class Schemas:
                 yield from self.iter_schemas(field.inner.schema)
 
     def to_tuple(self, schema: Schema) -> Tuple[str, Any]:
-        return type_name(name_for(schema)), self.build(schema)
+        return definition_name_for_schema(schema), self.build(schema)
