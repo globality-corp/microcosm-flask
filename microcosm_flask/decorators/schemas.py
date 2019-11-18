@@ -1,5 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
+from typing import List
 
 from inflection import camelize, underscore
 from marshmallow import Schema
@@ -14,7 +15,11 @@ class SelectedField:
     required: bool = True
 
 
-def get_fields_from_schema(schema_cls, selected_fields):
+def get_fields_from_schema(schema_cls: Schema, selected_fields: List[SelectedField]):
+    """
+    Select fields definitions from a schema
+
+    """
     associated_fields = {}
     for selected_field in selected_fields:
         if isinstance(selected_field, str):
@@ -63,6 +68,10 @@ def set_associated_schema(target_cls, name_suffix, associated_schema):
 
 
 def build_associated_schema(schema_cls, name_suffix, inherits_from, associated_fields):
+    """
+    Build a schema class, whose name is based on an existing schema.
+
+    """
     return type(
         associated_schema_name(schema_cls, name_suffix),
         inherits_from,
