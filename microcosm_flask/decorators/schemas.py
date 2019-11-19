@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from inflection import camelize, underscore
 from marshmallow import Schema
@@ -12,12 +12,16 @@ from microcosm_flask.swagger.naming import type_name
 @dataclass
 class SelectedField:
     name: str
-    required: bool = True
+    required: Optional[bool] = None
 
 
 def get_fields_from_schema(schema_cls: Schema, selected_fields: List[SelectedField]):
     """
     Select fields definitions from a schema
+
+    By default, the selected fields will keep the same value for `required` as the source,
+    but this can be overriden by passing the right value for `required` to the `SelectedField` instance
+    passed in to this method.
 
     """
     associated_fields = {}
@@ -25,7 +29,8 @@ def get_fields_from_schema(schema_cls: Schema, selected_fields: List[SelectedFie
         if isinstance(selected_field, str):
             selected_field = SelectedField(selected_field)
         schema_field = deepcopy(schema_cls._declared_fields[selected_field.name])
-        schema_field.required = selected_field.required
+        if selected_field.required is not None:
+            schema_field.required = selected_field.required
         associated_fields[selected_field.name] = schema_field
 
     return associated_fields
