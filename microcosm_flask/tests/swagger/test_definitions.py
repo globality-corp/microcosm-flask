@@ -189,7 +189,6 @@ def test_build_swagger():
                     },
                 },
                 required=[
-                    "email",
                     "firstName",
                 ],
             ),
