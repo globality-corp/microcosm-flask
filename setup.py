@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "2.7.0"
+version = "2.8.0"
 
 
 setup(
@@ -21,6 +21,7 @@ setup(
     python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
+        "tornado<6",
         "Flask>=1.0.2",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
