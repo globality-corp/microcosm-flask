@@ -160,7 +160,7 @@ def header_param(name, required=False, param_type="string"):
     })
 
 
-def query_param(name, field, required=False):
+def query_param(name, field):
     """
     Build a query parameter definition.
 
@@ -168,7 +168,7 @@ def query_param(name, field, required=False):
     parameter = build_parameter(field)
     parameter["name"] = name
     parameter["in"] = "query"
-    parameter["required"] = False
+    parameter["required"] = field.required
 
     return swagger.QueryParameterSubSchema(**parameter)
 

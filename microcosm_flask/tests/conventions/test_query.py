@@ -120,7 +120,7 @@ class TestQuery:
                             "type": "string",
                         },
                         {
-                            "required": False,
+                            "required": True,
                             "type": "string",
                             "name": "value",
                             "in": "query",
