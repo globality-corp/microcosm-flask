@@ -42,6 +42,6 @@ class EnumParameterBuilder(ParameterBuilder):
     def parse_enum_values(self, field: Field) -> Sequence:
         enum = getattr(field, "enum", None)
         return [
-            str(enum.__name__)+'.' + str(choice.value if field.by_value else choice.name)
+            str(enum.__name__)+'.' + str(choice.value if field.by_value else choice.name)  # type: ignore
             for choice in enum
         ]
