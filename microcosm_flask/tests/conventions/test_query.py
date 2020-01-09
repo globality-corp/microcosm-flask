@@ -15,7 +15,8 @@ from microcosm_flask.operations import Operation
 
 
 class QueryStringSchema(Schema):
-    value = fields.String(required=True)
+    required_value = fields.String(required=True)
+    optional_value = fields.String(required=False)
 
 
 class QueryResultSchema(Schema):
@@ -38,7 +39,7 @@ def make_query(graph, ns, request_schema, response_schema):
         request_data = load_query_string_data(request_schema)
         response_data = dict(
             result=True,
-            value=request_data["value"],
+            value=request_data["required_value"],
         )
         return dump_response_data(response_schema, response_data, Operation.Query.value.default_code)
 
@@ -78,7 +79,7 @@ class TestQuery:
         """
         uri = "/api/v1/foo/get"
         query_string = {
-            "value": "bar",
+            "required_value": "bar",
         }
         response = self.client.get(uri, query_string=query_string)
         assert_that(response.status_code, is_(equal_to(200)))
@@ -122,7 +123,13 @@ class TestQuery:
                         {
                             "required": False,
                             "type": "string",
-                            "name": "value",
+                            "name": "optional_value",
+                            "in": "query",
+                        },
+                        {
+                            "required": True,
+                            "type": "string",
+                            "name": "required_value",
                             "in": "query",
                         },
                     ],
