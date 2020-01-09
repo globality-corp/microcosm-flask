@@ -6,7 +6,7 @@ from microcosm_flask.fields import EnumField
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
-def is_int(value:str):
+def is_int(value: str):
     try:
         enumType, enumValue = value.split(".")
         int(enumValue)
