@@ -40,7 +40,7 @@ def test_field_int_enum():
         "format": "enum",
         "type": "integer",
         "enum": [
-            "ValueType.1",
-            "ValueType.2"
+            1,
+            2
         ],
     })))

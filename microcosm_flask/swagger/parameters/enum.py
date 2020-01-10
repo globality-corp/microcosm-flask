@@ -6,10 +6,9 @@ from microcosm_flask.fields import EnumField
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
-def is_int(value: str):
+def is_int(value):
     try:
-        enumType, enumValue = value.split(".")
-        int(enumValue)
+        int(value)
     except Exception:
         return False
     else:
@@ -32,16 +31,16 @@ class EnumParameterBuilder(ParameterBuilder):
     def parse_type(self, field: Field) -> str:
         enum_values = self.parse_enum_values(field)
 
-        if all((is_int(enum_value) for enum_value in enum_values)):
-            return "integer"
-        elif all((isinstance(enum_value, str) for enum_value in enum_values)):
+        if all((isinstance(enum_value, str) for enum_value in enum_values)):
             return "string"
+        elif all((is_int(enum_value) for enum_value in enum_values)):
+            return "integer"
         else:
             raise Exception(f"Cannot infer enum type for field: {field.name}")
 
     def parse_enum_values(self, field: Field) -> Sequence:
         enum = getattr(field, "enum", None)
         return [
-            str(enum.__name__)+'.' + str(choice.value if field.by_value else choice.name)  # type: ignore
+            choice.value if field.by_value else enum.__name__ + '.' + str(choice.name)  # type: ignore
             for choice in enum
         ]
