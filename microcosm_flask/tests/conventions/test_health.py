@@ -4,7 +4,7 @@ Health check convention tests.
 """
 from json import loads
 
-from hamcrest import assert_that, equal_to, is_
+from hamcrest import assert_that, equal_to, is_, has_entries, has_entry
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
 
@@ -27,10 +27,7 @@ def test_health_check():
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(200)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to({
-        "name": "example",
-        "ok": True,
-    })))
+    assert_that(data, has_entries("name", "example", "ok", True))
 
 
 def test_health_check_with_build_info():
@@ -42,20 +39,22 @@ def test_health_check_with_build_info():
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(200)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to(dict(
-        name="example",
-        ok=True,
-        checks=dict(
-            build_num=dict(
-                message="undefined",
-                ok=True,
-            ),
-            sha1=dict(
-                message="undefined",
-                ok=True,
-            ),
-        ),
-    ))))
+    assert_that(
+        data,
+        has_entries(
+            "checks",
+            dict(
+                build_num=dict(
+                    message="undefined",
+                    ok=True,
+                ),
+                sha1=dict(
+                    message="undefined",
+                    ok=True,
+                ),
+            )
+        )
+    )
 
 
 def test_health_check_custom_check():
@@ -78,16 +77,18 @@ def test_health_check_custom_check():
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(200)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to({
-        "name": "example",
-        "ok": True,
-        "checks": {
-            "foo": {
-                "message": "hi",
-                "ok": True,
-            },
-        },
-    })))
+    assert_that(
+        data,
+        has_entries(
+            "checks",
+            dict(
+                foo=dict(
+                    message="hi",
+                    ok=True
+                )
+            )
+        )
+    )
 
 
 def test_health_check_custom_check_failed():
@@ -113,13 +114,16 @@ def test_health_check_custom_check_failed():
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(503)))
     data = loads(response.get_data().decode("utf-8"))
-    assert_that(data, is_(equal_to({
-        "name": "example",
-        "ok": False,
-        "checks": {
-            "foo": {
-                "message": "failure!",
-                "ok": False,
-            },
-        },
-    })))
+
+    assert_that(
+        data,
+        has_entries(
+            "checks",
+            dict(
+                foo=dict(
+                    message="failure!",
+                    ok=False,
+                ),
+            )
+        )
+    )

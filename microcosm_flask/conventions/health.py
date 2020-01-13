@@ -6,6 +6,7 @@ using HTTP 200/503 status codes to indicate healthiness.
 
 """
 from distutils.util import strtobool
+from socket import gethostbyname, gethostname
 
 from microcosm.api import defaults
 
@@ -73,16 +74,23 @@ class Health:
         Encode the name, the status of all checks, and the current overall status.
 
         """
+        hostname = gethostname()
+        ip = gethostbyname(hostname)
+
         # evaluate checks
         checks = {
             key: HealthResult.evaluate(func, self.graph)
             for key, func in self.checks.items()
         }
+
         dct = dict(
             # return the service name helps for routing debugging
             name=self.name,
+            hostname=hostname,
+            ip=ip,
             ok=all(checks.values()),
         )
+
         if checks:
             dct["checks"] = {
                 key: checks[key].to_dict()
