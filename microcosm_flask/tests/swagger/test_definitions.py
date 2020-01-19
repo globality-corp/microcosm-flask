@@ -2,7 +2,12 @@
 Test Swagger definition construction.
 
 """
-from hamcrest import assert_that, equal_to, has_entries
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    has_items,
+)
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
 
@@ -270,6 +275,37 @@ def test_build_swagger():
         consumes=[
             "application/json",
         ],
+    ))
+
+
+def test_build_integer_valued_param():
+    graph = create_object_graph(name="example", testing=True)
+    ns = Namespace(
+        subject=Person,
+        version="v1",
+        identifier_type="int",
+    )
+    configure_crud(graph, ns, PERSON_MAPPINGS)
+
+    with graph.flask.test_request_context():
+        operations = list(iter_endpoints(graph, match_function))
+        swagger_schema = build_swagger(graph, ns, operations)
+
+    assert_that(swagger_schema, has_entries(
+        paths=has_entries(
+            **{
+                "/person/{person_id}": has_entries(
+                    patch=has_entries(
+                        parameters=has_items({
+                            "required": True,
+                            "type": "integer",
+                            "name": "person_id",
+                            "in": "path",
+                        }),
+                    ),
+                ),
+            },
+        ),
     ))
 
 
