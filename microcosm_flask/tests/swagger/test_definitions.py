@@ -15,7 +15,7 @@ from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.swagger.definitions import build_swagger
+from microcosm_flask.swagger.definitions import build_path_for_integer_param, build_swagger
 from microcosm_flask.tests.conventions.fixtures import (
     NewPersonSchema,
     Person,
@@ -290,6 +290,11 @@ def test_build_integer_valued_param():
     with graph.flask.test_request_context():
         operations = list(iter_endpoints(graph, match_function))
         swagger_schema = build_swagger(graph, ns, operations)
+
+        assert_that(
+            build_path_for_integer_param(ns, Operation.Update, set(["person_id"])),
+            equal_to("/api/v1/person/{person_id}"),
+        )
 
     assert_that(swagger_schema, has_entries(
         paths=has_entries(

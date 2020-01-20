@@ -17,6 +17,7 @@ Note that:
 
 """
 from logging import getLogger
+from typing import Set
 from urllib.parse import unquote
 
 from openapi import model as swagger
@@ -35,6 +36,8 @@ from microcosm_flask.swagger.naming import operation_name, type_name
 
 
 logger = getLogger("microcosm_flask.swagger")
+# Placeholder integer id used to build URIs in werkzeug before replacing with id param name.
+# Use a value that is unlikely to be present somewhere else in the URI.
 PLACEHOLDER_INTEGER_ID = 1111
 
 
@@ -121,7 +124,7 @@ def iter_definitions(definitions, operations):
         yield get_response_schema(func)
 
 
-def build_path_for_integer_param(ns, operation, arguments):
+def build_path_for_integer_param(ns, operation, arguments: Set):
     """
     Build an endpoint path when the parameters are integer-valued
 
@@ -138,10 +141,10 @@ def build_path_for_integer_param(ns, operation, arguments):
     them afterwards.
 
     """
-    sorted_args = list(arguments)
+    ordered_args = list(arguments)
     args_substitution = {
         PLACEHOLDER_INTEGER_ID + index: argument
-        for index, argument in enumerate(sorted_args)
+        for index, argument in enumerate(ordered_args)
     }
     uri_templates = {
         argument: f"{placeholder}"
