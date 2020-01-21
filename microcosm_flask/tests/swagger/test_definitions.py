@@ -2,7 +2,12 @@
 Test Swagger definition construction.
 
 """
-from hamcrest import assert_that, equal_to, has_entries
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_entries,
+    has_items,
+)
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
 
@@ -10,7 +15,7 @@ from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
-from microcosm_flask.swagger.definitions import build_swagger
+from microcosm_flask.swagger.definitions import build_path_for_integer_param, build_swagger
 from microcosm_flask.tests.conventions.fixtures import (
     NewPersonSchema,
     Person,
@@ -270,6 +275,42 @@ def test_build_swagger():
         consumes=[
             "application/json",
         ],
+    ))
+
+
+def test_build_integer_valued_param():
+    graph = create_object_graph(name="example", testing=True)
+    ns = Namespace(
+        subject=Person,
+        version="v1",
+        identifier_type="int",
+    )
+    configure_crud(graph, ns, PERSON_MAPPINGS)
+
+    with graph.flask.test_request_context():
+        operations = list(iter_endpoints(graph, match_function))
+        swagger_schema = build_swagger(graph, ns, operations)
+
+        assert_that(
+            build_path_for_integer_param(ns, Operation.Update, set(["person_id"])),
+            equal_to("/api/v1/person/{person_id}"),
+        )
+
+    assert_that(swagger_schema, has_entries(
+        paths=has_entries(
+            **{
+                "/person/{person_id}": has_entries(
+                    patch=has_entries(
+                        parameters=has_items({
+                            "required": True,
+                            "type": "integer",
+                            "name": "person_id",
+                            "in": "path",
+                        }),
+                    ),
+                ),
+            },
+        ),
     ))
 
 
