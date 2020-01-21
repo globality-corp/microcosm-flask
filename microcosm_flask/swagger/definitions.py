@@ -17,6 +17,7 @@ Note that:
 
 """
 from logging import getLogger
+from typing import Set
 from urllib.parse import unquote
 
 from openapi import model as swagger
@@ -35,6 +36,9 @@ from microcosm_flask.swagger.naming import operation_name, type_name
 
 
 logger = getLogger("microcosm_flask.swagger")
+# Placeholder integer id used to build URIs in werkzeug before replacing with id param name.
+# Use a value that is unlikely to be present somewhere else in the URI.
+PLACEHOLDER_INTEGER_ID = 1111
 
 
 def build_swagger(graph, ns, operations):
@@ -120,21 +124,53 @@ def iter_definitions(definitions, operations):
         yield get_response_schema(func)
 
 
-def build_path(operation, ns):
+def build_path_for_integer_param(ns, operation, arguments: Set):
     """
-    Build a path URI for an operation.
+    Build an endpoint path when the parameters are integer-valued
+
+    When building paths for swagger, parameter names are substituted for
+    path parameters. For example, the output will have '/api/v1/person/{person_id}'.
+    We still use werkzeug to build those paths with placeholders for params.
+
+    That works with UUID-valued ids but not integer-valued ones, due do a difference
+    between the UUIDConverter and NumberConverter's `to_url` methods
+    (see https://github.com/pallets/werkzeug/blob/master/src/werkzeug/routing.py#L1315
+    and https://github.com/pallets/werkzeug/blob/master/src/werkzeug/routing.py#L1234)
+
+    Here we instead use placeholder integers to use werkzeug functions, and replace
+    them afterwards.
 
     """
+    ordered_args = list(arguments)
+    args_substitution = {
+        PLACEHOLDER_INTEGER_ID + index: argument
+        for index, argument in enumerate(ordered_args)
+    }
+    uri_templates = {
+        argument: f"{placeholder}"
+        for placeholder, argument in args_substitution.items()
+    }
+    path = unquote(ns.url_for(operation, _external=False, **uri_templates))
+    for placeholder_integer, argument in args_substitution.items():
+        path = path.replace(str(placeholder_integer), f"{{{argument}}}")
+
+    return path
+
+
+def build_path(operation, ns):
     try:
         return ns.url_for(operation, _external=False)
     except BuildError as error:
-        # we are missing some URI path parameters
-        uri_templates = {
-            argument: "{{{}}}".format(argument)
-            for argument in error.suggested.arguments
-        }
-        # flask will sometimes try to quote '{' and '}' characters
-        return unquote(ns.url_for(operation, _external=False, **uri_templates))
+        if ns.identifier_type == "int":
+            return build_path_for_integer_param(ns, operation, error.suggested.arguments)
+        else:
+            # we are missing some URI path parameters
+            uri_templates = {
+                argument: f"{{{argument}}}"
+                for argument in error.suggested.arguments
+            }
+            # flask will sometimes try to quote '{' and '}' characters
+            return unquote(ns.url_for(operation, _external=False, **uri_templates))
 
 
 def body_param(schema):
@@ -160,7 +196,7 @@ def header_param(name, required=False, param_type="string"):
     })
 
 
-def query_param(name, field, required=False):
+def query_param(name, field):
     """
     Build a query parameter definition.
 
@@ -168,7 +204,7 @@ def query_param(name, field, required=False):
     parameter = build_parameter(field)
     parameter["name"] = name
     parameter["in"] = "query"
-    parameter["required"] = False
+    parameter["required"] = field.required
 
     return swagger.QueryParameterSubSchema(**parameter)
 
@@ -181,6 +217,9 @@ def path_param(name, ns):
     if ns.identifier_type == "uuid":
         param_type = "string"
         param_format = "uuid"
+    elif ns.identifier_type == "int":
+        param_type = "integer"
+        param_format = None
     else:
         param_type = "string"
         param_format = None
