@@ -106,6 +106,7 @@ def pubsub_schema(fields):
 )
 class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
+    email = fields.Email(allow_none=True)
 
     def get_links(self, obj):
         links = Links()
