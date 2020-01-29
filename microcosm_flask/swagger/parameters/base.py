@@ -34,6 +34,7 @@ class ParameterBuilder(ABC):
             "$ref": self.parse_ref,
             "type": self.parse_type,
             "items": self.parse_items,
+            "x-nullable": self.parse_nullable,
         }
 
     def build(self, field: Field) -> Mapping[str, Any]:
@@ -67,6 +68,11 @@ class ParameterBuilder(ABC):
 
         """
         return field.default
+
+    def parse_nullable(self, field: Field) -> Optional[bool]:
+        if field.allow_none:
+            return True
+        return None
 
     def parse_description(self, field: Field) -> Optional[str]:
         """
