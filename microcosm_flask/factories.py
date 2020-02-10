@@ -28,7 +28,6 @@ def configure_flask(graph):
 
     xray_recorder.configure(
         service=graph.metadata.import_name,
-        plugins=("ECSPlugin"),
         daemon_address=graph.metadata.xray_daemon_address
     )
     XRayMiddleware(app, xray_recorder)
