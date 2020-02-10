@@ -11,6 +11,7 @@ from microcosm.api import defaults
 
 @defaults(
     port=5000,
+    xray_daemon_address="xray:2000",
     enable_profiling=False,
     profile_dir=None,
 )
