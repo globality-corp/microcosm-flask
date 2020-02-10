@@ -28,7 +28,7 @@ def configure_flask(graph):
 
     xray_recorder.configure(
         service=graph.metadata.import_name,
-        daemon_address=graph.metadata.xray_daemon_address
+        daemon_address="xray:2000",
     )
     XRayMiddleware(app, xray_recorder)
 
