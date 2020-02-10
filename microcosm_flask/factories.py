@@ -26,7 +26,11 @@ def configure_flask(graph):
     app.debug = graph.metadata.debug
     app.testing = graph.metadata.testing
 
-    xray_recorder.configure(service=graph.metadata.import_name, plugins=("ECSPlugin"))
+    xray_recorder.configure(
+        service=graph.metadata.import_name,
+        plugins=("ECSPlugin"),
+        daemon_address=graph.metadata.xray_daemon_address
+    )
     XRayMiddleware(app, xray_recorder)
 
     # copy in the graph's configuration for non-nested keys
