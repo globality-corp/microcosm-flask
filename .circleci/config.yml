@@ -141,7 +141,7 @@ jobs:
             echo "username:$PYPI_USERNAME" >> ~/.pypirc
             echo "password:$PYPI_PASSWORD" >> ~/.pypirc
             echo >> ~/.pypirc
-            version=$(cat .bumpversion.cfg | awk '/current_version / {print $3}')
+            version=$(python setup.py --version)
             python setup.py register -r pypi
             python setup.py sdist
             twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz

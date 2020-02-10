@@ -2,6 +2,9 @@
 Factories to configure Flask.
 
 """
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
 import microcosm.opaque  # noqa
 from flask import Flask
 from microcosm.api import defaults
@@ -22,6 +25,9 @@ def configure_flask(graph):
     app = Flask(graph.metadata.import_name)
     app.debug = graph.metadata.debug
     app.testing = graph.metadata.testing
+
+    xray_recorder.configure(service=graph.metadata.import_name, plugins=("ECSPlugin"))
+    XRayMiddleware(app, xray_recorder)
 
     # copy in the graph's configuration for non-nested keys
     app.config.update({

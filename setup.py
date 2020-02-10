@@ -22,6 +22,7 @@ setup(
     keywords="microcosm",
     install_requires=[
         "tornado<6",
+        "aws-xray-sdk>=2.4.3",
         "Flask>=1.0.2",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
