@@ -146,6 +146,29 @@ jobs:
             python setup.py sdist
             twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz
 
+  deploy_pypi_rc:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Deploy
+          command: |
+            echo "[distutils]" > ~/.pypirc
+            echo "index-servers =" >> ~/.pypirc
+            echo "    pypi " >> ~/.pypirc
+            echo >> ~/.pypirc
+            echo "[pypi]" >> ~/.pypirc
+            echo "repository:https://upload.pypi.org/legacy/" >> ~/.pypirc
+            echo "username:$PYPI_USERNAME" >> ~/.pypirc
+            echo "password:$PYPI_PASSWORD" >> ~/.pypirc
+            echo >> ~/.pypirc
+            sed  -i '/version \=/s/\".*\"/'"\"0.${CIRCLE_BUILD_NUM}.dev${CIRCLE_BUILD_NUM}\"/" setup.py
+            version=$(cat .bumpversion.cfg | awk '/current_version / {print $3}')
+            python setup.py register -r pypi
+            python setup.py sdist
+            twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz
+
 workflows:
   version: 2
 
@@ -184,6 +207,11 @@ workflows:
             # run for all branches and tags
             tags:
               only: /.*/
+      - deploy_pypi_rc:
+          requires:
+            - lint
+            - test
+            - typehinting
       - deploy_pypi:
           requires:
             - test
