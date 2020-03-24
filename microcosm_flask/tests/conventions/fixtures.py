@@ -28,12 +28,13 @@ class Person:
 
 
 class NewAddressSchema(Schema):
-    addressLine = fields.Str(attribute="address_line", required=True)
+    addressLine = fields.String(attribute="address_line", required=True)
 
 
 class NewPersonSchema(Schema):
-    firstName = fields.Str(attribute="first_name", required=True)
-    lastName = fields.Str(attribute="last_name", required=True)
+    # both attribute and data_key fields should result in the same swagger definition
+    firstName = fields.String(attribute="first_name", required=True)
+    last_name = fields.String(data_key="lastName", required=True)
     email = fields.Email()
 
     @property
@@ -46,8 +47,8 @@ class NewPersonBatchSchema(Schema):
 
 
 class UpdatePersonSchema(Schema):
-    firstName = fields.Str(attribute="first_name")
-    lastName = fields.Str(attribute="last_name")
+    firstName = fields.String(attribute="first_name")
+    last_name = fields.String(data_key="lastName")
 
 
 class AddressCSVSchema(NewAddressSchema):

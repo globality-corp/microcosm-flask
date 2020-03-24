@@ -38,7 +38,7 @@ class Schemas:
         fields = list(self.iter_fields(schema))
 
         properties = {
-            field.name: self.build_parameter(field)
+            name: self.build_parameter(field)
             for name, field in fields
         }
 
@@ -65,9 +65,15 @@ class Schemas:
         Generates: name, field pairs
 
         """
+        serialized_names = {}
+        for field_name, field_def in schema.declared_fields.items():
+            if isinstance(field_def, Field) and field_def.data_key:
+                serialized_names[field_name] = field_def.data_key
+
         for name in sorted(schema.fields.keys()):
             field = schema.fields[name]
-            yield name, field
+            serialized_name = serialized_names.get(name, name)
+            yield serialized_name, field
 
     def iter_schemas(self, schema: Schema) -> Iterable[Tuple[str, Any]]:
         """
