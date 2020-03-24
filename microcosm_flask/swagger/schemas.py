@@ -38,7 +38,7 @@ class Schemas:
         fields = list(self.iter_fields(schema))
 
         properties = {
-            field.name: self.build_parameter(field)
+            name: self.build_parameter(field)
             for name, field in fields
         }
 
@@ -67,7 +67,9 @@ class Schemas:
         """
         for name in sorted(schema.fields.keys()):
             field = schema.fields[name]
-            yield name, field
+            field_name = field.data_key or name
+
+            yield field_name, field
 
     def iter_schemas(self, schema: Schema) -> Iterable[Tuple[str, Any]]:
         """
