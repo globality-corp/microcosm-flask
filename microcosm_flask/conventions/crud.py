@@ -195,8 +195,8 @@ class CRUDConvention(Convention):
             definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
             return dump_response_data(
-                "",
-                None,
+                response_schema="",
+                response_data=None,
                 status_code=operation.value.default_code,
                 headers=headers,
                 response_format=response_format,
