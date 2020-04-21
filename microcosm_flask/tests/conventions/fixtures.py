@@ -186,6 +186,10 @@ def person_delete(person_id):
     return person_id == PERSON_ID_1
 
 
+def person_delete_batch():
+    return True
+
+
 def person_replace(person_id, **kwargs):
     return Person(id=person_id, **kwargs)
 
