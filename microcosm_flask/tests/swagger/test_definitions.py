@@ -166,7 +166,6 @@ def test_build_swagger():
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "x-nullable": True,
                     },
                     "lastName": {
                         "type": "string",
@@ -189,7 +188,6 @@ def test_build_swagger():
                     "email": {
                         "format": "email",
                         "type": "string",
-                        "x-nullable": True,
                     },
                     "firstName": {
                         "type": "string",
@@ -205,12 +203,14 @@ def test_build_swagger():
                     "email": {
                         "format": "email",
                         "type": "string",
-                        "x-nullable": True,
                     },
                     "firstName": {
                         "type": "string",
                     },
                 },
+                required=[
+                    "email",
+                ],
             ),
             UpdatePerson=dict(
                 type="object",

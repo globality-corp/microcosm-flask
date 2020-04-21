@@ -32,6 +32,7 @@ class Operation(Enum):
     Search = OperationInfo("search", "GET", NODE_PATTERN, 200)
     Count = OperationInfo("count", "HEAD", NODE_PATTERN, 200)
     Create = OperationInfo("create", "POST", NODE_PATTERN, 201)
+    DeleteBatch = OperationInfo("delete_batch", "DELETE", NODE_PATTERN, 204)
     UpdateBatch = OperationInfo("update_batch", "PATCH", NODE_PATTERN, 200)
     CreateCollection = OperationInfo("create_collection", "POST", NODE_PATTERN, 200)
     SavedSearch = OperationInfo("saved_search", "POST", NODE_PATTERN, 200)

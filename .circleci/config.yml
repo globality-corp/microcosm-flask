@@ -14,7 +14,7 @@
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2019.31.2
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.7.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -28,7 +28,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2019.31.2
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.7.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -38,6 +38,7 @@ deploy_defaults: &deploy_defaults
         JFROG_AUTH: "InjectedDuringRuntime"
         PYPI_USERNAME: "InjectedDuringRuntime"
         PYPI_PASSWORD: "InjectedDuringRuntime"
+
 
 whitelist: &whitelist
   paths:
@@ -56,22 +57,22 @@ jobs:
           root: ~/repo
           <<: *whitelist
 
-  build_base_docker:
+  build_docker:
     <<: *defaults
 
     steps:
       - attach_workspace:
           at: ~/repo
 
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
 
       - run:
           name: Build Base Docker
           # install dependencies for loading ecs task definitions
           command: |
             eval $(aws ecr get-login --no-include-email)
-            globality-build build-gen local
-            globality-build docker --repo python-library
+            globality-build docker-build-push --repo python-library
 
   test:
     <<: *defaults
@@ -146,6 +147,7 @@ jobs:
             python setup.py sdist
             twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz
 
+
 workflows:
   version: 2
 
@@ -156,7 +158,7 @@ workflows:
             # run for all branches and tags
             tags:
               only: /.*/
-      - build_base_docker:
+      - build_docker:
           requires:
             - checkout
           filters:
@@ -165,21 +167,21 @@ workflows:
               only: /.*/
       - lint:
           requires:
-            - build_base_docker
+            - build_docker
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - test:
           requires:
-            - build_base_docker
+            - build_docker
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - typehinting:
           requires:
-            - build_base_docker
+            - build_docker
           filters:
             # run for all branches and tags
             tags:

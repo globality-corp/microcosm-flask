@@ -28,12 +28,13 @@ class Person:
 
 
 class NewAddressSchema(Schema):
-    addressLine = fields.Str(attribute="address_line", required=True)
+    addressLine = fields.String(attribute="address_line", required=True)
 
 
 class NewPersonSchema(Schema):
-    firstName = fields.Str(attribute="first_name", required=True)
-    lastName = fields.Str(attribute="last_name", required=True)
+    # both attribute and data_key fields should result in the same swagger definition
+    firstName = fields.String(attribute="first_name", required=True)
+    last_name = fields.String(data_key="lastName", required=True)
     email = fields.Email()
 
     @property
@@ -46,8 +47,8 @@ class NewPersonBatchSchema(Schema):
 
 
 class UpdatePersonSchema(Schema):
-    firstName = fields.Str(attribute="first_name")
-    lastName = fields.Str(attribute="last_name")
+    firstName = fields.String(attribute="first_name")
+    last_name = fields.String(data_key="lastName")
 
 
 class AddressCSVSchema(NewAddressSchema):
@@ -106,7 +107,6 @@ def pubsub_schema(fields):
 )
 class PersonSchema(PersonCSVSchema):
     _links = fields.Method("get_links", dump_only=True)
-    email = fields.Email(allow_none=True)
 
     def get_links(self, obj):
         links = Links()
@@ -184,6 +184,10 @@ def person_retrieve(person_id, family_member=None):
 
 def person_delete(person_id):
     return person_id == PERSON_ID_1
+
+
+def person_delete_batch():
+    return True
 
 
 def person_replace(person_id, **kwargs):

@@ -38,6 +38,7 @@ from microcosm_flask.tests.conventions.fixtures import (
     address_search,
     person_create,
     person_delete,
+    person_delete_batch,
     person_replace,
     person_retrieve,
     person_search,
@@ -66,6 +67,7 @@ def add_request_id(headers, response_data):
 PERSON_MAPPINGS = {
     Operation.Create: (person_create, NewPersonSchema(), PersonSchema(), add_request_id),
     Operation.Delete: (person_delete,),
+    Operation.DeleteBatch: (person_delete_batch,),
     Operation.UpdateBatch: (person_update_batch, NewPersonBatchSchema(), PersonBatchSchema()),
     Operation.Replace: (person_replace, NewPersonSchema(), PersonSchema()),
     Operation.Retrieve: (person_retrieve, PersonLookupSchema(), PersonSchema()),
@@ -278,6 +280,10 @@ class TestCRUD:
                 },
             }],
         })
+
+    def test_delete_batch(self):
+        response = self.client.delete("/api/person")
+        self.assert_response(response, 204)
 
     def test_retrieve(self):
         uri = "/api/person/{}".format(PERSON_ID_1)
