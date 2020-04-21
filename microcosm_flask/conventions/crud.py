@@ -170,6 +170,40 @@ class CRUDConvention(Convention):
 
         update_batch.__doc__ = "Update a batch of {}".format(ns.subject_name)
 
+    def configure_deletebatch(self, ns, definition):
+        """
+        Register a delete batch endpoint.
+
+        The definition's func should be a delete function, which must:
+        - accept kwargs for path data
+        - return truthy/falsey
+
+        :param ns: the namespace
+        :param definition: the endpoint definition
+
+        """
+        operation = Operation.DeleteBatch
+        request_schema = definition.request_schema or Schema()
+
+        @self.add_route(ns.collection_path, operation, ns)
+        @qs(request_schema)
+        @wraps(definition.func)
+        def delete_batch(**path_data):
+            headers = dict()
+            request_data = load_query_string_data(request_schema)
+            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            definition.header_func(headers, response_data)
+            response_format = self.negotiate_response_content(definition.response_formats)
+            return dump_response_data(
+                "",
+                None,
+                status_code=operation.value.default_code,
+                headers=headers,
+                response_format=response_format,
+            )
+
+        delete_batch.__doc__ = "Delete a batch of {}".format(ns.subject_name)
+
     def configure_retrieve(self, ns, definition):
         """
         Register a retrieve endpoint.
