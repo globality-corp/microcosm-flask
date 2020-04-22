@@ -5,14 +5,19 @@ Exposes swagger definitions for matching operations.
 
 """
 from flask import g
+from marshmallow import Schema, fields
 from microcosm.api import defaults
 
 from microcosm_flask.conventions.base import Convention
-from microcosm_flask.conventions.encoding import make_response
-from microcosm_flask.conventions.registry import iter_endpoints
+from microcosm_flask.conventions.encoding import load_query_string_data, make_response
+from microcosm_flask.conventions.registry import iter_endpoints, request
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_swagger
+
+
+class ValidateSwaggerSchema(Schema):
+    validate_schema = fields.Boolean()
 
 
 class SwaggerConvention(Convention):
@@ -46,8 +51,11 @@ class SwaggerConvention(Convention):
 
         """
         @self.add_route(ns.singleton_path, Operation.Discover, ns)
+        @request(ValidateSwaggerSchema)
         def discover():
-            swagger = build_swagger(self.graph, ns, self.find_matching_endpoints(ns))
+            request_data = load_query_string_data(ValidateSwaggerSchema())
+
+            swagger = build_swagger(self.graph, ns, self.find_matching_endpoints(ns), **request_data)
             g.hide_body = True
             return make_response(swagger)
 
