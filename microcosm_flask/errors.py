@@ -147,14 +147,34 @@ def make_json_error(error):
     return dump_response_data(None, response_data, status_code, headers)
 
 
+def make_json_error_with_sentry(error):
+    response = make_json_error(error)
+    try:
+        send_error_to_sentry(error, response)
+    except ImportError:
+        pass
+    return response
+
+
+def send_error_to_sentry(error, response):
+    from sentry_sdk import capture_exception
+    from sentry_sdk import configure_scope
+    with configure_scope() as scope:
+        scope.set_tag("x-request-id", response.headers.get("X-Request-Id"))
+        capture_exception(error)
+
+
 def configure_error_handlers(graph):
     """
     Register error handlers.
 
     """
+    error_func = make_json_error
+    if graph.sentry_logging.enabled:
+        error_func = make_json_error_with_sentry
     # override all of the werkzeug HTTPExceptions
     for code in default_exceptions.keys():
-        graph.flask.register_error_handler(code, make_json_error)
+        graph.flask.register_error_handler(code, error_func)
 
     # register catch all for user exceptions
-    graph.flask.register_error_handler(Exception, make_json_error)
+    graph.flask.register_error_handler(Exception, error_func)
