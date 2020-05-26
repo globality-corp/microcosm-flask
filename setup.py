@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "3.1.0"
+version = "3.2.0"
 
 
 setup(
@@ -36,8 +36,15 @@ setup(
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
-        "spooky": "spooky>=2.0.0",
         "profiling": "pyinstrument>=3.0",
+        "sentry": "sentry-sdk>=0.14.4",
+        "spooky": "spooky>=2.0.0",
+        "test": [
+            "sentry-sdk>=0.14.4",
+            "PyHamcrest",
+            "coverage",
+            "parameterized"
+        ],
     },
     setup_requires=[
         "nose>=1.3.7",
@@ -70,6 +77,7 @@ setup(
             "request_context = microcosm_flask.context:configure_request_context",
             "route = microcosm_flask.routing:configure_route_decorator",
             "route_metrics = microcosm_flask.metrics:RouteMetrics",
+            "sentry_logging = microcosm_flask.sentry:configure_sentry",
             "swagger_convention = microcosm_flask.conventions.swagger:configure_swagger",
             "uuid = microcosm_flask.converters:configure_uuid",
             "memory_profiler = microcosm_flask.memory:MemoryProfiler",
