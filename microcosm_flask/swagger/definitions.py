@@ -17,11 +17,18 @@ Note that:
 
 """
 from logging import getLogger
-from typing import Set
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Set,
+    Tuple,
+)
 from urllib.parse import unquote
 
+from flask.globals import _request_ctx_stack
 from openapi import model as swagger
-from werkzeug.routing import BuildError
+from werkzeug.routing import BuildError, Rule
 
 from microcosm_flask.conventions.registry import (
     get_qs_schema,
@@ -29,6 +36,7 @@ from microcosm_flask.conventions.registry import (
     get_response_schema,
 )
 from microcosm_flask.errors import ErrorContextSchema, ErrorSchema, SubErrorSchema
+from microcosm_flask.namespaces import Namespace
 from microcosm_flask.naming import name_for
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.api import build_parameter, iter_schemas
@@ -41,7 +49,7 @@ logger = getLogger("microcosm_flask.swagger")
 PLACEHOLDER_INTEGER_ID = 1111
 
 
-def build_swagger(graph, ns, operations):
+def build_swagger(graph, ns, operations, validate_schema=False):
     """
     Build out the top-level swagger definition.
 
@@ -65,13 +73,32 @@ def build_swagger(graph, ns, operations):
     )
     add_paths(schema.paths, base_path, operations)
     add_definitions(schema.definitions, operations)
-    try:
-        schema.validate()
-    except Exception:
-        logger.exception("Swagger definition did not validate against swagger schema")
-        raise
+
+    if validate_schema:
+        try:
+            schema.validate()
+        except Exception:
+            logger.exception("Swagger definition did not validate against swagger schema")
+            raise
 
     return schema
+
+
+def _construct_schema_request_arguments():
+    """
+    Create a mapping between a given endpoint/method and its possible arguments.
+    Used in aid of generating paths during swagger generation
+
+    """
+    reqctx = _request_ctx_stack.top
+    url_adapter = reqctx.url_adapter
+    rules: List[Rule] = url_adapter.map._rules
+
+    return {
+        (rule.endpoint, method): rule.arguments
+        for rule in rules
+        for method in rule.methods
+    }
 
 
 def add_paths(paths, base_path, operations):
@@ -79,8 +106,10 @@ def add_paths(paths, base_path, operations):
     Add paths to swagger.
 
     """
+    schema_request_arguments = _construct_schema_request_arguments()
+
     for operation, ns, rule, func in operations:
-        path = build_path(operation, ns)
+        path = build_path(operation, ns, schema_request_arguments)
         if not path.startswith(base_path):
             continue
         method = operation.value.method.lower()
@@ -157,19 +186,38 @@ def build_path_for_integer_param(ns, operation, arguments: Set):
     return path
 
 
-def build_path(operation, ns):
+def create_uri_templates(arguments):
+    return {
+        argument: f"{{{argument}}}"
+        for argument in arguments
+    }
+
+
+def build_path(operation: Operation, ns: Namespace, schema_request_arguments: Optional[Dict[Tuple, List[str]]] = None):
+    expected_arguments: List[str] = (
+        schema_request_arguments.get((ns.endpoint_for(operation), operation.value.method), [])
+        if schema_request_arguments
+        else []
+    )
+
+    expected_uri_templates = create_uri_templates(expected_arguments)
+
     try:
-        return ns.url_for(operation, _external=False)
-    except BuildError as error:
+        # flask will sometimes try to quote '{' and '}' characters
+        return unquote(ns.url_for(operation, _external=False, **expected_uri_templates))
+    except (BuildError, ValueError) as error:
+        # NB: The arguments were misidentified in the previous step, use the ones supplied by the error
+        actual_arguments = (
+            error.suggested.arguments   # type: ignore
+            if isinstance(error, BuildError)
+            else expected_arguments
+        )
+
         if ns.identifier_type == "int":
-            return build_path_for_integer_param(ns, operation, error.suggested.arguments)
+            return build_path_for_integer_param(ns, operation, actual_arguments)  # type: ignore
         else:
             # we are missing some URI path parameters
-            uri_templates = {
-                argument: f"{{{argument}}}"
-                for argument in error.suggested.arguments
-            }
-            # flask will sometimes try to quote '{' and '}' characters
+            uri_templates = create_uri_templates(actual_arguments)
             return unquote(ns.url_for(operation, _external=False, **uri_templates))
 
 

@@ -2,6 +2,9 @@
 Error handling tests.
 
 """
+import json
+from unittest.mock import patch
+
 from hamcrest import (
     assert_that,
     equal_to,
@@ -161,10 +164,52 @@ def test_custom_error_status_code():
 
     client = graph.app.test_client()
 
-    response = client.get("/malformed_syntax")
+    with patch("microcosm_flask.errors.send_error_to_sentry") as mock_sentry:
+        response = client.get("/malformed_syntax")
+
+    mock_sentry.assert_not_called()
     assert_that(response.status_code, is_(equal_to(400)))
     data = response.json
     assert_that(data, has_entries(dict(
+        code=400,
+        message="MyValidationError",
+        retryable=False,
+        context={"errors": []},
+    )))
+
+
+def test_sentry_integration():
+    """
+    Test when sentry enabled, send_error_to_sentry is called in addition to make_json_error with the
+    original exception and the output of make_json_error
+
+    """
+    def loader(metadata):
+        return dict(
+            sentry_logging=dict(
+                dsn="topic",
+                enabled=True,
+            )
+        )
+    graph = create_object_graph(name="example", testing=True, loader=loader)
+
+    @graph.app.route("/malformed_syntax")
+    @graph.audit
+    def malformed_syntax():
+        raise MyValidationError
+
+    client = graph.app.test_client()
+
+    with patch("microcosm_flask.errors.send_error_to_sentry") as mock_sentry:
+        response = client.get("/malformed_syntax")
+
+    (actual_exception, actual_response), kwargs = mock_sentry.call_args
+
+    assert_that(isinstance(actual_exception, MyValidationError), is_(True))
+    assert_that(mock_sentry.call_count, is_(equal_to(1)))
+    assert_that(json.loads(actual_response.data), is_(equal_to(response.json)))
+    assert_that(response.status_code, is_(equal_to(400)))
+    assert_that(response.json, has_entries(dict(
         code=400,
         message="MyValidationError",
         retryable=False,
