@@ -7,7 +7,12 @@ from microcosm.decorators import defaults
 from microcosm.object_graph import ObjectGraph
 from microcosm_logging.decorators import logger
 
-from sentry_sdk.utils import BadDsn
+
+try:
+    import sentry_sdk
+    from sentry_sdk.utils import BadDsn
+except ImportError:
+    sentry_sdk = None
 
 
 @dataclass
@@ -42,13 +47,12 @@ def before_send(event, hint):
 @logger
 def configure_sentry(graph: ObjectGraph):
     enabled, dsn, sentry = False, None, None
-    if graph.config.sentry_logging.enabled and graph.config.sentry_logging.dsn:
+    if graph.config.sentry_logging.enabled and graph.config.sentry_logging.dsn and sentry_sdk:
         enabled = graph.config.sentry_logging.enabled
         dsn = graph.config.sentry_logging.dsn
         if graph.metadata.testing:
             sentry = MagicMock()
         else:
-            import sentry_sdk
             try:
                 sentry = sentry_sdk.init(
                     graph.config.sentry_logging.dsn,
