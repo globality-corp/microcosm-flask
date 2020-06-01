@@ -189,7 +189,7 @@ def test_sentry_integration():
             sentry_logging=dict(
                 dsn="topic",
                 enabled=True,
-            )
+            ),
         )
     graph = create_object_graph(name="example", testing=True, loader=loader)
 

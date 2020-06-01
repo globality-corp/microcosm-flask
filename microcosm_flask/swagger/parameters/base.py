@@ -24,7 +24,7 @@ class ParameterBuilder(ABC):
     and delegates to the first compatible implementation.
 
     """
-    def __init__(self, build_parameter: Callable[[Schema], Mapping[str, Any]]):
+    def __init__(self, build_parameter: Callable[[Schema], Mapping[str, Any]], **kwargs):
         self.build_parameter = build_parameter
         self.parsers = {
             "default": self.parse_default,

@@ -3,14 +3,27 @@ Testing fixtures (e.g. for CRUD).
 
 """
 from copy import copy
+from enum import Enum, unique
 from uuid import uuid4
 
 from marshmallow import Schema, fields
 
 from microcosm_flask.decorators.schemas import SelectedField, add_associated_schema
+from microcosm_flask.fields import EnumField
 from microcosm_flask.linking import Link, Links
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
+
+
+@unique
+class EyeColor(Enum):
+    """
+    Natural eye colors
+
+    """
+    PURPLE = "PURPLE"
+    TEAL = "TEAL"
+    RUBY = "RUBY"
 
 
 class Address:
@@ -35,6 +48,7 @@ class NewPersonSchema(Schema):
     # both attribute and data_key fields should result in the same swagger definition
     firstName = fields.String(attribute="first_name", required=True)
     last_name = fields.String(data_key="lastName", required=True)
+    eye_color = EnumField(EyeColor, data_key="eyeColor")
     email = fields.Email()
 
     @property
