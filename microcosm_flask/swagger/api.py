@@ -6,7 +6,6 @@ from typing import (
     Any,
     Iterable,
     Mapping,
-    Optional,
     Tuple,
 )
 
@@ -17,7 +16,7 @@ from microcosm_flask.swagger.parameters import Parameters
 from microcosm_flask.swagger.schemas import Schemas
 
 
-def build_schema(schema: Schema, strict_enums: Optional[bool] = True) -> Mapping[str, Any]:
+def build_schema(schema: Schema, strict_enums: bool = True) -> Mapping[str, Any]:
     """
     Build JSON schema from a marshmallow schema.
 
@@ -26,7 +25,7 @@ def build_schema(schema: Schema, strict_enums: Optional[bool] = True) -> Mapping
     return builder.build(schema)
 
 
-def iter_schemas(schema: Schema, strict_enums: Optional[bool] = True) -> Iterable[Tuple[str, Any]]:
+def iter_schemas(schema: Schema, strict_enums: bool = True) -> Iterable[Tuple[str, Any]]:
     """
     Build zero or more JSON schemas for a marshmallow schema.
 

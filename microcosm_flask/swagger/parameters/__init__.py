@@ -4,7 +4,6 @@ from typing import (
     Any,
     List,
     Mapping,
-    Optional,
     Type,
 )
 
@@ -25,7 +24,7 @@ class Parameters:
     and delegates to the first compatible implementation.
 
     """
-    def __init__(self, strict_enums: Optional[bool] = True):
+    def __init__(self, strict_enums: bool = True):
         self.strict_enums = strict_enums
 
     def build(self, field: Field) -> Mapping[str, Any]:

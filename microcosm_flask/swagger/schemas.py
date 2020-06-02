@@ -7,7 +7,6 @@ from typing import (
     Callable,
     Iterable,
     Mapping,
-    Optional,
     Tuple,
 )
 
@@ -31,7 +30,7 @@ class Schemas:
     def __init__(
         self,
         build_parameter: Callable[..., Mapping[str, Any]],
-        strict_enums: Optional[bool] = True,
+        strict_enums: bool = True,
     ):
         self.build_parameter = build_parameter
         self.strict_enums = strict_enums

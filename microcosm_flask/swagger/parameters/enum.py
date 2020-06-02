@@ -34,7 +34,7 @@ class EnumParameterBuilder(ParameterBuilder):
     def __init__(
         self,
         build_parameter: Callable[[Schema], Mapping[str, Any]],
-        strict_enums: Optional[bool] = True,
+        strict_enums: bool = True,
         **kwargs,
     ):
         super().__init__(build_parameter)
