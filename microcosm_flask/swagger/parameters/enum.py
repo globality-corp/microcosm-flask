@@ -66,7 +66,6 @@ class EnumParameterBuilder(ParameterBuilder):
         ]
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:
-        if not self.strict_enums:
-            return None
-
-        return self._parse_enum_values(field)
+        if self.strict_enums:
+            return self._parse_enum_values(field)
+        return None
