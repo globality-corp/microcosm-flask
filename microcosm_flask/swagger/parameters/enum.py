@@ -49,9 +49,7 @@ class EnumParameterBuilder(ParameterBuilder):
         return None
 
     def parse_type(self, field: Field) -> str:
-        enum_values = self.parse_enum_values(field)
-        if enum_values is None:
-            return "string"
+        enum_values = self._parse_enum_values(field)
 
         if all((isinstance(enum_value, str) for enum_value in enum_values)):
             return "string"
@@ -60,12 +58,15 @@ class EnumParameterBuilder(ParameterBuilder):
         else:
             raise Exception(f"Cannot infer enum type for field: {field.name}")
 
-    def parse_enum_values(self, field: Field) -> Optional[Sequence]:
-        if not self.strict_enums:
-            return None
-
+    def _parse_enum_values(self, field: Field) -> Sequence:
         enum = getattr(field, "enum", None)
         return [
             choice.value if field.by_value else choice.name  # type: ignore
             for choice in enum
         ]
+
+    def parse_enum_values(self, field: Field) -> Optional[Sequence]:
+        if not self.strict_enums:
+            return None
+
+        return self._parse_enum_values(field)

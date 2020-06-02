@@ -13,6 +13,15 @@ def test_schema_generation():
     assert_that(schema, is_(equal_to({
         "type": "object",
         "properties": {
+            "eyeColor": {
+                "enum": [
+                    "PURPLE",
+                    "TEAL",
+                    "RUBY",
+                ],
+                "format": "enum",
+                "type": "string",
+            },
             "firstName": {
                 "type": "string",
             },
