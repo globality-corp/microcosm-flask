@@ -38,3 +38,29 @@ def test_schema_generation():
             "lastName",
         ],
     })))
+
+
+def test_schema_generation_non_strict_enums():
+    schema = build_schema(NewPersonSchema(), strict_enums=False)
+    assert_that(schema, is_(equal_to({
+        "type": "object",
+        "properties": {
+            "eyeColor": {
+                "type": "string",
+            },
+            "firstName": {
+                "type": "string",
+            },
+            "lastName": {
+                "type": "string",
+            },
+            "email": {
+                "format": "email",
+                "type": "string",
+            },
+        },
+        "required": [
+            "firstName",
+            "lastName",
+        ],
+    })))
