@@ -147,6 +147,15 @@ def test_build_swagger():
                         "type": "string",
                         "format": "email",
                     },
+                    "eyeColor": {
+                        "enum": [
+                            "PURPLE",
+                            "TEAL",
+                            "RUBY",
+                        ],
+                        "format": "enum",
+                        "type": "string",
+                    },
                     "lastName": {
                         "type": "string",
                     },
@@ -166,6 +175,10 @@ def test_build_swagger():
                     "email": {
                         "type": "string",
                         "format": "email",
+                    },
+                    # Response-side enums are declared as strings
+                    "eyeColor": {
+                        "type": "string",
                     },
                     "lastName": {
                         "type": "string",

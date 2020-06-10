@@ -34,6 +34,13 @@ def test_field_enum():
     })))
 
 
+def test_field_enum_non_strict():
+    parameter = build_parameter(TestSchema().fields["choice"], strict_enums=False)
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
+    })))
+
+
 def test_field_int_enum():
     parameter = build_parameter(TestSchema().fields["value"])
     assert_that(parameter, is_(equal_to({

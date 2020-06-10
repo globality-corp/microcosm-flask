@@ -27,8 +27,13 @@ class Schemas:
     Swagger schema builder.
 
     """
-    def __init__(self, build_parameter: Callable[[Field], Mapping[str, Any]]):
+    def __init__(
+        self,
+        build_parameter: Callable[..., Mapping[str, Any]],
+        strict_enums: bool = True,
+    ):
         self.build_parameter = build_parameter
+        self.strict_enums = strict_enums
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
@@ -38,7 +43,7 @@ class Schemas:
         fields = list(self.iter_fields(schema))
 
         properties = {
-            name: self.build_parameter(field)
+            name: self.build_parameter(field, strict_enums=self.strict_enums)
             for name, field in fields
         }
 
