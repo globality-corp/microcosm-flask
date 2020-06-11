@@ -16,6 +16,7 @@ Note that:
 
 
 """
+from enum import Enum, unique
 from logging import getLogger
 from typing import (
     Dict,
@@ -47,6 +48,13 @@ logger = getLogger("microcosm_flask.swagger")
 # Placeholder integer id used to build URIs in werkzeug before replacing with id param name.
 # Use a value that is unlikely to be present somewhere else in the URI.
 PLACEHOLDER_INTEGER_ID = 1111
+
+
+@unique
+class RequestSide(Enum):
+    REQUEST = "REQUEST"
+    RESPONSE = "RESPONSE"
+    BOTH = "BOTH"
 
 
 def build_swagger(graph, ns, operations, validate_schema=False):
@@ -128,13 +136,13 @@ def add_definitions(definitions, operations):
     Add definitions to swagger.
 
     """
-    for definition_schema in iter_definitions(definitions, operations):
+    for definition_schema, request_side in iter_definitions(definitions, operations):
         if definition_schema is None:
             continue
         if isinstance(definition_schema, str):
             continue
 
-        for name, schema in iter_schemas(definition_schema):
+        for name, schema in iter_schemas(definition_schema, strict_enums=request_side != RequestSide.RESPONSE):
             definitions.setdefault(name, swagger.Schema(schema))
 
 
@@ -145,12 +153,12 @@ def iter_definitions(definitions, operations):
     """
     # general error schema per errors.py
     for error_schema_class in [ErrorSchema, ErrorContextSchema, SubErrorSchema]:
-        yield error_schema_class()
+        yield error_schema_class(), RequestSide.BOTH
 
     # add all request and response schemas
     for operation, obj, rule, func in operations:
-        yield get_request_schema(func)
-        yield get_response_schema(func)
+        yield get_request_schema(func), RequestSide.REQUEST
+        yield get_response_schema(func), RequestSide.RESPONSE
 
 
 def build_path_for_integer_param(ns, operation, arguments: Set):

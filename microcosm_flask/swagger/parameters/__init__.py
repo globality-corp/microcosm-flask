@@ -24,6 +24,9 @@ class Parameters:
     and delegates to the first compatible implementation.
 
     """
+    def __init__(self, strict_enums: bool = True):
+        self.strict_enums = strict_enums
+
     def build(self, field: Field) -> Mapping[str, Any]:
         """
         Build a swagger parameter from a marshmallow field.
@@ -37,6 +40,7 @@ class Parameters:
         builders: List[ParameterBuilder] = [
             builder_type(
                 build_parameter=self.build,  # type: ignore
+                strict_enums=self.strict_enums,
             )
             for builder_type in builder_types
         ]
