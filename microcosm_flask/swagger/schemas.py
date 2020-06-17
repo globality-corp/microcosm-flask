@@ -2,11 +2,11 @@
 Generate JSON Schema for Marshmallow schemas.
 
 """
-import typing.List
 from typing import (
     Any,
     Callable,
     Iterable,
+    List as TypingList,
     Mapping,
     Tuple,
     Type,
@@ -36,7 +36,10 @@ class Schemas:
     ):
         self.build_parameter = build_parameter
         self.strict_enums = strict_enums
-        self.seen_schemas: typing.List[Type[Schema]] = []
+
+        # XXX This will break if this class is ever instantiated and then has
+        # `build` called more than once
+        self.seen_schemas: TypingList[Type[Schema]] = []
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """

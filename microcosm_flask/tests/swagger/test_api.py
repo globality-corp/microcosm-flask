@@ -4,8 +4,8 @@ Test JSON Schema generation.
 """
 from hamcrest import assert_that, equal_to, is_
 
-from microcosm_flask.swagger.api import build_schema
-from microcosm_flask.tests.conventions.fixtures import NewPersonSchema
+from microcosm_flask.swagger.api import build_schema, iter_schemas
+from microcosm_flask.tests.conventions.fixtures import NewPersonSchema, RecursiveSchema
 
 
 def test_schema_generation():
@@ -63,4 +63,16 @@ def test_schema_generation_non_strict_enums():
             "firstName",
             "lastName",
         ],
+    })))
+
+
+def test_schema_generation_recursive():
+    schemas = list(iter_schemas(RecursiveSchema()))
+    name, schema = schemas[0]
+    assert_that(schema, is_(equal_to({
+        "type": "object",
+        "properties": {'children': {
+            'type': 'array',
+            'items': {'$ref': '#/definitions/Recursive'},
+        }},
     })))
