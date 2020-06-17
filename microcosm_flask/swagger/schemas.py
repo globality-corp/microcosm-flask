@@ -2,12 +2,14 @@
 Generate JSON Schema for Marshmallow schemas.
 
 """
+import typing.List
 from typing import (
     Any,
     Callable,
     Iterable,
     Mapping,
     Tuple,
+    Type,
 )
 
 from marshmallow import Schema
@@ -34,6 +36,7 @@ class Schemas:
     ):
         self.build_parameter = build_parameter
         self.strict_enums = strict_enums
+        self.seen_schemas: typing.List[Type[Schema]] = []
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
@@ -85,6 +88,11 @@ class Schemas:
         """
         if not schema:
             return
+
+        if type(schema) in self.seen_schemas:
+            return
+
+        self.seen_schemas.append(type(schema))
 
         yield self.to_tuple(schema)
 
