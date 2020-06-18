@@ -7,7 +7,9 @@ from typing import (
     Callable,
     Iterable,
     Mapping,
+    Set,
     Tuple,
+    Type,
 )
 
 from marshmallow import Schema
@@ -34,6 +36,10 @@ class Schemas:
     ):
         self.build_parameter = build_parameter
         self.strict_enums = strict_enums
+
+        # NB: This will break if this class is ever instantiated and then has
+        # `build` called more than once
+        self.seen_schemas: Set[Type[Schema]] = set()
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
@@ -86,6 +92,11 @@ class Schemas:
         if not schema:
             return
 
+        if type(schema) in self.seen_schemas:
+            return
+
+        self.seen_schemas.add(type(schema))
+
         yield self.to_tuple(schema)
 
         for associated_schema in getattr(schema, associated_schemas_attr_name(schema.__class__), {}).values():
@@ -93,11 +104,9 @@ class Schemas:
 
         for name, field in self.iter_fields(schema):
             if isinstance(field, Nested):
-                yield self.to_tuple(field.schema)
                 yield from self.iter_schemas(field.schema)
 
             if isinstance(field, List) and isinstance(field.inner, Nested):
-                yield self.to_tuple(field.inner.schema)
                 yield from self.iter_schemas(field.inner.schema)
 
     def to_tuple(self, schema: Schema) -> Tuple[str, Any]:

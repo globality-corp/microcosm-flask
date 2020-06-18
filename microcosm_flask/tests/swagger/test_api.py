@@ -2,10 +2,15 @@
 Test JSON Schema generation.
 
 """
-from hamcrest import assert_that, equal_to, is_
+from hamcrest import (
+    assert_that,
+    equal_to,
+    has_length,
+    is_,
+)
 
-from microcosm_flask.swagger.api import build_schema
-from microcosm_flask.tests.conventions.fixtures import NewPersonSchema
+from microcosm_flask.swagger.api import build_schema, iter_schemas
+from microcosm_flask.tests.conventions.fixtures import NewPersonSchema, RecursiveSchema
 
 
 def test_schema_generation():
@@ -63,4 +68,22 @@ def test_schema_generation_non_strict_enums():
             "firstName",
             "lastName",
         ],
+    })))
+
+
+def test_schema_iteration_recursive():
+    # BEWARE: Using `next(...)` instead of `list(...)[0]` here wouldn't
+    # actually test what we want, because it would just grab the first item and
+    # not trigger the infinite recursion.
+    schemas = list(iter_schemas(RecursiveSchema()))
+    assert_that(schemas, has_length(1))
+
+    name, schema = schemas[0]
+    assert_that(name, is_("Recursive"))
+    assert_that(schema, is_(equal_to({
+        "type": "object",
+        "properties": {"children": {
+            "type": "array",
+            "items": {"$ref": "#/definitions/Recursive"},
+        }},
     })))
