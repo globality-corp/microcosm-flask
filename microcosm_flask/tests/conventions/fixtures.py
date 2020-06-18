@@ -99,7 +99,7 @@ class PersonCSVSchema(NewPersonSchema):
 
 
 class RecursiveSchema(Schema):
-    children = fields.List(fields.Nested(lambda: RecursiveSchema))
+    children = fields.List(fields.Nested(lambda: RecursiveSchema()))
 
 
 def pubsub_schema(fields):

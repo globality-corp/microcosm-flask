@@ -6,7 +6,7 @@ from typing import (
     Any,
     Callable,
     Iterable,
-    List as TypingList,
+    List as ListType,
     Mapping,
     Tuple,
     Type,
@@ -39,7 +39,7 @@ class Schemas:
 
         # XXX This will break if this class is ever instantiated and then has
         # `build` called more than once
-        self.seen_schemas: TypingList[Type[Schema]] = []
+        self.seen_schemas: ListType[Type[Schema]] = []
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
