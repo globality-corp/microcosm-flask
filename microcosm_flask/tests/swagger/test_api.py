@@ -72,6 +72,7 @@ def test_schema_iteration_recursive():
     # not trigger the infinite recursion.
     schemas = list(iter_schemas(RecursiveSchema()))
     name, schema = schemas[0]
+    assert_that(name, is_("Recursive"))
     assert_that(schema, is_(equal_to({
         "type": "object",
         "properties": {"children": {

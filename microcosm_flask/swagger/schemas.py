@@ -37,7 +37,7 @@ class Schemas:
         self.build_parameter = build_parameter
         self.strict_enums = strict_enums
 
-        # XXX This will break if this class is ever instantiated and then has
+        # NB: This will break if this class is ever instantiated and then has
         # `build` called more than once
         self.seen_schemas: ListType[Type[Schema]] = []
 
