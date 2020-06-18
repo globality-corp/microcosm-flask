@@ -66,7 +66,7 @@ def test_schema_generation_non_strict_enums():
     })))
 
 
-def test_schema_generation_recursive():
+def test_schema_iteration_recursive():
     # BEWARE: Using `next(...)` instead of `list(...)[0]` here wouldn't
     # actually test what we want, because it would just grab the first item and
     # not trigger the infinite recursion.
