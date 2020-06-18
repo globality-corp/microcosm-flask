@@ -104,11 +104,9 @@ class Schemas:
 
         for name, field in self.iter_fields(schema):
             if isinstance(field, Nested):
-                yield self.to_tuple(field.schema)
                 yield from self.iter_schemas(field.schema)
 
             if isinstance(field, List) and isinstance(field.inner, Nested):
-                yield self.to_tuple(field.inner.schema)
                 yield from self.iter_schemas(field.inner.schema)
 
     def to_tuple(self, schema: Schema) -> Tuple[str, Any]:
