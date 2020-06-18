@@ -6,8 +6,8 @@ from typing import (
     Any,
     Callable,
     Iterable,
-    List as ListType,
     Mapping,
+    Set,
     Tuple,
     Type,
 )
@@ -39,7 +39,7 @@ class Schemas:
 
         # NB: This will break if this class is ever instantiated and then has
         # `build` called more than once
-        self.seen_schemas: ListType[Type[Schema]] = []
+        self.seen_schemas: Set[Type[Schema]] = set()
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
@@ -95,7 +95,7 @@ class Schemas:
         if type(schema) in self.seen_schemas:
             return
 
-        self.seen_schemas.append(type(schema))
+        self.seen_schemas.add(type(schema))
 
         yield self.to_tuple(schema)
 
