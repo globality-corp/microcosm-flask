@@ -74,8 +74,8 @@ def test_schema_generation_recursive():
     name, schema = schemas[0]
     assert_that(schema, is_(equal_to({
         "type": "object",
-        "properties": {'children': {
-            'type': 'array',
-            'items': {'$ref': '#/definitions/Recursive'},
+        "properties": {"children": {
+            "type": "array",
+            "items": {"$ref": "#/definitions/Recursive"},
         }},
     })))
