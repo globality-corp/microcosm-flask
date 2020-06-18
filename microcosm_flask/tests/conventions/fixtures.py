@@ -98,6 +98,10 @@ class PersonCSVSchema(NewPersonSchema):
         return column_order
 
 
+class RecursiveSchema(Schema):
+    children = fields.List(fields.Nested(lambda: RecursiveSchema()))
+
+
 def pubsub_schema(fields):
     """
     Example usage of `add_associated_schema`, creating an additional decorator
