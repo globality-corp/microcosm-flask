@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from os import makedirs
 from os.path import exists, expanduser, join
 
@@ -38,8 +38,9 @@ def enable_profiling(graph):
         g.profiler.stop()
         output_html = g.profiler.output_html()
 
-        time_tag = datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-        profile_path = join(profile_dir, f"profile-{time_tag}.html")
+        now = datetime.now(timezone.utc)
+        timestamp = now.strftime("%Y-%m-%dT%H%M%S.%fZ")
+        profile_path = join(profile_dir, f"profile-{timestamp}.html")
         with open(profile_path, "w") as f:
             f.write(output_html)
         graph.app.logger.info(f"Profile saved into: {profile_path}")
