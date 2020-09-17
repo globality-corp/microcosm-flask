@@ -184,7 +184,19 @@ jobs:
       - run:
           name: Deploy
           command: |
-            echo "Not publishing package!"
+            echo "[distutils]" > ~/.pypirc
+            echo "index-servers =" >> ~/.pypirc
+            echo "    pypi " >> ~/.pypirc
+            echo >> ~/.pypirc
+            echo "[pypi]" >> ~/.pypirc
+            echo "repository:https://upload.pypi.org/legacy/" >> ~/.pypirc
+            echo "username:$PYPI_USERNAME" >> ~/.pypirc
+            echo "password:$PYPI_PASSWORD" >> ~/.pypirc
+            echo >> ~/.pypirc
+            version=$(cat .bumpversion.cfg | awk '/current_version / {print $3}')
+            python setup.py register -r pypi
+            python setup.py sdist
+            twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz
 
 
 workflows:
