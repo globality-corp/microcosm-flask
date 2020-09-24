@@ -3,9 +3,11 @@ Conventions for canonical CRUD endpoints.
 
 """
 from functools import wraps
+from timeit import default_timer as timer
 
 from inflection import pluralize
 from marshmallow import Schema
+from microcosm_logging.decorators import logger
 
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.encoding import (
@@ -21,11 +23,8 @@ from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema, identity
 
-from microcosm_logging.decorators import logger
 
-from timeit import default_timer as timer
-
-
+@logger
 class CRUDConvention(Convention):
 
     @property
