@@ -21,6 +21,10 @@ from microcosm_flask.conventions.registry import qs, request, response
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema, identity
 
+from microcosm_logging.decorators import logger
+
+from timeit import default_timer as timer
+
 
 class CRUDConvention(Convention):
 
@@ -126,13 +130,17 @@ class CRUDConvention(Convention):
             headers = encode_id_header(response_data)
             definition.header_func(headers, response_data)
             response_format = self.negotiate_response_content(definition.response_formats)
-            return dump_response_data(
+
+            serialization_start = timer()
+            out = dump_response_data(
                 definition.response_schema,
                 response_data,
                 status_code=Operation.Create.value.default_code,
                 headers=headers,
                 response_format=response_format,
             )
+            self.logger.info(f"Checkpoint -- Serialization took: {timer() - serialization_start:.2f}s")
+            return out
 
         create.__doc__ = "Create a new {}".format(ns.subject_name)
 
