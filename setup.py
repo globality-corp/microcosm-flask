@@ -40,11 +40,20 @@ setup(
         "sentry": "sentry-sdk>=0.14.4",
         "spooky": "spooky>=2.0.0",
         "test": [
+            "nose>=1.3.7",
             "sentry-sdk>=0.14.4",
             "PyHamcrest",
             "coverage",
-            "parameterized"
+            "parameterized",
+            "microcosm-metrics>=2.5.1"
         ],
+        "lint": [
+            "flake8",
+            "flake8-print",
+            "flake8-logging-format",
+            "isort<5",
+            "flake8-isort"
+        ]
     },
     setup_requires=[
         "nose>=1.3.7",
