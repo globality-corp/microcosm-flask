@@ -157,8 +157,8 @@ def make_json_error_with_sentry(error):
 
 
 def send_error_to_sentry(error, response):
-    from sentry_sdk import capture_exception
-    from sentry_sdk import configure_scope
+    from sentry_sdk import capture_exception, configure_scope
+
     with configure_scope() as scope:
         scope.set_tag("x-request-id", response.headers.get("X-Request-Id"))
         capture_exception(error)

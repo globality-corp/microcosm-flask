@@ -14,7 +14,7 @@
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.36.100
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.39.10
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -28,7 +28,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.36.100
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.39.10
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -176,13 +176,13 @@ jobs:
           command: |
             echo "Not publishing package!"
 
-  deploy_pypi:
+  publish_library:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Deploy
+          name: Publish
           command: |
             echo "[distutils]" > ~/.pypirc
             echo "index-servers =" >> ~/.pypirc
@@ -242,7 +242,7 @@ workflows:
             # run for all branches and tags
             tags:
               only: /.*/
-      - deploy_pypi:
+      - publish_library:
           requires:
             - test
             - lint
