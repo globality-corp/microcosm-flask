@@ -65,7 +65,7 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
-                "classifier:200",
+                "classifier:2xx",
             ],
         )
 
@@ -95,7 +95,7 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
-                "classifier:204",
+                "classifier:2xx",
             ],
         )
 
@@ -125,6 +125,6 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
-                "classifier:404",
+                "classifier:4xx",
             ],
         )
