@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "3.4.1"
+version = "3.5.0"
 
 
 setup(
@@ -40,11 +40,18 @@ setup(
         "sentry": "sentry-sdk>=0.14.4",
         "spooky": "spooky>=2.0.0",
         "test": [
+            "nose>=1.3.7",
             "sentry-sdk>=0.14.4",
             "PyHamcrest",
             "coverage",
-            "parameterized"
+            "parameterized",
         ],
+        "lint": [
+            "flake8",
+            "flake8-print",
+            "flake8-logging-format",
+            "flake8-isort"
+        ]
     },
     setup_requires=[
         "nose>=1.3.7",

@@ -1,10 +1,15 @@
 {
   "params": {
+    "entrypoint": {
+      "pre_test_commands": [
+        "pip --quiet install microcosm-metrics"
+      ]
+    },
     "name": "microcosm-flask",
     "pypi": {
       "repository": "pypi"
     }
   },
   "type": "python-library",
-  "version": "2020.36.100"
+  "version": "2020.39.10"
 }
