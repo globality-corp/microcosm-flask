@@ -18,7 +18,7 @@ class LanguageField(String):
 
     def _validated(self, value):
         if not match(LANGUAGE_PATTERN, value):
-            self.fail("invalid_language")
+            raise self.make_error("invalid_language")
         return value
 
     def _serialize(self, value, attr, obj, **kwargs):
