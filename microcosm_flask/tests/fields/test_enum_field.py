@@ -6,11 +6,13 @@ from enum import Enum, IntEnum, unique
 
 from hamcrest import (
     assert_that,
+    calling,
     equal_to,
     has_entries,
     is_,
+    raises,
 )
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
 
 from microcosm_flask.fields import EnumField
 
@@ -96,3 +98,13 @@ def test_dump_value_from_string():
         name="foo",
         value="bar",
     )))
+
+
+def test_load_invalid():
+    schema = EnumSchema()
+    assert_that(
+        calling(schema.load).with_args(dict(
+            name="unknown",
+        )),
+        raises(ValidationError),
+    )
