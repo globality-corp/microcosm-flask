@@ -3,7 +3,18 @@ Adapter between conventional crud functions and the `microcosm_postgres.store.St
 
 """
 from microcosm_flask.naming import name_for
+from functools import wraps
 
+def print_cool_stuff(api_method):
+    @wraps(api_method)
+    def print_cool_stuff(*args, **kwargs):
+        print("Hello, I'm executing before the retrieve method!")
+        print(f' Args: {args}')
+        print(f' Kwargs: {kwargs}')
+        return api_method(*args, **kwargs)
+
+
+    return print_cool_stuff
 
 class CRUDStoreAdapter:
     """
@@ -33,6 +44,7 @@ class CRUDStoreAdapter:
         model = self.store.model_class(id=identifier, **kwargs)
         return self.store.replace(identifier, model)
 
+    @print_cool_stuff
     def retrieve(self, **kwargs):
         identifier = kwargs.pop(self.identifier_key)
         return self.store.retrieve(identifier)
