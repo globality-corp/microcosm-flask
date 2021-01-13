@@ -8,7 +8,6 @@ except ImportError:
     raise Exception("Route metrics require 'microcosm-metrics'")
 
 
-
 class StatusCodeClassifier(Classifier):
     """
     Label route result/error with its status code.
