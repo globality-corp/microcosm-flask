@@ -1,10 +1,12 @@
+from microcosm_flask.audit import parse_response
+from microcosm_flask.errors import extract_status_code
+
+
 try:
     from microcosm_metrics.classifier import Classifier
 except ImportError:
     raise Exception("Route metrics require 'microcosm-metrics'")
 
-from microcosm_flask.audit import parse_response
-from microcosm_flask.errors import extract_status_code
 
 
 class StatusCodeClassifier(Classifier):
