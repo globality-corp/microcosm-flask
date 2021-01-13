@@ -5,9 +5,11 @@ microcosm_flask/tests
 !entrypoint.sh
 !MANIFEST.in
 !README.md
+!HISTORY.rst
 !requirements.txt
 !setup.py
 !setup.cfg
+!pyproject.toml
+!conftest.py
 **/*.pyc
 **/*~
-
