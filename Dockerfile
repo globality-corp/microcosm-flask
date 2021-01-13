@@ -77,7 +77,8 @@ ENV LC_ALL en_US.UTF-8
 # These are enough to install dependencies and have a stable base layer
 # when source code changes.
 
-COPY README.md MANIFEST.in setup.cfg setup.py /src/
+# copy pyproject.toml and HISTORY.rst only if they exist
+COPY README.md MANIFEST.in setup.cfg setup.py pyproject.tom[l] HISTORY.rs[t] conftest.p[y] /src/
 
 RUN pip install --no-cache-dir --upgrade --extra-index-url ${EXTRA_INDEX_URL} /src/ && \
     apt-get remove --purge -y ${BUILD_PACKAGES} && \
