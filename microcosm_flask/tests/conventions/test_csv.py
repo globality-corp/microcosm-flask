@@ -91,7 +91,7 @@ class TestCSV:
         if status_code == 204:
             response_lines = None
         else:
-            response_lines = [row for row in reader(StringIO(response.data.decode("utf-8")))]
+            response_lines = [row for row in reader(StringIO(response.data.decode("utf-8-sig")))]
 
         # validate data if provided
         assert_that(

@@ -28,6 +28,6 @@ def test_make_response():
         ("Content-Length", "14"),
         ("ETag", etag_for(
             md5_hash='"2f8acf3fe5e5c2839a04b7677d9399b8"',
-            spooky_hash='"af072b51e1eb2a8d7b2ab84dab972674"',
+            spooky_hash='"053dd24aa81b8b2c3243143a14834d37"',
         )),
     ))

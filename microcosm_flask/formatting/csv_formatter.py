@@ -5,6 +5,9 @@ CSV response formatting.
 from csv import QUOTE_MINIMAL, writer
 from io import StringIO
 
+from werkzeug import Response
+from werkzeug.utils import get_content_type
+
 from microcosm_flask.formatting.base import BaseFormatter
 
 
@@ -22,6 +25,17 @@ class CSVFormatter(BaseFormatter):
         headers["Content-Disposition"] = "attachment; filename=\"{}\"".format(filename)
 
         return headers
+
+    def build_response(self, response_data):
+        response = Response(
+            self.format(response_data),
+            content_type=get_content_type(self.content_type, 'utf-8')
+        )
+
+        # start the output with U+FEFF BYTE ORDER MARK
+        # to signal to Excel to import the text file as UTF-8 rather than a legacy encoding
+        response.charset = "utf-8-sig"
+        return response
 
     def get_column_names(self, list_response_data):
         response_fields = list(list_response_data[0].keys())
