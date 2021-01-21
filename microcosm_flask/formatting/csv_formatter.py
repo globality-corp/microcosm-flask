@@ -9,6 +9,7 @@ from werkzeug import Response
 from werkzeug.utils import get_content_type
 
 from microcosm_flask.formatting.base import BaseFormatter
+from microcosm_flask.formatting.encoding import UTF_8, UTF_8_SIG
 
 
 class CSVFormatter(BaseFormatter):
@@ -29,12 +30,12 @@ class CSVFormatter(BaseFormatter):
     def build_response(self, response_data):
         response = Response(
             self.format(response_data),
-            content_type=get_content_type(self.content_type, 'utf-8')
+            content_type=get_content_type(self.content_type, UTF_8)
         )
 
         # start the output with U+FEFF BYTE ORDER MARK
         # to signal to Excel to import the text file as UTF-8 rather than a legacy encoding
-        response.charset = "utf-8-sig"
+        response.charset = UTF_8_SIG
         return response
 
     def get_column_names(self, list_response_data):

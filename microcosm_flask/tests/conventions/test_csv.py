@@ -21,6 +21,7 @@ from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.enums import ResponseFormats
 from microcosm_flask.fields import EnumField, QueryStringList
+from microcosm_flask.formatting.encoding import UTF_8_SIG
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.paging import OffsetLimitPageSchema
@@ -91,7 +92,7 @@ class TestCSV:
         if status_code == 204:
             response_lines = None
         else:
-            response_lines = [row for row in reader(StringIO(response.data.decode("utf-8-sig")))]
+            response_lines = [row for row in reader(StringIO(response.data.decode(UTF_8_SIG)))]
 
         # validate data if provided
         assert_that(
