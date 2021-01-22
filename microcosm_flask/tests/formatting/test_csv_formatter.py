@@ -2,6 +2,8 @@
 Test CSV formatting.
 
 """
+from codecs import BOM_UTF8
+
 from hamcrest import (
     assert_that,
     contains_inanyorder,
@@ -22,14 +24,14 @@ def test_make_response():
         dict(foo="baz"),
     ]))
 
-    assert_that(response.data, is_(equal_to(b"foo\r\nbar\r\nbaz\r\n")))
+    assert_that(response.data, is_(equal_to(BOM_UTF8 + b"foo\r\nbar\r\nbaz\r\n")))
     assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"a2ead3516dd1be4a3c7f45716c0a0eb7"',
-            spooky_hash='"02dee263db4f9326a3fbee9135939717"',
+            md5_hash='"d0366f8e71095c1b68e2ddfd551b3285"',
+            spooky_hash='"e264d2b6b13c5298cb2059716018aa4d"',
         )),
     ))
 
@@ -42,14 +44,14 @@ def test_make_response_tuples():
         ("d", "e", "f"),
     ]))
 
-    assert_that(response.data, is_(equal_to(b"a,b,c\r\nd,e,f\r\n")))
+    assert_that(response.data, is_(equal_to(BOM_UTF8 + b"a,b,c\r\nd,e,f\r\n")))
     assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"eb8bde290633452402b37aa580ca30e9"',
-            spooky_hash='"63b989eb36315937ef68206fb9fc3104"',
+            md5_hash='"22252aa7c314539c78dfa19dbf9af674"',
+            spooky_hash='"37cd063df88efefe1929f3cf4532b718"',
         )),
     ))
 
@@ -62,14 +64,14 @@ def test_make_response_list():
         ["d", "e", "f"],
     ]))
 
-    assert_that(response.data, is_(equal_to(b"a,b,c\r\nd,e,f\r\n")))
+    assert_that(response.data, is_(equal_to(BOM_UTF8 + b"a,b,c\r\nd,e,f\r\n")))
     assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"eb8bde290633452402b37aa580ca30e9"',
-            spooky_hash='"63b989eb36315937ef68206fb9fc3104"',
+            md5_hash='"22252aa7c314539c78dfa19dbf9af674"',
+            spooky_hash='"37cd063df88efefe1929f3cf4532b718"',
         )),
     ))
 
@@ -85,13 +87,13 @@ def test_make_response_ordered():
         )
     ]))
 
-    assert_that(response.data, is_(equal_to(b"id,firstName,lastName\r\nme,First,Last\r\n")))
+    assert_that(response.data, is_(equal_to(BOM_UTF8 + b"id,firstName,lastName\r\nme,First,Last\r\n")))
     assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
     assert_that(response.headers, contains_inanyorder(
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"4480bd6748cf93740490ebeee7eae1fe"',
-            spooky_hash='"0a7f40b47efb0a197b180444c4911b17"',
+            md5_hash='"79e41b38792fdca793f61791ef55e026"',
+            spooky_hash='"994df8aa1632af103265ebeae37a3804"',
         )),
     ))
