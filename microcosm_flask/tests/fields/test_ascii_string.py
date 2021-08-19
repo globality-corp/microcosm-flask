@@ -3,6 +3,7 @@ Test language field.
 
 """
 from hamcrest import assert_that, equal_to, is_
+from marshmallow import Schema
 
 from microcosm_flask.fields import AsciiEncodedString
 
