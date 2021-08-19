@@ -2,17 +2,9 @@
 Test language field.
 
 """
-from hamcrest import (
-    assert_that,
-    calling,
-    equal_to,
-    is_,
-    raises,
-)
-from marshmallow import Schema, ValidationError
+from hamcrest import assert_that, equal_to, is_
 
 from microcosm_flask.fields import AsciiEncodedString
-
 
 
 class AsciiStringSchema(Schema):
