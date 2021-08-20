@@ -6,7 +6,7 @@ from marshmallow import fields
 from marshmallow.fields import Field
 from microcosm_logging.decorators import logger
 
-from microcosm_flask.fields import LanguageField, URIField, AsciiEncodedStringField
+from microcosm_flask.fields import AsciiEncodedStringField, LanguageField, URIField
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
