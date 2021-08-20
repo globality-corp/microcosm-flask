@@ -2,13 +2,13 @@ from marshmallow import fields
 
 
 """
-AsciiEncodedString Marshmallow field
+AsciiEncodedStringField Marshmallow field
 An extension of the marshmallow fields.String that removes unicode
 characters on deserialization
 """
 
 
-class AsciiEncodedString(fields.String):
+class AsciiEncodedStringField(fields.String):
     def _deserialize(self, value, *args, **kwargs):
         if value is not None:
             value_encoded = value.encode("ascii", "ignore")
