@@ -21,6 +21,7 @@ setup(
     python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
+        "Flask<2",
         "Flask>=1.0.2",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",

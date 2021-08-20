@@ -5,11 +5,11 @@ Test language field.
 from hamcrest import assert_that, equal_to, is_
 from marshmallow import Schema
 
-from microcosm_flask.fields import AsciiEncodedString
+from microcosm_flask.fields import AsciiEncodedStringField
 
 
 class AsciiStringSchema(Schema):
-    str = AsciiEncodedString(required=True)
+    str = AsciiEncodedStringField(required=True)
 
 
 comment_text_unicode = "A nice \u0420\u043e\u0441\u0441\u0438\u044fcomment"
