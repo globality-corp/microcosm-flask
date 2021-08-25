@@ -31,6 +31,8 @@ elif [ "$1" = "lint" ]; then
    flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
    # Install standard type-linting dependencies
+   pip install types-python-dateutil
+   pip install types-setuptools
    pip --quiet install mypy
    mypy ${NAME} --ignore-missing-imports
 else
