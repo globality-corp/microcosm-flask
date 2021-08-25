@@ -6,7 +6,7 @@ from marshmallow import fields
 from marshmallow.fields import Field
 from microcosm_logging.decorators import logger
 
-from microcosm_flask.fields import LanguageField, URIField
+from microcosm_flask.fields import AsciiEncodedStringField, LanguageField, URIField
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
@@ -16,6 +16,7 @@ FieldInfo = namedtuple("FieldInfo", ["type", "format"])
 FIELD_MAPPINGS = {
     LanguageField: FieldInfo("string", "language"),
     URIField: FieldInfo("string", "uri"),
+    AsciiEncodedStringField: FieldInfo("string", "ascii-encoded-string"),
     fields.Boolean: FieldInfo("boolean", None),
     fields.Date: FieldInfo("string", "date"),
     fields.DateTime: FieldInfo("string", "date-time"),
