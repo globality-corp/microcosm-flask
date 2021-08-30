@@ -2,7 +2,7 @@
 Custom fields.
 
 """
-from microcosm_flask.fields.ascii_encoded_string_field import AsciiEncodedStringField  # noqa: F401
+from microcosm_flask.fields.cleaned_field import CleanedField  # noqa: F401
 from microcosm_flask.fields.enum_field import EnumField  # noqa: F401
 from microcosm_flask.fields.language_field import LanguageField  # noqa: F401
 from microcosm_flask.fields.query_string_list import QueryStringList  # noqa: F401
