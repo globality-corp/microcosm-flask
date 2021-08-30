@@ -5,8 +5,8 @@ An extension of the marshmallow fields.String that removes unicode control
 characters on deserialization
 """
 
-from marshmallow import fields
 import regex
+from marshmallow import fields
 
 
 class CleanedField(fields.String):
