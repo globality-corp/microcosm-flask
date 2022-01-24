@@ -4,8 +4,8 @@ For backend services that are not queried directly by a front-end it can be usef
 to specify a different HTTP code, to differentiate between a nonexistent resource
 on a well-understood path (e.g. GET /user/123) and a nonexistent (e.g. GET /ursr).
 
-In particular, this can allow a reverse-proxy to identify cases where it is routing a request
-based on an outdated DNS entry.
+In particular, this can allow a load-balancer to identify cases where it is routing a request
+based on an outdated DNS entry, and to directly retry the request on a different instance.
 
 
 """

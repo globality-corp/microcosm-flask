@@ -61,7 +61,7 @@ class EnumParameterBuilder(ParameterBuilder):
     def _parse_enum_values(self, field: Field) -> Sequence:
         return [
             choice.value if field.by_value else choice.name  # type: ignore
-            for choice in field.enum
+            for choice in field.enum  # type: ignore
         ]
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:
