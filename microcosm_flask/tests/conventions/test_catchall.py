@@ -39,6 +39,10 @@ class TestCatchall:
         response_post = self.client.get("/api/v1/nonexistent_uri")
         assert_that(response_post.status_code, is_(equal_to(421)))
 
+        # Note that the catchall convention overrides the usual HTTP 405 cases
+        response_id = self.client.post("/something/123")
+        assert_that(response_id.status_code, is_(equal_to(421)))
+
         # Check that existing routes still resolve correctly
         response_root = self.client.get("/")
         assert_that(response_root.status_code, is_(equal_to(200)))
