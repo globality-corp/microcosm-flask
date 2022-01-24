@@ -20,7 +20,8 @@ def configure_catchall_convention(graph):
     fallback_http_code = graph.config.catchall_convention.fallback_http_code
 
     @graph.flask.route("/<path:path>", methods=["GET", "POST", "PATCH", "PUT", "DELETE"])
-    def catch_all(path):
+    @graph.audit
+    def catchall_route(path):
         return "Unknown path", fallback_http_code
 
-    return catch_all
+    return catchall_route
