@@ -10,11 +10,12 @@ based on an outdated DNS entry, and to directly retry the request on a different
 
 """
 from microcosm.api import binding, defaults, typed
+from werkzeug.exceptions import abort
 
 
 @binding("catchall_convention")
 @defaults(
-    fallback_http_code=typed(int, default_value=421),
+    fallback_http_code=typed(int, default_value=501),
 )
 def configure_catchall_convention(graph):
     fallback_http_code = graph.config.catchall_convention.fallback_http_code
@@ -22,6 +23,6 @@ def configure_catchall_convention(graph):
     @graph.flask.route("/<path:path>", methods=["GET", "POST", "PATCH", "PUT", "DELETE"])
     @graph.audit
     def catchall_route(path):
-        return "Unknown path", fallback_http_code
+        abort(fallback_http_code, f"Unknown path {path}")
 
     return catchall_route
