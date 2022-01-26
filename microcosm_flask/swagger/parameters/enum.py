@@ -59,9 +59,11 @@ class EnumParameterBuilder(ParameterBuilder):
             raise Exception(f"Cannot infer enum type for field: {field.name}")
 
     def _parse_enum_values(self, field: Field) -> Sequence:
+        if not isinstance(field, EnumField):
+            raise Exception(f"Cannot parse enum values for non-enum fields: {field.name}")
         return [
-            choice.value if field.by_value else choice.name  # type: ignore
-            for choice in field.enum  # type: ignore
+            choice.value if field.by_value else choice.name
+            for choice in field.enum
         ]
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:
