@@ -23,7 +23,6 @@ def test_make_response():
 
     assert_that(response.data, is_(equal_to(b'{"foo":"bar"}\n')))
     assert_that(response.content_type, is_(equal_to("application/json")))
-    print("hello", response.headers)
     assert_that(response.headers, contains_inanyorder(
         ("Content-Type", "application/json"),
         ("Content-Length", "14"),
