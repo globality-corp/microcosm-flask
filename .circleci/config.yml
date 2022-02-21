@@ -183,24 +183,9 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Override version
+          name: Deploy
           command: |
-            sed -i -e "s/^\(version = \".*\)\"$/\1.dev${CIRCLE_BUILD_NUM}\"/" setup.py
-      - run:
-          name: Authenticate
-          command: |
-            echo "[distutils]" > ~/.pypirc
-            echo "index-servers =" >> ~/.pypirc
-            echo "    jfrog" >> ~/.pypirc
-            echo >> ~/.pypirc
-            echo "[jfrog]" >> ~/.pypirc
-            echo "repository:https://globality.jfrog.io/globality/api/pypi/pypi" >> ~/.pypirc
-            echo "username:$JFROG_USERNAME" >> ~/.pypirc
-            echo "password:$JFROG_PASSWORD" >> ~/.pypirc
-            echo >> ~/.pypirc
-      - run:
-          name: Publish
-          command: python setup.py sdist upload -r jfrog
+            echo "Not publishing package!"
 
   publish_library:
     <<: *defaults
@@ -270,9 +255,6 @@ workflows:
             - test
             - lint
             - typehinting
-          filters:
-            branches:
-              ignore: master
       - typehinting:
           context: 
           - Globality-Common
