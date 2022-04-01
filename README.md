@@ -46,3 +46,4 @@ python setup.py nosetests
 ## Configuration
 
  - The object graph's `debug` and `testing` flags are propagated to the Flask application
+
