@@ -69,8 +69,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        search.__doc__ = "Search the collection of all {}".format(pluralize(ns.subject_name))
-
     def configure_count(self, ns, definition):
         """
         Register a count endpoint.
@@ -102,8 +100,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        count.__doc__ = "Count the size of the collection of all {}".format(pluralize(ns.subject_name))
-
     def configure_create(self, ns, definition):
         """
         Register a create endpoint.
@@ -133,8 +129,6 @@ class CRUDConvention(Convention):
                 headers=headers,
                 response_format=response_format,
             )
-
-        create.__doc__ = "Create a new {}".format(ns.subject_name)
 
     def configure_updatebatch(self, ns, definition):
         """
@@ -168,8 +162,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        update_batch.__doc__ = "Update a batch of {}".format(ns.subject_name)
-
     def configure_deletebatch(self, ns, definition):
         """
         Register a delete batch endpoint.
@@ -202,8 +194,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        delete_batch.__doc__ = "Delete a batch of {}".format(ns.subject_name)
-
     def configure_retrieve(self, ns, definition):
         """
         Register a retrieve endpoint.
@@ -235,8 +225,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        retrieve.__doc__ = "Retrieve a {} by id".format(ns.subject_name)
-
     def configure_delete(self, ns, definition):
         """
         Register a delete endpoint.
@@ -267,8 +255,6 @@ class CRUDConvention(Convention):
                 headers=headers,
                 response_format=response_format,
             )
-
-        delete.__doc__ = "Delete a {} by id".format(ns.subject_name)
 
     def configure_replace(self, ns, definition):
         """
@@ -302,8 +288,6 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        replace.__doc__ = "Create or update a {} by id".format(ns.subject_name)
-
     def configure_update(self, ns, definition):
         """
         Register an update endpoint.
@@ -332,8 +316,6 @@ class CRUDConvention(Convention):
                 headers=headers,
                 response_format=response_format,
             )
-
-        update.__doc__ = "Update some or all of a {} by id".format(ns.subject_name)
 
     def configure_createcollection(self, ns, definition):
         """
@@ -372,8 +354,6 @@ class CRUDConvention(Convention):
                 headers=headers,
                 response_format=response_format,
             )
-
-        create_collection.__doc__ = "Create the collection of {}".format(pluralize(ns.subject_name))
 
 
 def configure_crud(graph, ns, mappings):

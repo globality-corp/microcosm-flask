@@ -59,6 +59,11 @@ class SwaggerConvention(Convention):
             g.hide_body = True
             return make_response(swagger)
 
+        @self.add_route(f"{ns.singleton_path}/docs", Operation.Retrieve, ns)
+        def swagger_docs():
+            # Render the swagger ui FE here, pointing to the swagger endpoint as a source?
+            return make_response({"some": "docs"})
+
 
 @defaults(
     name="swagger",

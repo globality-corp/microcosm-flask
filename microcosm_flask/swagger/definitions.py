@@ -302,6 +302,7 @@ def build_operation(operation, ns, rule, func):
         ]),
         responses=swagger.Responses(),
         tags=[ns.subject_name],
+        description=func.__doc__ or "",
     )
 
     # custom header parameter
