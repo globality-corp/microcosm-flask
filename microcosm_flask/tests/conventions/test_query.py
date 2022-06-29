@@ -99,6 +99,7 @@ class TestQuery:
         assert_that(swagger["paths"], is_(equal_to({
             "/foo/get": {
                 "get": {
+                    "description": "My doc string",
                     "tags": ["foo"],
                     "responses": {
                         "default": {

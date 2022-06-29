@@ -296,13 +296,17 @@ def build_operation(operation, ns, rule, func):
     Build an operation definition.
 
     """
+    description = ""
+    if func.__doc__:
+        description = func.__doc__.strip()
+
     swagger_operation = swagger.Operation(
         operationId=operation_name(operation, ns),
         parameters=swagger.ParametersList([
         ]),
         responses=swagger.Responses(),
         tags=[ns.subject_name],
-        description=func.__doc__ or "",
+        description=description,
     )
 
     # custom header parameter
