@@ -1,3 +1,4 @@
+# flake8: noqa
 html = """
 <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>

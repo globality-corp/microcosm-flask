@@ -60,7 +60,7 @@ class SwaggerConvention(Convention):
             g.hide_body = True
             return make_response(swagger)
 
-        @self.add_route(f"{ns.singleton_path}/docs", Operation.Retrieve, ns)
+        @self.add_route(f"{ns.singleton_path}/docs", Operation.Query, ns)
         def swagger_docs():
             return swagger_ui.html
 
