@@ -14,6 +14,7 @@ from microcosm_flask.conventions.registry import iter_endpoints, request
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_swagger
+from microcosm_flask.templates import swagger_ui
 
 
 class ValidateSwaggerSchema(Schema):
@@ -61,8 +62,7 @@ class SwaggerConvention(Convention):
 
         @self.add_route(f"{ns.singleton_path}/docs", Operation.Retrieve, ns)
         def swagger_docs():
-            # Render the swagger ui FE here, pointing to the swagger endpoint as a source?
-            return make_response({"some": "docs"})
+            return swagger_ui.html
 
 
 @defaults(
