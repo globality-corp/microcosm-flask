@@ -5,9 +5,9 @@ Landing Page convention.
 from distutils import dist
 from io import StringIO
 from json import dumps
+from pkg_resources import DistributionNotFound, get_distribution
 
 from jinja2 import Template
-from pkg_resources import DistributionNotFound, get_distribution
 
 from microcosm_flask.conventions.registry import iter_endpoints
 from microcosm_flask.templates.landing import template
