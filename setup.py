@@ -21,8 +21,7 @@ setup(
     python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
-        "Flask<2",
-        "Flask>=1.0.2",
+        "Flask>=2",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
@@ -76,6 +75,7 @@ setup(
             "basic_auth = microcosm_flask.basic_auth:configure_basic_auth_decorator",
             "build_info_convention = microcosm_flask.conventions.build_info:configure_build_info",
             "build_route_path = microcosm_flask.paths:RoutePathBuilder",
+            "catchall_convention = microcosm_flask.conventions.catchall:configure_catchall_convention",
             "discovery_convention = microcosm_flask.conventions.discovery:configure_discovery",
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",

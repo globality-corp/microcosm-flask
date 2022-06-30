@@ -60,7 +60,7 @@ class BaseFormatter(metaclass=ABCMeta):
             return
 
         if not spooky:
-            # use built-in md5
+            # use built-in SHA-1
             response.add_etag()
             return
 

@@ -30,7 +30,7 @@ def test_make_response():
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"d0366f8e71095c1b68e2ddfd551b3285"',
+            sha1_hash='"a1ce622dcb1bcf03565e4d6925adb1e752d86080"',
             spooky_hash='"e264d2b6b13c5298cb2059716018aa4d"',
         )),
     ))
@@ -50,7 +50,7 @@ def test_make_response_tuples():
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"22252aa7c314539c78dfa19dbf9af674"',
+            sha1_hash='"e4020b884f3ea6fe2bdd18dbf50495bcc32bb430"',
             spooky_hash='"37cd063df88efefe1929f3cf4532b718"',
         )),
     ))
@@ -70,7 +70,7 @@ def test_make_response_list():
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"22252aa7c314539c78dfa19dbf9af674"',
+            sha1_hash='"e4020b884f3ea6fe2bdd18dbf50495bcc32bb430"',
             spooky_hash='"37cd063df88efefe1929f3cf4532b718"',
         )),
     ))
@@ -93,7 +93,7 @@ def test_make_response_ordered():
         ("Content-Disposition", "attachment; filename=\"response.csv\""),
         ("Content-Type", "text/csv; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"79e41b38792fdca793f61791ef55e026"',
+            sha1_hash='"9f2b4c62a05e78d0417a92741321f03e3382cb56"',
             spooky_hash='"994df8aa1632af103265ebeae37a3804"',
         )),
     ))

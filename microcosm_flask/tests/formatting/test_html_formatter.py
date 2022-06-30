@@ -23,7 +23,7 @@ def test_make_response():
         ("Content-Length", "27"),
         ("Content-Type", "text/html; charset=utf-8"),
         ("ETag", etag_for(
-            md5_hash='"016a5a134aceb7391754f03893d30e06"',
+            sha1_hash='"ec3f3fe41fa61bd5d4e63dc0b4b28b4d33624166"',
             spooky_hash='"1a639cef905e11904ac33817c37997dd"',
         )),
     ))

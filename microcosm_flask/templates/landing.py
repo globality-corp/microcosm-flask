@@ -75,7 +75,7 @@ template = """
             <h3 class="text-center">{{ description }}</h2>
             {%- endif -%}
             <div class="section section-health">
-                <h2 class="no-margin"><a href="api/health">Health</a></h2>
+                <h2 class="no-margin"><a href="api/health?full=true">Health</a></h2>
                 <div>
                     <h2 class="no-margin float-left"><a href="api/config">Config</a></h2>
                 </div>
