@@ -19,9 +19,8 @@ html = """
     <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@4.12.0/swagger-ui-standalone-preset.min.js"></script>
     <script type="text/javascript">
       window.onload = function() {
-        // Swagger should be located under this URL, without the `/docs`
+        // Assumes swagger is located under this URL, without the `/docs`
         var swaggerLocation = window.location.href.replace("/docs", "");
-        console.log("Swagger location: " + swaggerLocation);
 
         window.ui = SwaggerUIBundle({
           url: swaggerLocation,
