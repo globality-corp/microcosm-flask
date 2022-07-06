@@ -14,6 +14,7 @@ from microcosm_flask.conventions.registry import iter_endpoints, request
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_swagger
+from microcosm_flask.templates import swagger_ui
 
 
 class ValidateSwaggerSchema(Schema):
@@ -58,6 +59,10 @@ class SwaggerConvention(Convention):
             swagger = build_swagger(self.graph, ns, self.find_matching_endpoints(ns), **request_data)
             g.hide_body = True
             return make_response(swagger)
+
+        @self.add_route(f"{ns.singleton_path}/docs", Operation.Query, ns)
+        def swagger_docs():
+            return swagger_ui.html
 
 
 @defaults(

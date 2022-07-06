@@ -17,6 +17,7 @@ Note that:
 
 """
 from enum import Enum, unique
+from inspect import getdoc
 from logging import getLogger
 from typing import (
     Dict,
@@ -296,12 +297,17 @@ def build_operation(operation, ns, rule, func):
     Build an operation definition.
 
     """
+    description = ""
+    if func.__doc__:
+        description = getdoc(func)
+
     swagger_operation = swagger.Operation(
         operationId=operation_name(operation, ns),
         parameters=swagger.ParametersList([
         ]),
         responses=swagger.Responses(),
         tags=[ns.subject_name],
+        description=description,
     )
 
     # custom header parameter
