@@ -6,6 +6,10 @@
     "entrypoint": {
       "pre_test_commands": [
         "pip --quiet install microcosm-metrics"
+      ],
+      "pre_typehinting_commands": [
+        "pip install types-python-dateutil",
+        "pip install types-setuptools"
       ]
     },
     "name": "microcosm-flask",
