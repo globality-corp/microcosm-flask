@@ -230,14 +230,14 @@ workflows:
   build-and-release:
     jobs:
       - checkout:
-          context: 
+          context:
           - Globality-Common
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - build_docker:
-          context: 
+          context:
           - Globality-Common
           requires:
             - checkout
@@ -246,7 +246,7 @@ workflows:
             tags:
               only: /.*/
       - lint:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -255,7 +255,7 @@ workflows:
             tags:
               only: /.*/
       - test:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -264,7 +264,7 @@ workflows:
             tags:
               only: /.*/
       - deploy_jfrog_rc:
-          context: 
+          context:
           - Globality-Common
           requires:
             - test
@@ -274,7 +274,7 @@ workflows:
             branches:
               ignore: master
       - typehinting:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -283,8 +283,9 @@ workflows:
             tags:
               only: /.*/
       - publish_library:
-          context: 
+          context:
           - Globality-Common
+          - Python-Context
           requires:
             - test
             - lint
