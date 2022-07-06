@@ -96,7 +96,7 @@ template = """
                 {%- for link in links | sort -%}
                 <ul>
                     <li>
-                        <a href="{{ links[link] }}">{{ link | replace("_", " ") | capitalize }}</a>
+                        <a href="{{ links[link] }}">{{ link | replace("_", " ") }}</a>
                     </li>
                 </ul>
                 {%- endfor -%}
