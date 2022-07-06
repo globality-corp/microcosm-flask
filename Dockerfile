@@ -12,8 +12,7 @@
 #
 
 # ----------- deps -----------
-# Install from Debian Stretch with modern Python support
-FROM python:slim-stretch as deps
+FROM python:3.7-stretch as deps
 
 #
 # Most services will use the same set of packages here, though a few will install
@@ -84,7 +83,6 @@ RUN pip install --no-cache-dir --upgrade --extra-index-url ${EXTRA_INDEX_URL} /s
     apt-get remove --purge -y ${BUILD_PACKAGES} && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
-
 
 # ----------- final -----------
 FROM base
