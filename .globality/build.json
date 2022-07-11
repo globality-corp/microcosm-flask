@@ -1,8 +1,15 @@
 {
   "params": {
+    "docker": {
+      "docker_tag": "python:3.7-stretch"
+    },
     "entrypoint": {
       "pre_test_commands": [
         "pip --quiet install microcosm-metrics"
+      ],
+      "pre_typehinting_commands": [
+        "pip install types-python-dateutil",
+        "pip install types-setuptools"
       ]
     },
     "name": "microcosm-flask",
@@ -11,5 +18,5 @@
     }
   },
   "type": "python-library",
-  "version": "2020.51.0"
+  "version": "2022.23.1"
 }

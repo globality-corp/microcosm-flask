@@ -57,6 +57,7 @@ def test_build_swagger():
         paths={
             "/person": {
                 "post": {
+                    "description": "Create a new person",
                     "tags": ["person"],
                     "responses": {
                         "default": {
@@ -91,6 +92,7 @@ def test_build_swagger():
             },
             "/person/{person_id}": {
                 "patch": {
+                    "description": "Update some or all of a person by id",
                     "tags": ["person"],
                     "responses": {
                         "default": {

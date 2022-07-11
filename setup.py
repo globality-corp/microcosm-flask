@@ -34,6 +34,8 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        # Breaking change here removing `soft_unicode` used by Jinja.
+        "MarkupSafe<2.1.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
