@@ -283,8 +283,9 @@ workflows:
             tags:
               only: /.*/
       - publish_library:
-          context: 
+          context:
           - Globality-Common
+          - Python-Context
           requires:
             - test
             - lint
