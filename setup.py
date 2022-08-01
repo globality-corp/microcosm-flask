@@ -50,7 +50,7 @@ setup(
             "parameterized",
         ],
         "lint": [
-            "flake8",
+            "flake8<5",
             "flake8-print",
             "flake8-logging-format",
             "flake8-isort"
