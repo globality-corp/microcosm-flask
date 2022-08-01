@@ -1,4 +1,9 @@
-from enum import Enum, IntEnum, unique
+from enum import (
+    Enum,
+    EnumMeta,
+    IntEnum,
+    unique,
+)
 
 from hamcrest import assert_that, equal_to, is_
 from marshmallow import Schema
@@ -18,9 +23,19 @@ class ValueType(IntEnum):
     Bar = 2
 
 
+class FormatNonStrictMeta(EnumMeta):
+    __openapi_strict__ = False
+
+
+@unique
+class ChoicesNonStrict(Enum, metaclass=FormatNonStrictMeta):
+    Profit = "profit"
+
+
 class TestSchema(Schema):
     choice = EnumField(Choices)
     value = EnumField(ValueType, by_value=True)
+    choice_non_strict = EnumField(ChoicesNonStrict)
 
 
 def test_field_enum():
@@ -50,4 +65,11 @@ def test_field_int_enum():
             1,
             2
         ],
+    })))
+
+
+def test_enum_format_override():
+    parameter = build_parameter(TestSchema().fields["choice_non_strict"])
+    assert_that(parameter, is_(equal_to({
+        "type": "string",
     })))
