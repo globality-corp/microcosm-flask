@@ -44,8 +44,9 @@ class EnumParameterBuilder(ParameterBuilder):
         return bool(getattr(field, "enum", None))
 
     def parse_format(self, field: Field) -> Optional[str]:
-        if isinstance(field, EnumField) and self.strict_enums:
+        if self.is_strict(field):
             return "enum"
+
         return None
 
     def parse_type(self, field: Field) -> str:
@@ -67,6 +68,14 @@ class EnumParameterBuilder(ParameterBuilder):
         ]
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:
-        if self.strict_enums:
+        if self.is_strict(field):
             return self._parse_enum_values(field)
+
         return None
+
+    def is_strict(self, field: Field) -> bool:
+        return (
+            isinstance(field, EnumField) and
+            self.strict_enums and
+            getattr(field.enum, "__openapi_strict__", True)
+        )
