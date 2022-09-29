@@ -51,7 +51,8 @@ class MemoryProfiler:
         difference = latest_snapshot.compare_to(self.origin_snapshot, "lineno")
         top_ten = difference[:self.report_size_lines]
         worst_offenders = "\n".join([str(memory_item) for memory_item in top_ten])
-        self.logger.info(f"Memory snapshot: \n {worst_offenders}")
+        log_msg = f"Memory snapshot: \n {worst_offenders}"
+        self.logger.info(log_msg)
         self.last_sampling_time = current_time
 
     def get_now(self):

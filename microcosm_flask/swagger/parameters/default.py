@@ -48,9 +48,8 @@ class DefaultParameterBuilder(ParameterBuilder):
         try:
             FIELD_MAPPINGS[type(field)]
         except KeyError:
-            self.logger.exception(
-                f"No mapped swagger type for marshmallow field: {field}",
-            )
+            log_msg = f"No mapped swagger type for marshmallow field: {field}"
+            self.logger.exception(log_msg)
             raise
         else:
             return True
