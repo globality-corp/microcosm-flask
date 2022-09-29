@@ -355,7 +355,7 @@ def add_responses(swagger_operation, operation, ns, func):
     )
 
     if getattr(func, "__doc__", None):
-        description = func.__doc__.strip().splitlines()[0]
+        description = getdoc(func)
     else:
         description = "{} {}".format(operation.value.name, ns.subject_name)
 

@@ -131,11 +131,8 @@ def make_json_error(error):
     # Flask will not log user exception (fortunately), but will log an error
     # for exceptions that escape out of the application entirely (e.g. if the
     # error handler raises an error)
-    error_logger.debug("Handling {} error: {}".format(
-        status_code,
-        message,
-    ))
-
+    log_msg = f"Handling {status_code} error: {message}"
+    error_logger.debug(log_msg)
     # Serialize into JSON response
     response_data = {
         "code": status_code,
