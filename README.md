@@ -42,6 +42,15 @@ Run the tests
 python setup.py nosetests
 ```
 
+## Linting
+
+Lint the code:
+
+```shell
+NAME=microcosm_flask ./entrypoint.sh lint
+NAME=microcosm_flask ./entrypoint.sh typehinting
+```
+
 
 ## Configuration
 
