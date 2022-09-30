@@ -33,6 +33,8 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        # Breaking change here removing `soft_unicode` used by Jinja.
+        "MarkupSafe<2.1.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
@@ -47,7 +49,7 @@ setup(
             "parameterized",
         ],
         "lint": [
-            "flake8",
+            "flake8<5",
             "flake8-print",
             "flake8-logging-format",
             "flake8-isort"
@@ -73,7 +75,6 @@ setup(
             "basic_auth = microcosm_flask.basic_auth:configure_basic_auth_decorator",
             "build_info_convention = microcosm_flask.conventions.build_info:configure_build_info",
             "build_route_path = microcosm_flask.paths:RoutePathBuilder",
-            "catchall_convention = microcosm_flask.conventions.catchall:configure_catchall_convention",
             "discovery_convention = microcosm_flask.conventions.discovery:configure_discovery",
             "error_handlers = microcosm_flask.errors:configure_error_handlers",
             "flask = microcosm_flask.factories:configure_flask",

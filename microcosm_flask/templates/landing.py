@@ -4,7 +4,7 @@ template = """
         <head>
             <meta charset="utf-8">
             <meta http-equiv="x-ua-compatible" content="ie=edge">
-            <title>{{ service_name | capitalize }}</title>
+            <title>{{ service_name }}</title>
             <meta name="description" content="Landing">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
@@ -96,7 +96,7 @@ template = """
                 {%- for link in links | sort -%}
                 <ul>
                     <li>
-                        <a href="{{ links[link] }}">{{ link | replace("_", " ") | capitalize }}</a>
+                        <a href="{{ links[link] }}">{{ link | replace("_", " ") }}</a>
                     </li>
                 </ul>
                 {%- endfor -%}

@@ -68,12 +68,13 @@ def configure_landing(graph):   # noqa: C901
         links = {key: value for (key, value) in graph.config.landing_convention.get("links", {}).items()}
 
         # add links for each swagger version
-        for swagger_version in swagger_versions:
-            links["swagger {}". format(swagger_version)] = "api/{}/swagger".format(swagger_version)
+        for version in swagger_versions:
+            links[f"Swagger {version}"] = f"api/{version}/swagger"
+            links[f"Swagger {version} UI"] = f"api/{version}/swagger/docs"
 
         # add link to home page
         if hasattr(properties, "url"):
-            links["home page"] = properties.url
+            links["Home page"] = properties.url
 
         return links
 

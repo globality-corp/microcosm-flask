@@ -99,6 +99,7 @@ class TestCommand:
         assert_that(swagger["paths"], is_(equal_to({
             "/foo/do": {
                 "post": {
+                    "description": "My doc string",
                     "tags": ["foo"],
                     "responses": {
                         "default": {
