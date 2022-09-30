@@ -31,7 +31,6 @@ setup(
         "microcosm>=3.0.0",
         "microcosm-logging>=1.5.0",
         "openapi>=1.1.0",
-        "parameterized>=0.8.1",
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
