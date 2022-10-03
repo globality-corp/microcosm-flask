@@ -47,12 +47,12 @@ def before_send(event, hint):
 @logger
 def configure_sentry(graph: ObjectGraph):
     enabled, dsn, sentry = False, None, None
-    if graph.config.sentry_logging.enabled and graph.config.sentry_logging.dsn and sentry_sdk:
+    if graph.config.sentry_logging.enabled and graph.config.sentry_logging.dsn:
         enabled = graph.config.sentry_logging.enabled
         dsn = graph.config.sentry_logging.dsn
         if graph.metadata.testing:
             sentry = MagicMock()
-        else:
+        elif sentry_sdk:
             try:
                 sentry = sentry_sdk.init(
                     graph.config.sentry_logging.dsn,
