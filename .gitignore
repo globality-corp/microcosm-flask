@@ -101,4 +101,5 @@ target/
 /coverage/
 
 # Python Virtual Environments
-venv/
+venv
+/
