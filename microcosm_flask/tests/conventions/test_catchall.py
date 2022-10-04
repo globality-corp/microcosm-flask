@@ -5,6 +5,8 @@ Test catch-all route
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 
+import microcosm_flask.conventions.catchall  # noqa: 401
+
 
 def make_routes(graph):
     """
