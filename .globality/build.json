@@ -1,7 +1,7 @@
 {
   "params": {
     "docker": {
-      "docker_tag": "python:3.9-slim-bullseye"
+      "docker_tag": "python:3.7-stretch"
     },
     "entrypoint": {
       "pre_test_commands": [
@@ -18,5 +18,5 @@
     }
   },
   "type": "python-library",
-  "version": "2022.39.0"
+  "version": "2022.23.1"
 }
