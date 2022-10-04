@@ -27,7 +27,7 @@ executors:
   globality-build-executor:
     working_directory: ~/repo
     docker:
-      - image: ${AWS_ECR_DOMAIN}/globality-build:2022.39.0
+      - image: ${AWS_ECR_DOMAIN}/globality-build:2022.40.0
         aws_auth:
           aws_access_key_id: ${AWS_ACCESS_KEY_ID}
           aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -39,7 +39,7 @@ executors:
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.39.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.40.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -54,7 +54,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.39.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.40.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -89,10 +89,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-
-      - setup_remote_docker:
-          version: 19.03.12
-          docker_layer_caching: true
 
       - run:
           name: Login AWS ECR
