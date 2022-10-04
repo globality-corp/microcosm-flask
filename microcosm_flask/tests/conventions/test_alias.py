@@ -10,44 +10,31 @@ from hamcrest import (
     has_key,
     is_,
 )
-from marshmallow import Schema, fields
 from microcosm.api import create_object_graph
 
 from microcosm_flask.conventions.alias import configure_alias
-from microcosm_flask.conventions.base import EndpointDefinition
 from microcosm_flask.conventions.crud import configure_crud
 from microcosm_flask.conventions.swagger import configure_swagger
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
 from microcosm_flask.swagger.definitions import build_path
-from microcosm_flask.tests.conventions.fixtures import Person
-
-
-class PersonSchema(Schema):
-    id = fields.Integer()
-    first_name = fields.String()
-    last_name = fields.String()
-
-
-PERSON = Person(id=1, first_name="First", last_name="Last")
+from microcosm_flask.tests.conventions.fixtures import (
+    PERSON_1,
+    PERSON_ID_1,
+    Person,
+    PersonLookupSchema,
+    PersonSchema,
+    person_retrieve,
+)
 
 
 def find_person_by_name(person_name):
-    return PERSON
-
-
-def find_person(person_id):
-    return PERSON
+    return PERSON_1
 
 
 PERSON_MAPPINGS = {
-    Operation.Alias: EndpointDefinition(
-        func=find_person_by_name,
-    ),
-    Operation.Retrieve: EndpointDefinition(
-        func=find_person,
-        response_schema=PersonSchema(),
-    ),
+    Operation.Alias: (find_person_by_name,),
+    Operation.Retrieve: (person_retrieve, PersonLookupSchema(), PersonSchema()),
 }
 
 
@@ -79,7 +66,10 @@ class TestAlias:
     def test_alias(self):
         response = self.client.get("/api/person/foo")
         assert_that(response.status_code, is_(equal_to(302)))
-        assert_that(response.headers["Location"], is_(equal_to("http://localhost/api/person/1")))
+        assert_that(
+            response.headers["Location"],
+            is_(equal_to(f"http://localhost/api/person/{PERSON_ID_1}"))
+        )
 
     def test_swagger(self):
         response = self.client.get("/api/swagger")
