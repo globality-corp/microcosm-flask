@@ -17,7 +17,7 @@ executors:
   node-executor:
     working_directory: ~/repo
     docker:
-      - image: cimg/node:14.19.0
+      - image: circleci/node:14.19.0
         environment:
           EXTRA_INDEX_URL: "InjectedDuringRuntime"
           AWS_ECR_DOMAIN: "InjectedDuringRuntime"
@@ -112,7 +112,6 @@ jobs:
               --build-arg JFROG_AUTH=$JFROG_AUTH .
 
             docker push $AWS_ECR_DOMAIN/python-library:$CIRCLE_SHA1
-
 
   test:
     <<: *defaults
@@ -259,14 +258,14 @@ workflows:
   build-and-release:
     jobs:
       - checkout:
-          context: 
+          context:
           - Globality-Common
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - build_docker:
-          context: 
+          context:
           - Globality-Common
           requires:
             - checkout
@@ -275,7 +274,7 @@ workflows:
             tags:
               only: /.*/
       - lint:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -284,7 +283,7 @@ workflows:
             tags:
               only: /.*/
       - test:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -293,14 +292,14 @@ workflows:
             tags:
               only: /.*/
       - deploy_jfrog_rc:
-          context: 
+          context:
           - Globality-Common
           requires:
             - test
             - lint
             - typehinting
       - typehinting:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -309,7 +308,7 @@ workflows:
             tags:
               only: /.*/
       - publish_library:
-          context: 
+          context:
           - Globality-Common
           - Python-Context
           requires:
