@@ -99,3 +99,6 @@ target/
 .mypy_cache
 
 /coverage/
+
+# Python Virtual Environments
+venv/
