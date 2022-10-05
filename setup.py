@@ -34,6 +34,8 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        # TODO: without this, test_landing fails, so needs a deeper review
+        "werkzeug==2.1.1",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
