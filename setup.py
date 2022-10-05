@@ -22,7 +22,7 @@ setup(
     keywords="microcosm",
     install_requires=[
         "Flask>=2",
-        # Werkzeug 2.2 breaks aliases? https://github.com/globality-corp/microcosm-flask/pull/335
+        # Werkzeug 2.2 breaks things: https://github.com/globality-corp/microcosm-flask/pull/337
         "Werkzeug<2.2.0",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
