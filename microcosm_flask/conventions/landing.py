@@ -41,7 +41,7 @@ def configure_landing(graph):   # noqa: C901
             Defines a condition to determine which endpoints are swagger type
 
             """
-            if(ns.subject == graph.config.swagger_convention.name):
+            if (ns.subject == graph.config.swagger_convention.name):
                 return True
             return False
 

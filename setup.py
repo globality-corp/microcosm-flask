@@ -28,7 +28,7 @@ setup(
         "Flask-UUID>=0.2",
         "jsonschema==3.2.0",
         "marshmallow>=3.0.0",
-        "microcosm>=3.0.0",
+        "microcosm>=3.1.0",
         "microcosm-logging>=1.5.0",
         "openapi>=1.1.0",
         "python-dateutil>=2.7.3",
@@ -50,18 +50,12 @@ setup(
             "coverage",
             "parameterized",
         ],
-        "lint": [
-            "flake8<5",
-            "flake8-print",
-            "flake8-logging-format",
-            "flake8-isort"
-        ]
+        "lint": ["flake8<5", "flake8-print", "flake8-logging-format", "flake8-isort"],
     },
     setup_requires=[
         "nose>=1.3.7",
     ],
-    dependency_links=[
-    ],
+    dependency_links=[],
     entry_points={
         "microcosm_flask.swagger.parameters": [
             "decorated = microcosm_flask.swagger.parameters.decorated:DecoratedParameterBuilder",

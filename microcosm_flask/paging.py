@@ -55,8 +55,12 @@ def identity(x):
 # NB: lots of code currently uses `PageSchema` to refer to `OffsetLimitPageSchema`
 # keeping this (mis)naming for backwards compatibilty
 class PageSchema(Schema):
-    offset = fields.Integer(missing=None)
-    limit = fields.Integer(missing=None)
+    offset = fields.Integer(
+        missing=None, metadata={"description": "The pagination starting offset."}
+    )
+    limit = fields.Integer(
+        missing=None, metadata={"description": "The pagination limit."}
+    )
 
 
 class OffsetLimitPageSchema(PageSchema):
@@ -70,6 +74,7 @@ class PaginatedList:
     Includes HAL-style links (e.g for the current or next page)
 
     """
+
     def __init__(self, items, _page, _ns, _operation, _context):
         self.items = items
         self._page = _page
@@ -89,10 +94,7 @@ class PaginatedList:
         """
         links = Links()
         links["self"] = Link.for_(
-            self._operation,
-            self._ns,
-            qs=self._page.to_items(),
-            **self._context
+            self._operation, self._ns, qs=self._page.to_items(), **self._context
         )
         return links
 
@@ -102,6 +104,7 @@ class OffsetLimitPaginatedList(PaginatedList):
     A paginated list using offset/limit style paging.
 
     """
+
     def __init__(self, items, count, _page, _ns, _operation, _context):
         super(OffsetLimitPaginatedList, self).__init__(
             items=items,
@@ -149,6 +152,7 @@ class Page:
     Encapsulates pagination information.
 
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -168,10 +172,7 @@ class Page:
         this is normally necessary when passing page data to controller functions as kwargs.
 
         """
-        return [
-            (key, func(self.kwargs[key]))
-            for key in sorted(self.kwargs.keys())
-        ]
+        return [(key, func(self.kwargs[key])) for key in sorted(self.kwargs.keys())]
 
     def to_dict(self, func=str):
         return dict(self.to_items(func=func))
@@ -231,6 +232,7 @@ class Page:
         Generate a schema class that represents a paginted list of items.
 
         """
+
         class PaginatedListSchema(Schema):
             __alias__ = "{}_list".format(ns.subject_name)
             items = fields.List(fields.Nested(item_schema), required=True)
@@ -244,6 +246,7 @@ class OffsetLimitPage(Page):
     Offset/limit based paging.
 
     """
+
     def __init__(self, offset=None, limit=None, **kwargs):
         super(OffsetLimitPage, self).__init__(**kwargs)
         self.offset = self.default_offset if offset is None else offset
@@ -252,17 +255,13 @@ class OffsetLimitPage(Page):
     @property
     def next_page(self):
         return OffsetLimitPage(
-            offset=self.offset + self.limit,
-            limit=self.limit,
-            **self.kwargs
+            offset=self.offset + self.limit, limit=self.limit, **self.kwargs
         )
 
     @property
     def prev_page(self):
         return OffsetLimitPage(
-            offset=self.offset - self.limit,
-            limit=self.limit,
-            **self.kwargs
+            offset=self.offset - self.limit, limit=self.limit, **self.kwargs
         )
 
     @property
@@ -277,10 +276,9 @@ class OffsetLimitPage(Page):
             return 20
 
     def to_items(self, func=str):
-        return [
-            ("offset", self.offset),
-            ("limit", self.limit),
-        ] + super(OffsetLimitPage, self).to_items(func=func)
+        return [("offset", self.offset), ("limit", self.limit)] + super(
+            OffsetLimitPage, self
+        ).to_items(func=func)
 
     def to_paginated_list(self, result, _ns, _operation, **kwargs):
         items, count, context = self.parse_result(result)
@@ -316,11 +314,25 @@ class OffsetLimitPage(Page):
         class PaginatedListSchema(Schema):
             __alias__ = "{}_list".format(ns.subject_name)
 
-            offset = fields.Integer(required=True)
-            limit = fields.Integer(required=True)
-            count = fields.Integer(required=True)
-            items = fields.List(fields.Nested(item_schema), required=True)
-            _links = fields.Raw()
+            offset = fields.Integer(
+                required=True,
+                metadata={"description": "The pagination starting offset."},
+            )
+            limit = fields.Integer(
+                required=True, metadata={"description": "The pagination limit."}
+            )
+            count = fields.Integer(
+                required=True,
+                metadata={"description": "The number of items in the page."},
+            )
+            items = fields.List(
+                fields.Nested(item_schema),
+                required=True,
+                metadata={"description": "The page of items."},
+            )
+            _links = fields.Raw(
+                metadata={"description": "Links to the available operations."}
+            )
 
             @property
             def csv_column_order(self):
