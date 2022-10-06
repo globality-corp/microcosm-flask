@@ -76,10 +76,9 @@ class ParameterBuilder(ABC):
         Parse the description for the field, if any.
 
         """
-        if "metadata" in field.metadata:
-            metadata = field.metadata.get("metadata")
-            if metadata:
-                return metadata.get("description")
+        metadata = field.metadata.get("metadata", {})
+        if metadata:
+            return metadata.get("description")
         return field.metadata.get("description")
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:

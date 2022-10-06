@@ -319,7 +319,8 @@ class OffsetLimitPage(Page):
                 metadata={"description": "The pagination starting offset."},
             )
             limit = fields.Integer(
-                required=True, metadata={"description": "The pagination limit."}
+                required=True,
+                metadata={"description": "The pagination limit."},
             )
             count = fields.Integer(
                 required=True,
