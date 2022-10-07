@@ -2,6 +2,7 @@
 Generate JSON Schema for Marshmallow schemas.
 
 """
+import re
 from typing import (
     Any,
     Callable,
@@ -29,6 +30,7 @@ class Schemas:
     Swagger schema builder.
 
     """
+
     def __init__(
         self,
         build_parameter: Callable[..., Mapping[str, Any]],
@@ -59,13 +61,14 @@ class Schemas:
         )
 
         required_fields = [
-            name
-            for name, field in fields
-            if field.required and not field.allow_none
+            name for name, field in fields if field.required and not field.allow_none
         ]
 
         if required_fields:
             result["required"] = required_fields
+
+        if schema.__doc__:
+            result["description"] = re.sub(r"\s+", " ", schema.__doc__.strip())
 
         return result
 
@@ -99,7 +102,9 @@ class Schemas:
 
         yield self.to_tuple(schema)
 
-        for associated_schema in getattr(schema, associated_schemas_attr_name(schema.__class__), {}).values():
+        for associated_schema in getattr(
+            schema, associated_schemas_attr_name(schema.__class__), {}
+        ).values():
             yield self.to_tuple(associated_schema())
 
         for name, field in self.iter_fields(schema):

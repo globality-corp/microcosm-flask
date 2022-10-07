@@ -120,6 +120,7 @@ class TestCommand:
                             "name": "X-Response-Skip-Null",
                             "required": False,
                             "type": "string",
+                            "description": "Remove fields with null values from the response."
                         },
                         {
                             "schema": {

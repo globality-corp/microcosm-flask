@@ -24,7 +24,10 @@ class ParameterBuilder(ABC):
     and delegates to the first compatible implementation.
 
     """
-    def __init__(self, build_parameter: Callable[[Schema], Mapping[str, Any]], **kwargs):
+
+    def __init__(
+        self, build_parameter: Callable[[Schema], Mapping[str, Any]], **kwargs
+    ):
         self.build_parameter = build_parameter
         self.parsers = {
             "default": self.parse_default,
@@ -73,6 +76,9 @@ class ParameterBuilder(ABC):
         Parse the description for the field, if any.
 
         """
+        metadata = field.metadata.get("metadata", {})
+        if metadata:
+            return metadata.get("description")
         return field.metadata.get("description")
 
     def parse_enum_values(self, field: Field) -> Optional[Sequence]:

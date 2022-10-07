@@ -21,7 +21,16 @@ class EndpointDefinition(tuple):
     A definition for an endpoint.
 
     """
-    def __new__(cls, func=None, request_schema=None, response_schema=None, header_func=None, response_formats=None):
+
+    def __new__(
+        cls,
+        func=None,
+        request_schema=None,
+        response_schema=None,
+        header_func=None,
+        response_formats=None,
+        description=None,
+    ):
         """
         Define an API endpoint.
 
@@ -40,11 +49,19 @@ class EndpointDefinition(tuple):
         :param response_schema: a marshmallow schema to encode response data
         :param header_func: a header-modifying function
         :param response_formats: an optional list of support response formats
+        :param description: a description of the endpoint for documentation
 
         """
         return tuple.__new__(
             EndpointDefinition,
-            (func, request_schema, response_schema, header_func, response_formats),
+            (
+                func,
+                request_schema,
+                response_schema,
+                header_func,
+                response_formats,
+                description,
+            ),
         )
 
     @property
@@ -67,12 +84,17 @@ class EndpointDefinition(tuple):
     def response_formats(self):
         return self[4] or []
 
+    @property
+    def description(self):
+        return self[5]
+
 
 class Convention:
     """
     A convention is a recipe for applying Flask-compatible functions to a namespace.
 
     """
+
     def __init__(self, graph):
         self.graph = graph
         self._registered_routes = set()
