@@ -310,7 +310,7 @@ workflows:
       - publish_library:
           context: 
           - Globality-Common
-          - Python-Common
+          - Python-Context
           requires:
             - test
             - lint
