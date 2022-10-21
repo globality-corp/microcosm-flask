@@ -23,7 +23,6 @@ from microcosm_flask.paging import OffsetLimitPage, OffsetLimitPageSchema, ident
 
 
 class CRUDConvention(Convention):
-
     @property
     def page_cls(self):
         return OffsetLimitPage
@@ -58,10 +57,16 @@ class CRUDConvention(Convention):
         @wraps(definition.func)
         def search(**path_data):
             page = self.page_cls.from_query_string(definition.request_schema)
-            result = definition.func(**merge_data(path_data, page.to_dict(func=identity)))
-            response_data, headers = page.to_paginated_list(result, ns, Operation.Search)
+            result = definition.func(
+                **merge_data(path_data, page.to_dict(func=identity))
+            )
+            response_data, headers = page.to_paginated_list(
+                result, ns, Operation.Search
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 paginated_list_schema,
                 response_data,
@@ -69,7 +74,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        search.__doc__ = search.__doc__ or "Search the collection of all {}".format(pluralize(ns.subject_name))
+        search.__doc__ = (
+            definition.description
+            or search.__doc__
+            or "Search the collection of all {}".format(pluralize(ns.subject_name))
+        )
 
     def configure_count(self, ns, definition):
         """
@@ -85,6 +94,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
+
         @self.add_route(ns.collection_path, Operation.Count, ns)
         @qs(definition.request_schema)
         @wraps(definition.func)
@@ -94,7 +104,9 @@ class CRUDConvention(Convention):
             count = definition.func(**merge_data(path_data, request_data))
             headers = encode_count_header(count)
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 None,
                 None,
@@ -102,7 +114,13 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        count.__doc__ = count.__doc__ or "Count the size of the collection of all {}".format(pluralize(ns.subject_name))
+        count.__doc__ = (
+            definition.description
+            or count.__doc__
+            or "Count the size of the collection of all {}".format(
+                pluralize(ns.subject_name)
+            )
+        )
 
     def configure_create(self, ns, definition):
         """
@@ -116,6 +134,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
+
         @self.add_route(ns.collection_path, Operation.Create, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
@@ -125,7 +144,9 @@ class CRUDConvention(Convention):
             response_data = definition.func(**merge_data(path_data, request_data))
             headers = encode_id_header(response_data)
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -134,7 +155,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        create.__doc__ = create.__doc__ or "Create a new {}".format(ns.subject_name)
+        create.__doc__ = (
+            definition.description
+            or create.__doc__
+            or "Create a new {}".format(ns.subject_name)
+        )
 
     def configure_updatebatch(self, ns, definition):
         """
@@ -159,7 +184,9 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             response_data = definition.func(**merge_data(path_data, request_data))
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -168,7 +195,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        update_batch.__doc__ = update_batch.__doc__ or "Update a batch of {}".format(ns.subject_name)
+        update_batch.__doc__ = (
+            definition.description
+            or update_batch.__doc__
+            or "Update a batch of {}".format(ns.subject_name)
+        )
 
     def configure_deletebatch(self, ns, definition):
         """
@@ -191,9 +222,13 @@ class CRUDConvention(Convention):
         def delete_batch(**path_data):
             headers = dict()
             request_data = load_query_string_data(request_schema)
-            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            response_data = require_response_data(
+                definition.func(**merge_data(path_data, request_data))
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 response_schema="",
                 response_data=None,
@@ -202,7 +237,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        delete_batch.__doc__ = delete_batch.__doc__ or "Delete a batch of {}".format(ns.subject_name)
+        delete_batch.__doc__ = (
+            definition.description
+            or delete_batch.__doc__
+            or "Delete a batch of {}".format(ns.subject_name)
+        )
 
     def configure_retrieve(self, ns, definition):
         """
@@ -225,9 +264,13 @@ class CRUDConvention(Convention):
         def retrieve(**path_data):
             headers = dict()
             request_data = load_query_string_data(request_schema)
-            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            response_data = require_response_data(
+                definition.func(**merge_data(path_data, request_data))
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -235,7 +278,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        retrieve.__doc__ = retrieve.__doc__ or "Retrieve a {} by id".format(ns.subject_name)
+        retrieve.__doc__ = (
+            definition.description
+            or retrieve.__doc__
+            or "Retrieve a {} by id".format(ns.subject_name)
+        )
 
     def configure_delete(self, ns, definition):
         """
@@ -257,9 +304,13 @@ class CRUDConvention(Convention):
         def delete(**path_data):
             headers = dict()
             request_data = load_query_string_data(request_schema)
-            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            response_data = require_response_data(
+                definition.func(**merge_data(path_data, request_data))
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 "",
                 None,
@@ -268,7 +319,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        delete.__doc__ = delete.__doc__ or "Delete a {} by id".format(ns.subject_name)
+        delete.__doc__ = (
+            definition.description
+            or delete.__doc__
+            or "Delete a {} by id".format(ns.subject_name)
+        )
 
     def configure_replace(self, ns, definition):
         """
@@ -282,6 +337,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
+
         @self.add_route(ns.instance_path, Operation.Replace, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
@@ -292,9 +348,13 @@ class CRUDConvention(Convention):
             # Replace/put should create a resource if not already present, but we do not
             # enforce these semantics at the HTTP layer. If `func` returns falsey, we
             # will raise a 404.
-            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            response_data = require_response_data(
+                definition.func(**merge_data(path_data, request_data))
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -302,7 +362,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        replace.__doc__ = replace.__doc__ or "Create or update a {} by id".format(ns.subject_name)
+        replace.__doc__ = (
+            definition.description
+            or replace.__doc__
+            or "Create or update a {} by id".format(ns.subject_name)
+        )
 
     def configure_update(self, ns, definition):
         """
@@ -316,6 +380,7 @@ class CRUDConvention(Convention):
         :param definition: the endpoint definition
 
         """
+
         @self.add_route(ns.instance_path, Operation.Update, ns)
         @request(definition.request_schema)
         @response(definition.response_schema)
@@ -323,9 +388,13 @@ class CRUDConvention(Convention):
         def update(**path_data):
             headers = dict()
             request_data = load_request_data(definition.request_schema)
-            response_data = require_response_data(definition.func(**merge_data(path_data, request_data)))
+            response_data = require_response_data(
+                definition.func(**merge_data(path_data, request_data))
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 definition.response_schema,
                 response_data,
@@ -333,7 +402,11 @@ class CRUDConvention(Convention):
                 response_format=response_format,
             )
 
-        update.__doc__ = update.__doc__ or "Update some or all of a {} by id".format(ns.subject_name)
+        update.__doc__ = (
+            definition.description
+            or update.__doc__
+            or "Update some or all of a {} by id".format(ns.subject_name)
+        )
 
     def configure_createcollection(self, ns, definition):
         """
@@ -355,17 +428,23 @@ class CRUDConvention(Convention):
             request_data = load_request_data(definition.request_schema)
             page = self.page_cls.from_query_string(self.page_schema(), {})
 
-            result = definition.func(**merge_data(
-                path_data,
-                merge_data(
-                    request_data,
-                    page.to_dict(func=identity),
-                ),
-            ))
+            result = definition.func(
+                **merge_data(
+                    path_data,
+                    merge_data(
+                        request_data,
+                        page.to_dict(func=identity),
+                    ),
+                )
+            )
 
-            response_data, headers = page.to_paginated_list(result, ns, Operation.CreateCollection)
+            response_data, headers = page.to_paginated_list(
+                result, ns, Operation.CreateCollection
+            )
             definition.header_func(headers, response_data)
-            response_format = self.negotiate_response_content(definition.response_formats)
+            response_format = self.negotiate_response_content(
+                definition.response_formats
+            )
             return dump_response_data(
                 paginated_list_schema,
                 response_data,
@@ -374,7 +453,9 @@ class CRUDConvention(Convention):
             )
 
         create_collection.__doc__ = (
-            create_collection.__doc__ or "Create the collection of {}".format(pluralize(ns.subject_name))
+            definition.description
+            or create_collection.__doc__
+            or "Create the collection of {}".format(pluralize(ns.subject_name))
         )
 
 

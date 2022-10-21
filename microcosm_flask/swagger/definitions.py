@@ -69,13 +69,18 @@ def build_swagger(graph, ns, operations, validate_schema=False):
         info=swagger.Info(
             title=graph.metadata.name,
             version=ns.version,
+            description=graph.metadata.description,
         ),
-        consumes=swagger.MediaTypeList([
-            swagger.MimeType("application/json"),
-        ]),
-        produces=swagger.MediaTypeList([
-            swagger.MimeType("application/json"),
-        ]),
+        consumes=swagger.MediaTypeList(
+            [
+                swagger.MimeType("application/json"),
+            ]
+        ),
+        produces=swagger.MediaTypeList(
+            [
+                swagger.MimeType("application/json"),
+            ]
+        ),
         basePath=base_path,
         paths=swagger.Paths(),
         definitions=swagger.Definitions(),
@@ -87,7 +92,9 @@ def build_swagger(graph, ns, operations, validate_schema=False):
         try:
             schema.validate()
         except Exception:
-            logger.exception("Swagger definition did not validate against swagger schema")
+            logger.exception(
+                "Swagger definition did not validate against swagger schema"
+            )
             raise
 
     return schema
@@ -126,10 +133,9 @@ def add_paths(paths, base_path, operations):
         # However, OpenAPI requires the minimal base path to be "/"
         # This means we need branching logic for that special case
         suffix_start = 0 if len(base_path) == 1 else len(base_path)
-        paths.setdefault(
-            path[suffix_start:],
-            swagger.PathItem(),
-        )[method] = build_operation(operation, ns, rule, func)
+        paths.setdefault(path[suffix_start:], swagger.PathItem(),)[
+            method
+        ] = build_operation(operation, ns, rule, func)
 
 
 def add_definitions(definitions, operations):
@@ -143,7 +149,9 @@ def add_definitions(definitions, operations):
         if isinstance(definition_schema, str):
             continue
 
-        for name, schema in iter_schemas(definition_schema, strict_enums=request_side != RequestSide.RESPONSE):
+        for name, schema in iter_schemas(
+            definition_schema, strict_enums=request_side != RequestSide.RESPONSE
+        ):
             definitions.setdefault(name, swagger.Schema(schema))
 
 
@@ -196,15 +204,18 @@ def build_path_for_integer_param(ns, operation, arguments: Set):
 
 
 def create_uri_templates(arguments):
-    return {
-        argument: f"{{{argument}}}"
-        for argument in arguments
-    }
+    return {argument: f"{{{argument}}}" for argument in arguments}
 
 
-def build_path(operation: Operation, ns: Namespace, schema_request_arguments: Optional[Dict[Tuple, List[str]]] = None):
+def build_path(
+    operation: Operation,
+    ns: Namespace,
+    schema_request_arguments: Optional[Dict[Tuple, List[str]]] = None,
+):
     expected_arguments: List[str] = (
-        schema_request_arguments.get((ns.endpoint_for(operation), operation.value.method), [])
+        schema_request_arguments.get(
+            (ns.endpoint_for(operation), operation.value.method), []
+        )
         if schema_request_arguments
         else []
     )
@@ -217,7 +228,7 @@ def build_path(operation: Operation, ns: Namespace, schema_request_arguments: Op
     except (BuildError, ValueError) as error:
         # NB: The arguments were misidentified in the previous step, use the ones supplied by the error
         actual_arguments = (
-            error.suggested.arguments   # type: ignore
+            error.suggested.arguments  # type: ignore
             if isinstance(error, BuildError)
             else expected_arguments
         )
@@ -231,26 +242,33 @@ def build_path(operation: Operation, ns: Namespace, schema_request_arguments: Op
 
 
 def body_param(schema):
-    return swagger.BodyParameter(**{
-        "name": "body",
-        "in": "body",
-        "schema": swagger.JsonReference({
-            "$ref": "#/definitions/{}".format(type_name(name_for(schema))),
-        }),
-    })
+    return swagger.BodyParameter(
+        **{
+            "name": "body",
+            "in": "body",
+            "schema": swagger.JsonReference(
+                {
+                    "$ref": "#/definitions/{}".format(type_name(name_for(schema))),
+                }
+            ),
+        }
+    )
 
 
-def header_param(name, required=False, param_type="string"):
+def header_param(name, required=False, param_type="string", description=None):
     """
     Build a header parameter definition.
 
     """
-    return swagger.HeaderParameterSubSchema(**{
-        "name": name,
-        "in": "header",
-        "required": required,
-        "type": param_type,
-    })
+    return swagger.HeaderParameterSubSchema(
+        **{
+            "name": name,
+            "in": "header",
+            "required": required,
+            "type": param_type,
+            "description": description,
+        }
+    )
 
 
 def query_param(name, field):
@@ -303,8 +321,7 @@ def build_operation(operation, ns, rule, func):
 
     swagger_operation = swagger.Operation(
         operationId=operation_name(operation, ns),
-        parameters=swagger.ParametersList([
-        ]),
+        parameters=swagger.ParametersList([]),
         responses=swagger.Responses(),
         tags=[ns.subject_name],
         description=description,
@@ -312,29 +329,28 @@ def build_operation(operation, ns, rule, func):
 
     # custom header parameter
     swagger_operation.parameters.append(
-        header_param("X-Response-Skip-Null")
+        header_param(
+            "X-Response-Skip-Null",
+            description="Remove fields with null values from the response.",
+        )
     )
 
     # path parameters
-    swagger_operation.parameters.extend([
-        path_param(argument, ns)
-        for argument in rule.arguments
-    ])
+    swagger_operation.parameters.extend(
+        [path_param(argument, ns) for argument in rule.arguments]
+    )
 
     # query string parameters
     qs_schema = get_qs_schema(func)
     if qs_schema:
-        swagger_operation.parameters.extend([
-            query_param(name, field)
-            for name, field in qs_schema.fields.items()
-        ])
+        swagger_operation.parameters.extend(
+            [query_param(name, field) for name, field in qs_schema.fields.items()]
+        )
 
     # body parameter
     request_schema = get_request_schema(func)
     if request_schema:
-        swagger_operation.parameters.append(
-            body_param(request_schema)
-        )
+        swagger_operation.parameters.append(body_param(request_schema))
 
     # sort parameters for predictable output
     swagger_operation.parameters.sort(key=lambda parameter: parameter["name"])
@@ -360,9 +376,7 @@ def add_responses(swagger_operation, operation, ns, func):
         description = "{} {}".format(operation.value.name, ns.subject_name)
 
     if operation in (Operation.Upload, Operation.UploadFor):
-        swagger_operation.consumes = [
-            "multipart/form-data"
-        ]
+        swagger_operation.consumes = ["multipart/form-data"]
 
     # resource request
     request_resource = get_request_schema(func)
@@ -379,9 +393,7 @@ def add_responses(swagger_operation, operation, ns, func):
         swagger_operation.produces.append(response_resource)
     elif not response_resource:
         response_code = (
-            204
-            if operation.value.default_code == 200
-            else operation.value.default_code
+            204 if operation.value.default_code == 200 else operation.value.default_code
         )
         swagger_operation.responses[str(response_code)] = build_response(
             description=description,
@@ -402,7 +414,9 @@ def build_response(description, resource=None):
         description=description,
     )
     if resource is not None:
-        response.schema = swagger.JsonReference({
-            "$ref": "#/definitions/{}".format(type_name(name_for(resource))),
-        })
+        response.schema = swagger.JsonReference(
+            {
+                "$ref": "#/definitions/{}".format(type_name(name_for(resource))),
+            }
+        )
     return response

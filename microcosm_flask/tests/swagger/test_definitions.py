@@ -38,7 +38,7 @@ def match_function(operation, obj, rule):
 
 
 def test_build_swagger():
-    graph = create_object_graph(name="example", testing=True)
+    graph = create_object_graph(name="example", testing=True, description="The API description.")
     ns = Namespace(
         subject=Person,
         version="v1",
@@ -53,6 +53,7 @@ def test_build_swagger():
         info={
             "version": "v1",
             "title": "example",
+            "description": "The API description."
         },
         paths={
             "/person": {
@@ -78,6 +79,7 @@ def test_build_swagger():
                             "name": "X-Response-Skip-Null",
                             "required": False,
                             "type": "string",
+                            "description": "Remove fields with null values from the response."
                         },
                         {
                             "in": "body",
@@ -114,6 +116,7 @@ def test_build_swagger():
                             "type": "string",
                             "name": "X-Response-Skip-Null",
                             "in": "header",
+                            "description": "Remove fields with null values from the response."
                         },
                         {
                             "in": "body",
