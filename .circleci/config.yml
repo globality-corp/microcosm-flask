@@ -12,10 +12,34 @@
 #
 version: 2.1
 
+
+executors:
+  node-executor:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:14.19.0
+        environment:
+          EXTRA_INDEX_URL: "InjectedDuringRuntime"
+          AWS_ECR_DOMAIN: "InjectedDuringRuntime"
+          JFROG_AUTH: "InjectedDuringRuntime"
+          APOLLO_ENGINE_API_KEY: "InjectedDuringRuntime"
+
+  globality-build-executor:
+    working_directory: ~/repo
+    docker:
+      - image: ${AWS_ECR_DOMAIN}/globality-build:2022.12.0
+        aws_auth:
+          aws_access_key_id: ${AWS_ACCESS_KEY_ID}
+          aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+        environment:
+          EXTRA_INDEX_URL: "InjectedDuringRuntime"
+          AWS_ECR_DOMAIN: "InjectedDuringRuntime"
+          JFROG_AUTH: "InjectedDuringRuntime"
+
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.51.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.12.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -30,7 +54,7 @@ defaults: &defaults
 deploy_defaults: &deploy_defaults
   working_directory: ~/repo
   docker:
-    - image: ${AWS_ECR_DOMAIN}/globality-build:2020.51.0
+    - image: ${AWS_ECR_DOMAIN}/globality-build:2022.12.0
       aws_auth:
         aws_access_key_id: ${AWS_ACCESS_KEY_ID}
         aws_secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -53,6 +77,7 @@ jobs:
 
     steps:
       - checkout
+
 
       - persist_to_workspace:
           root: ~/repo
@@ -103,6 +128,7 @@ jobs:
           name: Login AWS ECR
           command: |
             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ECR_DOMAIN}
+
 
       - run:
           name: Copy service tests to volume
@@ -177,17 +203,15 @@ jobs:
           command: |
             docker run -it --volumes-from service_tests ${AWS_ECR_DOMAIN}/python-library:${CIRCLE_SHA1} typehinting
 
+
+
   deploy_jfrog_rc:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Override version
-          command: |
-            sed -i -e "s/^\(version = \".*\)\"$/\1.dev${CIRCLE_BUILD_NUM}\"/" setup.py
-      - run:
-          name: Authenticate
+          name: Deploy  # If package publishing enabled, always push RCs to JFrog
           command: |
             echo "[distutils]" > ~/.pypirc
             echo "index-servers =" >> ~/.pypirc
@@ -198,9 +222,12 @@ jobs:
             echo "username:$JFROG_USERNAME" >> ~/.pypirc
             echo "password:$JFROG_PASSWORD" >> ~/.pypirc
             echo >> ~/.pypirc
-      - run:
-          name: Publish
-          command: python setup.py sdist upload -r jfrog
+            echo >> ~/.pypirc
+            version=0.${CIRCLE_BUILD_NUM}.dev${CIRCLE_BUILD_NUM}
+            sed  -i '/version \=/s/\".*\"/'"\"${version}\"/" setup.py
+            python setup.py register -r jfrog
+            python setup.py sdist
+            twine upload --repository jfrog dist/microcosm-flask-${version}.tar.gz
 
   publish_library:
     <<: *defaults
@@ -215,7 +242,7 @@ jobs:
             echo "    pypi " >> ~/.pypirc
             echo >> ~/.pypirc
             echo "[pypi]" >> ~/.pypirc
-            echo "repository:https://upload.pypi.org/legacy/" >> ~/.pypirc
+            echo "repository = https://upload.pypi.org/legacy/" >> ~/.pypirc
             echo "username = __token__" >> ~/.pypirc
             echo "password = ${PYPI_AUTH_TOKEN}" >> ~/.pypirc
             echo >> ~/.pypirc
@@ -225,19 +252,20 @@ jobs:
             twine upload --repository pypi dist/microcosm-flask-${version}.tar.gz
 
 
+
 workflows:
 
   build-and-release:
     jobs:
       - checkout:
-          context: 
+          context:
           - Globality-Common
           filters:
             # run for all branches and tags
             tags:
               only: /.*/
       - build_docker:
-          context: 
+          context:
           - Globality-Common
           requires:
             - checkout
@@ -246,7 +274,7 @@ workflows:
             tags:
               only: /.*/
       - lint:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -255,7 +283,7 @@ workflows:
             tags:
               only: /.*/
       - test:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker
@@ -264,17 +292,14 @@ workflows:
             tags:
               only: /.*/
       - deploy_jfrog_rc:
-          context: 
+          context:
           - Globality-Common
           requires:
             - test
             - lint
             - typehinting
-          filters:
-            branches:
-              ignore: master
       - typehinting:
-          context: 
+          context:
           - Globality-Common
           requires:
             - build_docker

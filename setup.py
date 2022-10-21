@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "3.9.0"
+version = "4.0.0"
 
 
 setup(
@@ -21,8 +21,9 @@ setup(
     python_requires=">=3.6",
     keywords="microcosm",
     install_requires=[
-        "Flask<2",
-        "Flask>=1.0.2",
+        "Flask>=2",
+        # Werkzeug 2.2 breaks things: https://github.com/globality-corp/microcosm-flask/pull/337
+        "Werkzeug<2.2.0",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
@@ -35,8 +36,6 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
-        # Breaking change here removing `soft_unicode` used by Jinja.
-        "MarkupSafe<2.1.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
@@ -50,7 +49,12 @@ setup(
             "coverage",
             "parameterized",
         ],
-        "lint": ["flake8<5", "flake8-print", "flake8-logging-format", "flake8-isort"],
+        "lint": [
+            "flake8<5",
+            "flake8-print",
+            "flake8-logging-format",
+            "flake8-isort",
+        ]
     },
     setup_requires=[
         "nose>=1.3.7",

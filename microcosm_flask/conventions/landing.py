@@ -86,7 +86,7 @@ def configure_landing(graph):   # noqa: C901
         """
         config = graph.config_convention.to_dict()
         env = get_env_file_commands(config, graph.metadata.name)
-        health = graph.health_convention.to_dict()
+        health = graph.health_convention.to_dict(full=True)
         properties = get_properties_and_version()
         swagger_versions = get_swagger_versions()
 

@@ -27,7 +27,7 @@ def test_make_response():
         ("Content-Type", "application/json"),
         ("Content-Length", "14"),
         ("ETag", etag_for(
-            md5_hash='"2f8acf3fe5e5c2839a04b7677d9399b8"',
+            sha1_hash='"15abb9bce7cf6dc65ab2f6bc6aebfd406448434b"',
             spooky_hash='"053dd24aa81b8b2c3243143a14834d37"',
         )),
     ))
