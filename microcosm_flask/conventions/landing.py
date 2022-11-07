@@ -15,6 +15,14 @@ from microcosm_flask.templates.landing import template
 
 def configure_landing(graph):   # noqa: C901
 
+    graph.use(
+        # If we don't have these loaded they will be loaded dynamically
+        # when we hit the landing convention route. Flask doesn't like us
+        # loading these routes so late, so do them upfront.
+        "config_convention",
+        "health_convention",
+    )
+
     def get_properties_and_version():
         """
         Parse the properties from the package information

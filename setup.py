@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "4.0.0"
+version = "4.1.0"
 
 
 setup(
@@ -22,8 +22,6 @@ setup(
     keywords="microcosm",
     install_requires=[
         "Flask>=2",
-        # Werkzeug 2.2 breaks things: https://github.com/globality-corp/microcosm-flask/pull/337
-        "Werkzeug<2.2.0",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
