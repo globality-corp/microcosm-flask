@@ -53,13 +53,13 @@ def identity(x):
 
 
 # NB: lots of code currently uses `PageSchema` to refer to `OffsetLimitPageSchema`
-# keeping this (mis)naming for backwards compatibilty
+# keeping this (mis)naming for backwards compatibility
 class PageSchema(Schema):
     offset = fields.Integer(
-        missing=None, metadata={"description": "The pagination starting offset."}
+        load_default=None, metadata={"description": "The pagination starting offset."}
     )
     limit = fields.Integer(
-        missing=None, metadata={"description": "The pagination limit."}
+        load_default=None, metadata={"description": "The pagination limit."}
     )
 
 

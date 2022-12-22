@@ -32,7 +32,7 @@ from microcosm_flask.tests.conventions.fixtures import Person
 
 
 class FileExtraSchema(Schema):
-    extra = fields.String(missing="something")
+    extra = fields.String(load_default="something")
 
 
 class FileResponseSchema(Schema):
