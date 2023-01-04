@@ -5,6 +5,7 @@ Operations provide a naming convention for references between endpoints,
 allowing easy construction of links or audit trails for external consumption.
 
 """
+import sys
 from collections import namedtuple
 from enum import Enum, unique
 
@@ -63,7 +64,13 @@ class Operation(Enum):
     @classmethod
     def from_name(cls, name):
         for operation in cls:
-            if operation.value.name.lower() == name.lower():
+            # https://github.com/python/cpython/issues/100098
+            if sys.version_info == (3, 11, 1):
+                operation_name = operation.value[0].lower()
+            else:
+                operation_name = operation.value.name.lower()
+
+            if operation_name == name.lower():
                 return operation
         else:
             raise ValueError(name)
