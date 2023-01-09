@@ -61,7 +61,7 @@ class DAGSchema(Schema):
     )
     substitutions = fields.List(
         fields.Nested(SubstitutionSchema),
-        missing=[],
+        load_default=[],
         required=False,
     )
 
@@ -80,12 +80,12 @@ class DAGSchema(Schema):
 
 class NewCloneSchema(Schema):
     commit = fields.Boolean(
-        missing=True,
+        load_default=True,
         required=False,
     )
     substitutions = fields.List(
         fields.Nested(SubstitutionSchema),
-        missing=[],
+        load_default=[],
         required=False,
     )
 

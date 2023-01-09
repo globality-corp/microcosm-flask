@@ -6,7 +6,7 @@ from microcosm_flask.swagger.api import build_parameter
 
 class TestSchema(Schema):
     id = fields.UUID()
-    foo = fields.String(metadata={"description": "Foo"}, default="bar")
+    foo = fields.String(metadata={"description": "Foo"}, dump_default="bar")
     payload = fields.Dict()
     datetime = fields.DateTime()
 
