@@ -61,7 +61,7 @@ class DAGSchema(Schema):
     )
     substitutions = fields.List(
         fields.Nested(SubstitutionSchema),
-        dump_default=[],
+        load_default=[],
         required=False,
     )
 
