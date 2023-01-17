@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "3.9.0"
+version = "3.9.1"
 
 
 setup(
@@ -58,6 +58,7 @@ setup(
     dependency_links=[],
     entry_points={
         "microcosm_flask.swagger.parameters": [
+            "constant = microcosm_flask.swagger.parameters.constant:ConstantParameterBuilder",
             "decorated = microcosm_flask.swagger.parameters.decorated:DecoratedParameterBuilder",
             "enum = microcosm_flask.swagger.parameters.enum:EnumParameterBuilder",
             "list = microcosm_flask.swagger.parameters.list:ListParameterBuilder",
