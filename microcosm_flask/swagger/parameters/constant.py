@@ -1,6 +1,6 @@
 from typing import Any, Optional
 
-from marshmallow.fields import Field, Constant
+from marshmallow.fields import Constant, Field
 
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 from microcosm_flask.swagger.parameters.enum import is_int
@@ -30,4 +30,3 @@ class ConstantParameterBuilder(ParameterBuilder):
         elif is_int(constant):
             return "integer"
         return None
-

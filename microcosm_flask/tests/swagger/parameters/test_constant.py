@@ -10,12 +10,12 @@ class TestSchema(Schema):
     deprecated_constant_int = fields.Constant(constant=123, dump_only=True)
 
 
-
 def test_field_constant_list():
     parameter = build_parameter(TestSchema().fields["deprecated_constant_list"])
     assert_that(parameter, is_(equal_to({
         "type": "array",
     })))
+
 
 def test_field_constant_string():
     parameter = build_parameter(TestSchema().fields["deprecated_constant_string"])
@@ -23,6 +23,7 @@ def test_field_constant_string():
         "type": "string",
         "default": "HELLO",
     })))
+
 
 def test_field_constant_int():
     parameter = build_parameter(TestSchema().fields["deprecated_constant_int"])
