@@ -33,6 +33,7 @@ FIELD_MAPPINGS = {
     fields.Time: FieldInfo("string", None),
     fields.URL: FieldInfo("string", "url"),
     fields.UUID: FieldInfo("string", "uuid"),
+    fields.Constant: FieldInfo("object", None),
 }
 
 
