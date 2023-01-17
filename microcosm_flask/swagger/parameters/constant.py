@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any, Optional
 
 from marshmallow.fields import Field, Constant
 
@@ -14,18 +14,20 @@ class ConstantParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return isinstance(field, Constant)
 
-    def parse_default(self, field: Constant) -> Any:
+    def parse_default(self, field: Field) -> Any:
         """
         Parse the default value for the field, if any.
 
         """
-        return field.constant
+        return getattr(field, "constant", None)
 
-    def parse_type(self, field: Constant) -> str:
-        if isinstance(field.constant, list):
+    def parse_type(self, field: Field) -> Optional[str]:
+        constant = getattr(field, "constant", None)
+        if isinstance(constant, list):
             return "array"
-        elif isinstance(field.constant, str):
+        elif isinstance(constant, str):
             return "string"
-        elif is_int(field.constant):
+        elif is_int(constant):
             return "integer"
+        return None
 
