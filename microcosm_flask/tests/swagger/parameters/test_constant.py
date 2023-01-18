@@ -14,6 +14,9 @@ def test_field_constant_list():
     parameter = build_parameter(TestSchema().fields["deprecated_constant_list"])
     assert_that(parameter, is_(equal_to({
         "type": "array",
+        "items": {
+            "type": "object",
+        }
     })))
 
 

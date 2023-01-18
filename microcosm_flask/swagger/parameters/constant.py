@@ -1,6 +1,6 @@
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
 
-from marshmallow.fields import Constant, Field
+from marshmallow.fields import Constant, Field, Raw
 
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 from microcosm_flask.swagger.parameters.enum import is_int
@@ -29,4 +29,10 @@ class ConstantParameterBuilder(ParameterBuilder):
             return "string"
         elif is_int(constant):
             return "integer"
+        return None
+
+    def parse_items(self, field: Field) -> Optional[Mapping[str, Any]]:
+        constant = getattr(field, "constant", None)
+        if isinstance(constant, list):
+            return self.build_parameter(Raw())  # type: ignore
         return None
