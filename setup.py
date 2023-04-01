@@ -25,7 +25,7 @@ setup(
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
-        "jsonschema==3.2.0",
+        "jsonschema>=3.2.0",
         "marshmallow>=3.0.0",
         "microcosm>=3.1.0",
         "microcosm-logging>=1.5.0",
