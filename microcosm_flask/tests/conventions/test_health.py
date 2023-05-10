@@ -3,6 +3,7 @@ Health check convention tests.
 
 """
 from unittest.mock import patch
+
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
@@ -85,7 +86,7 @@ def test_health_check_required_check_failed_logging():
     graph.use("health_convention")
 
     client = graph.flask.test_client()
-    with patch.object(graph.health_convention, "logger") as logger :
+    with patch.object(graph.health_convention, "logger") as logger:
         graph.health_convention.checks["foo"] = _health_check(False)
 
         response = client.get("/api/health")
