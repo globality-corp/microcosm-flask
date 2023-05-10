@@ -6,7 +6,9 @@ using HTTP 200/503 status codes to indicate healthiness.
 
 """
 from distutils.util import strtobool
+from functools import wraps
 from itertools import chain
+from logging import Logger
 from typing import Any, Dict
 
 from marshmallow import Schema, fields
@@ -60,17 +62,37 @@ class Health:
     The overall health is OK if all checks are OK.
 
     """
+
     def __init__(self, graph, include_build_info=True):
         self.graph = graph
         self.name = graph.metadata.name
         self.optional_checks = dict()
         self.checks = dict()
+        self.logger: Logger = graph.logger
 
         if include_build_info:
-            self.checks.update(dict(
-                build_num=BuildInfo.check_build_num,
-                sha1=BuildInfo.check_sha1,
-            ))
+            self.checks.update(
+                dict(
+                    build_num=BuildInfo.check_build_num,
+                    sha1=BuildInfo.check_sha1,
+                )
+            )
+
+    def log_error(self, func):
+        """
+        Decorator to wrap a check function in error logging.
+
+        """
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as error:
+                self.logger.exception("Exception in health check")
+                raise error
+
+        return wrapper
 
     def to_dict(self, full=None) -> Dict[str, Any]:
         """
@@ -84,7 +106,7 @@ class Health:
 
         # evaluate checks
         check_results: Dict[str, HealthResult] = {
-            key: HealthResult.evaluate(func, self.graph)
+            key: HealthResult.evaluate(self.log_error(func), self.graph)
             for key, func in checks
         }
 

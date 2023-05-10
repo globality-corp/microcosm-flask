@@ -2,6 +2,7 @@
 Health check convention tests.
 
 """
+from unittest.mock import patch
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
@@ -68,6 +69,39 @@ def test_health_check_required_check_failed():
             },
         },
     })))
+
+
+def test_health_check_required_check_failed_logging():
+    """
+    Should return 503 on health check failure.
+
+    """
+    loader = load_from_dict(
+        health_convention=dict(
+            include_build_info="false",
+        ),
+    )
+    graph = create_object_graph(name="example", testing=True, loader=loader)
+    graph.use("health_convention")
+
+    client = graph.flask.test_client()
+    with patch.object(graph.health_convention, "logger") as logger :
+        graph.health_convention.checks["foo"] = _health_check(False)
+
+        response = client.get("/api/health")
+
+        assert_that(response.status_code, is_(equal_to(503)))
+        assert_that(response.json, is_(equal_to({
+            "name": "example",
+            "ok": False,
+            "checks": {
+                "foo": {
+                    "message": "failure!",
+                    "ok": False,
+                },
+            },
+        })))
+        logger.exception.assert_called_once_with("Exception in health check")
 
 
 def test_health_check_optional_check_failed():
