@@ -18,6 +18,11 @@ def test_schema_generation():
     assert_that(schema, is_(equal_to({
         "type": "object",
         "properties": {
+            "email": {
+                "format": "email",
+                "type": "string",
+                "x-nullable": True,
+            },
             "eyeColor": {
                 "enum": [
                     "PURPLE",
@@ -31,10 +36,6 @@ def test_schema_generation():
                 "type": "string",
             },
             "lastName": {
-                "type": "string",
-            },
-            "email": {
-                "format": "email",
                 "type": "string",
             },
         },
@@ -62,6 +63,7 @@ def test_schema_generation_non_strict_enums():
             "email": {
                 "format": "email",
                 "type": "string",
+                "x-nullable": True,
             },
         },
         "required": [
