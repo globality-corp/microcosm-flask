@@ -47,7 +47,7 @@ from microcosm_flask.tests.conventions.fixtures import (
 )
 
 
-class TestEnum(Enum):
+class FooEnum(Enum):
     A = "A"
     B = "B"
 
@@ -57,7 +57,7 @@ class TestEnum(Enum):
 
 class SearchAddressPageSchema(OffsetLimitPageSchema):
     list_param = QueryStringList(String())
-    enum_param = EnumField(TestEnum)
+    enum_param = EnumField(FooEnum)
 
 
 def add_request_id(headers, response_data):
@@ -85,7 +85,7 @@ ADDRESS_MAPPINGS = {
 
 class TestCRUD:
 
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         person_ns = Namespace(subject=Person)
         address_ns = Namespace(subject=Address)

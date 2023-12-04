@@ -72,7 +72,7 @@ PERSON_MAPPINGS = {
 
 class TestIdentifierType:
 
-    def setup(self):
+    def setup_method(self):
         loader = load_from_dict(
             route=dict(
                 converters=[

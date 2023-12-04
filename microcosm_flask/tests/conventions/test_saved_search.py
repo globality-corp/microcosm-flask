@@ -28,7 +28,7 @@ class PersonSearch:
 
 class TestSavedSearch:
 
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         self.person_ns = Namespace(subject=Person)
         self.ns = Namespace(subject=PersonSearch)

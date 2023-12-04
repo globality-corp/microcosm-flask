@@ -2,6 +2,7 @@
 Test URI field.
 
 """
+import pytest
 from hamcrest import (
     assert_that,
     calling,
@@ -16,11 +17,12 @@ from microcosm_flask.fields.uri_field import normalize_uri
 
 
 class URISchema(Schema):
-    foo = URIField(include_query=True)
+    foo = URIField(metadata=dict(include_query=True))
 
 
-def test_normalize_uri():
-    CASES = [
+@pytest.mark.parametrize(
+    "uri, expected",
+    [
         ("http://example.com", "http://example.com"),
         ("http://example.com/", "http://example.com"),
         ("http://example.com//", "http://example.com"),
@@ -31,13 +33,10 @@ def test_normalize_uri():
         ("http://example.com:8080", "http://example.com:8080"),
         ("http://example.com/Foo#Bar", "http://example.com/Foo#Bar"),
         ("http://example.com/?foo=bar&bar=baz", "http://example.com?bar=baz&foo=bar"),
-    ]
-
-    def _assert_equal(normalized_uri, expected):
-        assert_that(normalized_uri, is_(equal_to(expected)))
-
-    for uri, expected in CASES:
-        yield _assert_equal, normalize_uri(uri), expected
+    ],
+)
+def test_normalize_uri(uri, expected):
+    assert normalize_uri(uri) == expected
 
 
 def test_uri_dump():

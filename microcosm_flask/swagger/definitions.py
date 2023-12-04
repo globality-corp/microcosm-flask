@@ -28,7 +28,7 @@ from typing import (
 )
 from urllib.parse import unquote
 
-from flask.globals import _request_ctx_stack
+from flask.globals import request_ctx
 from openapi import model as swagger
 from werkzeug.routing import BuildError, Rule
 
@@ -106,8 +106,7 @@ def _construct_schema_request_arguments():
     Used in aid of generating paths during swagger generation
 
     """
-    reqctx = _request_ctx_stack.top
-    url_adapter = reqctx.url_adapter
+    url_adapter = request_ctx.url_adapter
     rules: List[Rule] = url_adapter.map._rules
 
     return {

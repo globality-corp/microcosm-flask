@@ -45,7 +45,7 @@ def make_command(graph, ns, request_schema, response_schema):
 
 class TestCommand:
 
-    def setup(self):
+    def setup_method(self):
         # override configuration to use "query" operations for swagger
         def loader(metadata):
             return dict(

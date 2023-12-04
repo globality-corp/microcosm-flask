@@ -15,7 +15,7 @@ from microcosm_flask.operations import Operation
 
 class TestRouteMetrics:
 
-    def setup(self):
+    def setup_method(self):
         try:
             import microcosm_metrics  # noqa: F401
         except ImportError:

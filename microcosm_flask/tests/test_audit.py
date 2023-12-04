@@ -2,7 +2,7 @@
 Audit structure tests.
 
 """
-from logging import DEBUG, NOTSET, getLogger
+from logging import DEBUG, WARNING, getLogger
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -34,7 +34,7 @@ class TestRequestInfo:
     Test capturing of request data.
 
     """
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph("example", testing=True, debug=True)
         self.graph.use(
             "flask",
@@ -379,18 +379,18 @@ class TestRequestInfo:
         Enable DEBUG logging temporarily.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
         with self.graph.flask.test_request_context("/", headers={"X-Request-Debug": "true"}):
             with logging_levels():
                 assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
 
     def test_disable_logging(self):
         """
         Disable logging per request.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
         with self.graph.flask.test_request_context("/", headers={"X-Request-NoLog": "true"}):
             def func():
                 pass
