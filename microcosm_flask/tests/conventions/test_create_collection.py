@@ -28,7 +28,7 @@ class FooRequestSchema(Schema):
 
 
 class FooResponseSchema(Schema):
-    text = fields.String(request=True)
+    text = fields.String(metadata=dict(request=True))
 
 
 FOO_MAPPINGS = {
@@ -42,7 +42,7 @@ FOO_MAPPINGS = {
 
 class TestCreateCollection:
 
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
         self.ns = Namespace(subject="foo")

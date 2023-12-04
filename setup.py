@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "4.1.3"
+version = "5.0.0"
 
 
 setup(
@@ -18,10 +18,10 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.6",
+    python_requires=">=3.9",
     keywords="microcosm",
     install_requires=[
-        "Flask>=2",
+        "Flask>=3",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
@@ -40,24 +40,20 @@ setup(
         "profiling": "pyinstrument>=3.0",
         "sentry": "sentry-sdk>=0.14.4",
         "spooky": "spooky>=2.0.0",
-        "test": [
-            "nose>=1.3.7",
-            "sentry-sdk>=0.14.4",
-            "PyHamcrest",
-            "coverage",
-            "parameterized",
-        ],
-        "lint": [
-            "flake8<5",
-            "flake8-print",
-            "flake8-logging-format",
+        "build": [
             "flake8-isort",
+            "flake8-logging-format",
+            "flake8-print",
+            "flake8",
+            "mypy",
+            "PyHamcrest",
+            "pytest-cov",
+            "pytest",
+            "sentry-sdk",
+            "types-python-dateutil",
+            "types-setuptools",
         ]
     },
-    setup_requires=[
-        "nose>=1.3.7",
-    ],
-    dependency_links=[],
     entry_points={
         "microcosm_flask.swagger.parameters": [
             "constant = microcosm_flask.swagger.parameters.constant:ConstantParameterBuilder",
@@ -91,8 +87,4 @@ setup(
             "memory_profiler = microcosm_flask.memory:MemoryProfiler",
         ],
     },
-    tests_require=[
-        "coverage>=3.7.1",
-        "PyHamcrest>=1.9.0",
-    ],
 )

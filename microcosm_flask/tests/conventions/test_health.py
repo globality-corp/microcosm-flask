@@ -4,10 +4,10 @@ Health check convention tests.
 """
 from unittest.mock import patch
 
+import pytest
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
-from parameterized import parameterized
 
 
 def test_health_check():
@@ -155,14 +155,17 @@ def test_health_check_with_build_info():
     ))))
 
 
-@parameterized([
-    # When non-optional, always end up in the response
-    (False, False, True),
-    (False, True, True),
-    # Optional checks conditionally show up
-    (True, False, False),
-    (True, True, True),
-])
+@pytest.mark.parametrize(
+    "optional_check, full_check, expect_check_response",
+    [
+        # When non-optional, always end up in the response
+        (False, False, True),
+        (False, True, True),
+        # Optional checks conditionally show up
+        (True, False, False),
+        (True, True, True),
+    ]
+)
 def test_health_check_custom_checks(optional_check, full_check, expect_check_response):
     loader = load_from_dict(
         health_convention=dict(
@@ -199,14 +202,17 @@ def test_health_check_custom_checks(optional_check, full_check, expect_check_res
     assert_that(response.json, is_(equal_to(expected_response)))
 
 
-@parameterized([
-    # When non-optional, always end up in the response and fail
-    (False, False, True),
-    (False, True, True),
-    # Optional checks conditionally show up, and only fail is specified
-    (True, False, False),
-    (True, True, True),
-])
+@pytest.mark.parametrize(
+    "optional_check, full_check, expect_failure",
+    [
+        # When non-optional, always end up in the response and fail
+        (False, False, True),
+        (False, True, True),
+        # Optional checks conditionally show up, and only fail is specified
+        (True, False, False),
+        (True, True, True),
+    ]
+)
 def test_health_check_custom_check_failed(optional_check, full_check, expect_failure):
     loader = load_from_dict(
         health_convention=dict(

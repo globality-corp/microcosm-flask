@@ -5,13 +5,13 @@ from microcosm_flask.fields import QueryStringList
 from microcosm_flask.swagger.api import build_parameter
 
 
-class TestSchema(Schema):
+class FooSchema(Schema):
     names = fields.List(fields.String)
     qs = QueryStringList(fields.URL)
 
 
 def test_field_list():
-    parameter = build_parameter(TestSchema().fields["names"])
+    parameter = build_parameter(FooSchema().fields["names"])
     assert_that(parameter, is_(equal_to({
         "type": "array",
         "items": {
@@ -21,7 +21,7 @@ def test_field_list():
 
 
 def test_field_query_string_list():
-    parameter = build_parameter(TestSchema().fields["qs"])
+    parameter = build_parameter(FooSchema().fields["qs"])
     assert_that(parameter, is_(equal_to({
         "type": "array",
         "items": {

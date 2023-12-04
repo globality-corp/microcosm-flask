@@ -10,7 +10,7 @@ import microcosm_flask.tests.encryption.conventions.fixtures.encryptable_store  
 
 class TestCRUD:
 
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         self.graph.use(
             "encryptable_crud_routes",

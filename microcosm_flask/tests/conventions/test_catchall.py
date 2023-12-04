@@ -25,7 +25,7 @@ def make_routes(graph):
 
 
 class TestCatchall:
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         self.graph.use("catchall_convention")
 

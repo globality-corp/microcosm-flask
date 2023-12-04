@@ -46,7 +46,7 @@ def make_query(graph, ns, request_schema, response_schema):
 
 class TestQuery:
 
-    def setup(self):
+    def setup_method(self):
         # override configuration to use "query" operations for swagger
         def loader(metadata):
             return dict(

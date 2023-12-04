@@ -69,7 +69,7 @@ class ParameterBuilder(ABC):
         Parse the default value for the field, if any.
 
         """
-        return field.default
+        return field.dump_default
 
     def parse_description(self, field: Field) -> Optional[str]:
         """
