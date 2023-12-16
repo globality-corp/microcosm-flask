@@ -9,8 +9,7 @@ import microcosm_flask.tests.encryption.conventions.fixtures.encryptable_store  
 
 
 class TestCRUD:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         self.graph.use(
             "encryptable_crud_routes",
@@ -39,11 +38,15 @@ class TestCRUD:
             "otherValue": "Apple",
         }
         response = self.client.patch(uri, json=request_data)
-        self.assert_response(response, 200, {
-            "id": str(encryptable_id1),
-            "value": "Chair",
-            "otherValue": "Apple",
-        })
+        self.assert_response(
+            response,
+            200,
+            {
+                "id": str(encryptable_id1),
+                "value": "Chair",
+                "otherValue": "Apple",
+            },
+        )
 
     def test_update_to_null(self):
         encryptable_id1 = uuid4()
@@ -52,18 +55,26 @@ class TestCRUD:
             "value": None,
         }
         response = self.client.patch(uri, json=request_data)
-        self.assert_response(response, 200, {
-            "id": str(encryptable_id1),
-            "value": None,
-            "otherValue": None,
-        })
+        self.assert_response(
+            response,
+            200,
+            {
+                "id": str(encryptable_id1),
+                "value": None,
+                "otherValue": None,
+            },
+        )
 
     def test_empty_update(self):
         encryptable_id1 = uuid4()
         uri = f"/api/v1/encryptable/{encryptable_id1}"
         response = self.client.patch(uri, json={})
-        self.assert_response(response, 200, {
-            "id": str(encryptable_id1),
-            "value": "current_value",
-            "otherValue": None,
-        })
+        self.assert_response(
+            response,
+            200,
+            {
+                "id": str(encryptable_id1),
+                "value": "current_value",
+                "otherValue": None,
+            },
+        )

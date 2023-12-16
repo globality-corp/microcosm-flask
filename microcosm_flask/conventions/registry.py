@@ -3,7 +3,7 @@ Support for registering function metadata.
 
 """
 import re
-from typing import Iterator, Optional, Tuple
+from collections.abc import Iterator
 
 from werkzeug.exceptions import InternalServerError
 
@@ -55,7 +55,7 @@ def get_converter(rule):
     return None
 
 
-def parse_rule(rule: str) -> Iterator[Tuple[Optional[str], Optional[str], str]]:
+def parse_rule(rule: str) -> Iterator[tuple[str | None, str | None, str]]:
     """
     (this method disappeared from werkzeug after version 2.1.2. Just copied here
     for simplicity)
@@ -109,9 +109,11 @@ def request(schema):
     Decorate a function with a request schema.
 
     """
+
     def wrapper(func):
         setattr(func, REQUEST, schema)
         return func
+
     return wrapper
 
 
@@ -120,9 +122,11 @@ def response(schema):
     Decorate a function with a response schema.
 
     """
+
     def wrapper(func):
         setattr(func, RESPONSE, schema)
         return func
+
     return wrapper
 
 
@@ -131,9 +135,11 @@ def qs(schema):
     Decorate a function with a query string schema.
 
     """
+
     def wrapper(func):
         setattr(func, QS, schema)
         return func
+
     return wrapper
 
 

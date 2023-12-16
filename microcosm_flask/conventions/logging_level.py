@@ -90,7 +90,7 @@ class LoggingLevelConvention(Convention):
 
     """
     def __init__(self, graph):
-        super(LoggingLevelConvention, self).__init__(graph)
+        super().__init__(graph)
         self.max_duration = float(graph.config.logging_level_convention.max_duration)
 
     def configure_retrieve(self, ns, definition):

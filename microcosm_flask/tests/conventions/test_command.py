@@ -28,6 +28,7 @@ def make_command(graph, ns, request_schema, response_schema):
     Create an example command route.
 
     """
+
     @graph.route("/v1/foo/do", Operation.Command, ns)
     @request(request_schema)
     @response(response_schema)
@@ -40,12 +41,13 @@ def make_command(graph, ns, request_schema, response_schema):
             result=True,
             value=request_data["value"],
         )
-        return dump_response_data(response_schema, response_data, Operation.Command.value.default_code)
+        return dump_response_data(
+            response_schema, response_data, Operation.Command.value.default_code
+        )
 
 
 class TestCommand:
-
-    def setup(self):
+    def setup_method(self):
         # override configuration to use "query" operations for swagger
         def loader(metadata):
             return dict(
@@ -60,7 +62,9 @@ class TestCommand:
         self.graph.use("swagger_convention")
         self.ns = Namespace(subject="foo")
 
-        make_command(self.graph, self.ns, CommandArgumentSchema(), CommandResultSchema())
+        make_command(
+            self.graph, self.ns, CommandArgumentSchema(), CommandResultSchema()
+        )
 
         self.client = self.graph.flask.test_client()
 
@@ -70,7 +74,10 @@ class TestCommand:
 
         """
         with self.graph.flask.test_request_context():
-            assert_that(self.ns.url_for(Operation.Command), is_(equal_to("http://localhost/api/v1/foo/do")))
+            assert_that(
+                self.ns.url_for(Operation.Command),
+                is_(equal_to("http://localhost/api/v1/foo/do")),
+            )
 
     def test_command(self):
         """
@@ -83,10 +90,17 @@ class TestCommand:
         }
         response = self.client.post(uri, data=dumps(request_data))
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(loads(response.get_data().decode("utf-8")), is_(equal_to({
-            "result": True,
-            "value": "bar",
-        })))
+        assert_that(
+            loads(response.get_data().decode("utf-8")),
+            is_(
+                equal_to(
+                    {
+                        "result": True,
+                        "value": "bar",
+                    }
+                )
+            ),
+        )
 
     def test_swagger(self):
         """
@@ -96,41 +110,49 @@ class TestCommand:
         response = self.client.get("/api/v1/swagger")
         assert_that(response.status_code, is_(equal_to(200)))
         swagger = loads(response.get_data().decode("utf-8"))
-        assert_that(swagger["paths"], is_(equal_to({
-            "/foo/do": {
-                "post": {
-                    "description": "My doc string",
-                    "tags": ["foo"],
-                    "responses": {
-                        "default": {
-                            "description": "An error occurred", "schema": {
-                                "$ref": "#/definitions/Error",
-                            }
-                        },
-                        "200": {
-                            "description": "My doc string",
-                            "schema": {
-                                "$ref": "#/definitions/CommandResult",
+        assert_that(
+            swagger["paths"],
+            is_(
+                equal_to(
+                    {
+                        "/foo/do": {
+                            "post": {
+                                "description": "My doc string",
+                                "tags": ["foo"],
+                                "responses": {
+                                    "default": {
+                                        "description": "An error occurred",
+                                        "schema": {
+                                            "$ref": "#/definitions/Error",
+                                        },
+                                    },
+                                    "200": {
+                                        "description": "My doc string",
+                                        "schema": {
+                                            "$ref": "#/definitions/CommandResult",
+                                        },
+                                    },
+                                },
+                                "parameters": [
+                                    {
+                                        "in": "header",
+                                        "name": "X-Response-Skip-Null",
+                                        "required": False,
+                                        "type": "string",
+                                        "description": "Remove fields with null values from the response.",
+                                    },
+                                    {
+                                        "schema": {
+                                            "$ref": "#/definitions/CommandArgument",
+                                        },
+                                        "name": "body",
+                                        "in": "body",
+                                    },
+                                ],
+                                "operationId": "command",
                             }
                         }
-                    },
-                    "parameters": [
-                        {
-                            "in": "header",
-                            "name": "X-Response-Skip-Null",
-                            "required": False,
-                            "type": "string",
-                            "description": "Remove fields with null values from the response."
-                        },
-                        {
-                            "schema": {
-                                "$ref": "#/definitions/CommandArgument",
-                            },
-                            "name": "body",
-                            "in": "body",
-                        },
-                    ],
-                    "operationId": "command",
-                }
-            }
-        })))
+                    }
+                )
+            ),
+        )

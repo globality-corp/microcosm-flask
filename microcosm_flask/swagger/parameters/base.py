@@ -1,13 +1,11 @@
 from abc import ABC
-from typing import (
-    Any,
+from collections.abc import (
     Callable,
     Iterable,
     Mapping,
-    Optional,
     Sequence,
-    Tuple,
 )
+from typing import Any
 
 from marshmallow import Schema
 from marshmallow.fields import Field
@@ -53,7 +51,7 @@ class ParameterBuilder(ABC):
         """
         return False
 
-    def iter_parsed_values(self, field: Field) -> Iterable[Tuple[str, Any]]:
+    def iter_parsed_values(self, field: Field) -> Iterable[tuple[str, Any]]:
         """
         Walk the dictionary of parsers and emit all non-null values.
 
@@ -69,9 +67,9 @@ class ParameterBuilder(ABC):
         Parse the default value for the field, if any.
 
         """
-        return field.default
+        return field.dump_default
 
-    def parse_description(self, field: Field) -> Optional[str]:
+    def parse_description(self, field: Field) -> str | None:
         """
         Parse the description for the field, if any.
 
@@ -81,35 +79,35 @@ class ParameterBuilder(ABC):
             return metadata.get("description")
         return field.metadata.get("description")
 
-    def parse_enum_values(self, field: Field) -> Optional[Sequence]:
+    def parse_enum_values(self, field: Field) -> Sequence | None:
         """
         Parse enumerated value for enum fields, if any.
 
         """
         return None
 
-    def parse_format(self, field: Field) -> Optional[str]:
+    def parse_format(self, field: Field) -> str | None:
         """
         Parse the format for the field, if any.
 
         """
         return None
 
-    def parse_items(self, field: Field) -> Optional[Mapping[str, Any]]:
+    def parse_items(self, field: Field) -> Mapping[str, Any] | None:
         """
         Parse the child item type for list fields, if any.
 
         """
         return None
 
-    def parse_ref(self, field: Field) -> Optional[str]:
+    def parse_ref(self, field: Field) -> str | None:
         """
         Parse the reference type for nested fields, if any.
 
         """
         return None
 
-    def parse_type(self, field: Field) -> Optional[str]:
+    def parse_type(self, field: Field) -> str | None:
         """
         Parse the type for the field, if any.
 

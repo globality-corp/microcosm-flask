@@ -7,8 +7,7 @@ from microcosm.api import create_object_graph
 
 
 class TestRoutePathBuilder:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph("microcosm-path", testing=True)
         self.build_route_path = self.graph.build_route_path
         self.graph.lock()

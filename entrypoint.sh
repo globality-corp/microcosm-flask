@@ -28,7 +28,7 @@ if [ "$1" = "test" ]; then
    # Install standard test dependencies; YMMV
    pip --quiet install \
        .[test]
-   nosetests
+   pytest
 elif [ "$1" = "lint" ]; then
    # Install standard linting dependencies; YMMV
    pip --quiet install \

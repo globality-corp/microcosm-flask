@@ -149,7 +149,7 @@ class Namespace:
         # extract its parts
         matcher = match(operation.endpoint_pattern, endpoint)
         if not matcher:
-            raise InternalServerError("Malformed operation endpoint: {}".format(endpoint))
+            raise InternalServerError(f"Malformed operation endpoint: {endpoint}")
         kwargs = matcher.groupdict()
         del kwargs["operation"]
         if identifier_type is not None:
@@ -180,5 +180,5 @@ class Namespace:
 
         return "{}{}".format(
             url,
-            "{}{}".format(qs_character, urlencode(qs)) if qs else "",
+            f"{qs_character}{urlencode(qs)}" if qs else "",
         )

@@ -1,6 +1,5 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import List, Optional
 
 from inflection import camelize, underscore
 from marshmallow import Schema
@@ -12,10 +11,10 @@ from microcosm_flask.swagger.naming import type_name
 @dataclass
 class SelectedField:
     name: str
-    required: Optional[bool] = None
+    required: bool | None = None
 
 
-def get_fields_from_schema(schema_cls: Schema, selected_fields: List[SelectedField]):
+def get_fields_from_schema(schema_cls: Schema, selected_fields: list[SelectedField]):
     """
     Select fields definitions from a schema
 
@@ -45,10 +44,14 @@ def associated_schema_name(schema_cls, name_suffix):
 
 
 def get_associated_schema(schema_cls, name_suffix):
-    associated_schemas = getattr(schema_cls, associated_schemas_attr_name(schema_cls), {})
+    associated_schemas = getattr(
+        schema_cls, associated_schemas_attr_name(schema_cls), {}
+    )
     if name_suffix in associated_schemas:
         return associated_schemas[name_suffix]
-    raise KeyError(f"Schema {schema_cls} does not have an associated schema with suffix {name_suffix}")
+    raise KeyError(
+        f"Schema {schema_cls} does not have an associated schema with suffix {name_suffix}"
+    )
 
 
 def set_associated_schema(target_cls, name_suffix, associated_schema):
@@ -62,7 +65,9 @@ def set_associated_schema(target_cls, name_suffix, associated_schema):
     try:
         associated_schemas = getattr(target_cls, attr_name)
         if name_suffix in associated_schemas:
-            raise ValueError(f"Schema {target_cls} already has an associated schema for suffix {name_suffix}")
+            raise ValueError(
+                f"Schema {target_cls} already has an associated schema for suffix {name_suffix}"
+            )
         associated_schemas[name_suffix] = associated_schema
     except AttributeError:
         setattr(
@@ -97,6 +102,7 @@ def add_associated_schema(name_suffix, selected_fields=(), inherits_from=(Schema
                       be passed, which will make all sected field required
 
     """
+
     def decorator(schema_cls):
         associated_fields = get_fields_from_schema(schema_cls, selected_fields)
 

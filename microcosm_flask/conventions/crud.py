@@ -77,7 +77,7 @@ class CRUDConvention(Convention):
         search.__doc__ = (
             definition.description
             or search.__doc__
-            or "Search the collection of all {}".format(pluralize(ns.subject_name))
+            or f"Search the collection of all {pluralize(ns.subject_name)}"
         )
 
     def configure_count(self, ns, definition):
@@ -158,7 +158,7 @@ class CRUDConvention(Convention):
         create.__doc__ = (
             definition.description
             or create.__doc__
-            or "Create a new {}".format(ns.subject_name)
+            or f"Create a new {ns.subject_name}"
         )
 
     def configure_updatebatch(self, ns, definition):
@@ -198,7 +198,7 @@ class CRUDConvention(Convention):
         update_batch.__doc__ = (
             definition.description
             or update_batch.__doc__
-            or "Update a batch of {}".format(ns.subject_name)
+            or f"Update a batch of {ns.subject_name}"
         )
 
     def configure_deletebatch(self, ns, definition):
@@ -240,7 +240,7 @@ class CRUDConvention(Convention):
         delete_batch.__doc__ = (
             definition.description
             or delete_batch.__doc__
-            or "Delete a batch of {}".format(ns.subject_name)
+            or f"Delete a batch of {ns.subject_name}"
         )
 
     def configure_retrieve(self, ns, definition):
@@ -281,7 +281,7 @@ class CRUDConvention(Convention):
         retrieve.__doc__ = (
             definition.description
             or retrieve.__doc__
-            or "Retrieve a {} by id".format(ns.subject_name)
+            or f"Retrieve a {ns.subject_name} by id"
         )
 
     def configure_delete(self, ns, definition):
@@ -322,7 +322,7 @@ class CRUDConvention(Convention):
         delete.__doc__ = (
             definition.description
             or delete.__doc__
-            or "Delete a {} by id".format(ns.subject_name)
+            or f"Delete a {ns.subject_name} by id"
         )
 
     def configure_replace(self, ns, definition):
@@ -365,7 +365,7 @@ class CRUDConvention(Convention):
         replace.__doc__ = (
             definition.description
             or replace.__doc__
-            or "Create or update a {} by id".format(ns.subject_name)
+            or f"Create or update a {ns.subject_name} by id"
         )
 
     def configure_update(self, ns, definition):
@@ -405,7 +405,7 @@ class CRUDConvention(Convention):
         update.__doc__ = (
             definition.description
             or update.__doc__
-            or "Update some or all of a {} by id".format(ns.subject_name)
+            or f"Update some or all of a {ns.subject_name} by id"
         )
 
     def configure_createcollection(self, ns, definition):
@@ -455,7 +455,7 @@ class CRUDConvention(Convention):
         create_collection.__doc__ = (
             definition.description
             or create_collection.__doc__
-            or "Create the collection of {}".format(pluralize(ns.subject_name))
+            or f"Create the collection of {pluralize(ns.subject_name)}"
         )
 
 

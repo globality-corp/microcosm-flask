@@ -31,7 +31,7 @@ class RelationConvention(Convention):
         return OffsetLimitPage
 
     def __init__(self, graph):
-        super(RelationConvention, self).__init__(graph)
+        super().__init__(graph)
 
     def configure_createfor(self, ns, definition):
         """
@@ -63,7 +63,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        create.__doc__ = "Create a new {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        create.__doc__ = f"Create a new {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
     def configure_deletefor(self, ns, definition):
         """
@@ -93,7 +93,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        delete.__doc__ = "Delete a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        delete.__doc__ = f"Delete a {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
     def configure_replacefor(self, ns, definition):
         """
@@ -132,7 +132,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        replace.__doc__ = f"Replace a {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
     def configure_updatefor(self, ns, definition):
         """
@@ -171,7 +171,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        replace.__doc__ = "Replace a {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        replace.__doc__ = f"Replace a {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
     def configure_retrievefor(self, ns, definition):
         """
@@ -206,7 +206,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        retrieve.__doc__ = "Retrieve {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        retrieve.__doc__ = f"Retrieve {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
     def configure_searchfor(self, ns, definition):
         """
@@ -246,7 +246,7 @@ class RelationConvention(Convention):
                 response_format=response_format,
             )
 
-        search.__doc__ = "Search for {} relative to a {}".format(pluralize(ns.object_name), ns.subject_name)
+        search.__doc__ = f"Search for {pluralize(ns.object_name)} relative to a {ns.subject_name}"
 
 
 def configure_relation(graph, ns, mappings):

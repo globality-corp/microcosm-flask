@@ -310,7 +310,7 @@ def test_build_integer_valued_param():
         swagger_schema = build_swagger(graph, ns, operations)
 
         assert_that(
-            build_path_for_integer_param(ns, Operation.Update, set(["person_id"])),
+            build_path_for_integer_param(ns, Operation.Update, {"person_id"}),
             equal_to("/api/v1/person/{person_id}"),
         )
 

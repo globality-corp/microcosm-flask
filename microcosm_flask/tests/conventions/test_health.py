@@ -4,10 +4,10 @@ Health check convention tests.
 """
 from unittest.mock import patch
 
+import pytest
 from hamcrest import assert_that, equal_to, is_
 from microcosm.api import create_object_graph
 from microcosm.loaders import load_from_dict
-from parameterized import parameterized
 
 
 def test_health_check():
@@ -24,20 +24,21 @@ def test_health_check():
 
     response = client.get("/api/health")
     assert_that(response.status_code, is_(equal_to(200)))
-    assert_that(response.json, is_(equal_to({
-        "name": "example",
-        "ok": True,
-        "checks": {
-            "build_num": {
-                "message": "undefined",
-                "ok": True
-            },
-            "sha1": {
-                "message": "undefined",
-                "ok": True
-            },
-        },
-    })))
+    assert_that(
+        response.json,
+        is_(
+            equal_to(
+                {
+                    "name": "example",
+                    "ok": True,
+                    "checks": {
+                        "build_num": {"message": "undefined", "ok": True},
+                        "sha1": {"message": "undefined", "ok": True},
+                    },
+                }
+            )
+        ),
+    )
 
 
 def test_health_check_required_check_failed():
@@ -60,16 +61,23 @@ def test_health_check_required_check_failed():
     response = client.get("/api/health")
 
     assert_that(response.status_code, is_(equal_to(503)))
-    assert_that(response.json, is_(equal_to({
-        "name": "example",
-        "ok": False,
-        "checks": {
-            "foo": {
-                "message": "failure!",
-                "ok": False,
-            },
-        },
-    })))
+    assert_that(
+        response.json,
+        is_(
+            equal_to(
+                {
+                    "name": "example",
+                    "ok": False,
+                    "checks": {
+                        "foo": {
+                            "message": "failure!",
+                            "ok": False,
+                        },
+                    },
+                }
+            )
+        ),
+    )
 
 
 def test_health_check_required_check_failed_logging():
@@ -92,16 +100,23 @@ def test_health_check_required_check_failed_logging():
         response = client.get("/api/health")
 
         assert_that(response.status_code, is_(equal_to(503)))
-        assert_that(response.json, is_(equal_to({
-            "name": "example",
-            "ok": False,
-            "checks": {
-                "foo": {
-                    "message": "failure!",
-                    "ok": False,
-                },
-            },
-        })))
+        assert_that(
+            response.json,
+            is_(
+                equal_to(
+                    {
+                        "name": "example",
+                        "ok": False,
+                        "checks": {
+                            "foo": {
+                                "message": "failure!",
+                                "ok": False,
+                            },
+                        },
+                    }
+                )
+            ),
+        )
         logger.exception.assert_called_once_with("Exception in health check")
 
 
@@ -125,10 +140,17 @@ def test_health_check_optional_check_failed():
     response = client.get("/api/health")
 
     assert_that(response.status_code, is_(equal_to(200)))
-    assert_that(response.json, is_(equal_to({
-        "name": "example",
-        "ok": True,
-    })))
+    assert_that(
+        response.json,
+        is_(
+            equal_to(
+                {
+                    "name": "example",
+                    "ok": True,
+                }
+            )
+        ),
+    )
 
 
 def test_health_check_with_build_info():
@@ -139,30 +161,40 @@ def test_health_check_with_build_info():
 
     response = client.get("/api/health", query_string=dict(full=True))
     assert_that(response.status_code, is_(equal_to(200)))
-    assert_that(response.json, is_(equal_to(dict(
-        name="example",
-        ok=True,
-        checks=dict(
-            build_num=dict(
-                message="undefined",
-                ok=True,
-            ),
-            sha1=dict(
-                message="undefined",
-                ok=True,
-            ),
+    assert_that(
+        response.json,
+        is_(
+            equal_to(
+                dict(
+                    name="example",
+                    ok=True,
+                    checks=dict(
+                        build_num=dict(
+                            message="undefined",
+                            ok=True,
+                        ),
+                        sha1=dict(
+                            message="undefined",
+                            ok=True,
+                        ),
+                    ),
+                )
+            )
         ),
-    ))))
+    )
 
 
-@parameterized([
-    # When non-optional, always end up in the response
-    (False, False, True),
-    (False, True, True),
-    # Optional checks conditionally show up
-    (True, False, False),
-    (True, True, True),
-])
+@pytest.mark.parametrize(
+    "optional_check, full_check, expect_check_response",
+    [
+        # When non-optional, always end up in the response
+        (False, False, True),
+        (False, True, True),
+        # Optional checks conditionally show up
+        (True, False, False),
+        (True, True, True),
+    ],
+)
 def test_health_check_custom_checks(optional_check, full_check, expect_check_response):
     loader = load_from_dict(
         health_convention=dict(
@@ -187,26 +219,31 @@ def test_health_check_custom_checks(optional_check, full_check, expect_check_res
         "ok": True,
     }
     if expect_check_response:
-        expected_response.update({
-            "checks": {
-                "foo": {
-                    "message": "hi",
-                    "ok": True,
+        expected_response.update(
+            {
+                "checks": {
+                    "foo": {
+                        "message": "hi",
+                        "ok": True,
+                    },
                 },
-            },
-        })
+            }
+        )
 
     assert_that(response.json, is_(equal_to(expected_response)))
 
 
-@parameterized([
-    # When non-optional, always end up in the response and fail
-    (False, False, True),
-    (False, True, True),
-    # Optional checks conditionally show up, and only fail is specified
-    (True, False, False),
-    (True, True, True),
-])
+@pytest.mark.parametrize(
+    "optional_check, full_check, expect_failure",
+    [
+        # When non-optional, always end up in the response and fail
+        (False, False, True),
+        (False, True, True),
+        # Optional checks conditionally show up, and only fail is specified
+        (True, False, False),
+        (True, True, True),
+    ],
+)
 def test_health_check_custom_check_failed(optional_check, full_check, expect_failure):
     loader = load_from_dict(
         health_convention=dict(
@@ -227,22 +264,36 @@ def test_health_check_custom_check_failed(optional_check, full_check, expect_fai
 
     if expect_failure:
         assert_that(response.status_code, is_(equal_to(503)))
-        assert_that(response.json, is_(equal_to({
-            "name": "example",
-            "ok": False,
-            "checks": {
-                "foo": {
-                    "message": "failure!",
-                    "ok": False,
-                },
-            },
-        })))
+        assert_that(
+            response.json,
+            is_(
+                equal_to(
+                    {
+                        "name": "example",
+                        "ok": False,
+                        "checks": {
+                            "foo": {
+                                "message": "failure!",
+                                "ok": False,
+                            },
+                        },
+                    }
+                )
+            ),
+        )
     else:
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(response.json, is_(equal_to({
-            "name": "example",
-            "ok": True,
-        })))
+        assert_that(
+            response.json,
+            is_(
+                equal_to(
+                    {
+                        "name": "example",
+                        "ok": True,
+                    }
+                )
+            ),
+        )
 
 
 def _health_check(success=True):

@@ -19,16 +19,9 @@ Note that:
 from enum import Enum, unique
 from inspect import getdoc
 from logging import getLogger
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Set,
-    Tuple,
-)
 from urllib.parse import unquote
 
-from flask.globals import _request_ctx_stack
+import flask
 from openapi import model as swagger
 from werkzeug.routing import BuildError, Rule
 
@@ -106,9 +99,14 @@ def _construct_schema_request_arguments():
     Used in aid of generating paths during swagger generation
 
     """
-    reqctx = _request_ctx_stack.top
+    if hasattr(flask, "globals") and hasattr(flask.globals, "request_ctx"):
+        # update session for Flask >= 2.2
+        reqctx = flask.globals.request_ctx._get_current_object()
+    else:  # pragma: no cover
+        # update session for Flask < 2.2
+        reqctx = flask._request_ctx_stack.top
     url_adapter = reqctx.url_adapter
-    rules: List[Rule] = url_adapter.map._rules
+    rules: list[Rule] = url_adapter.map._rules
 
     return {
         (rule.endpoint, method): rule.arguments
@@ -170,7 +168,7 @@ def iter_definitions(definitions, operations):
         yield get_response_schema(func), RequestSide.RESPONSE
 
 
-def build_path_for_integer_param(ns, operation, arguments: Set):
+def build_path_for_integer_param(ns, operation, arguments: set):
     """
     Build an endpoint path when the parameters are integer-valued
 
@@ -210,9 +208,9 @@ def create_uri_templates(arguments):
 def build_path(
     operation: Operation,
     ns: Namespace,
-    schema_request_arguments: Optional[Dict[Tuple, List[str]]] = None,
+    schema_request_arguments: dict[tuple, list[str]] | None = None,
 ):
-    expected_arguments: List[str] = (
+    expected_arguments: list[str] = (
         schema_request_arguments.get(
             (ns.endpoint_for(operation), operation.value.method), []
         )
@@ -248,7 +246,7 @@ def body_param(schema):
             "in": "body",
             "schema": swagger.JsonReference(
                 {
-                    "$ref": "#/definitions/{}".format(type_name(name_for(schema))),
+                    "$ref": f"#/definitions/{type_name(name_for(schema))}",
                 }
             ),
         }
@@ -373,7 +371,7 @@ def add_responses(swagger_operation, operation, ns, func):
     if getattr(func, "__doc__", None):
         description = func.__doc__.strip().splitlines()[0]
     else:
-        description = "{} {}".format(operation.value.name, ns.subject_name)
+        description = f"{operation.value.name} {ns.subject_name}"
 
     if operation in (Operation.Upload, Operation.UploadFor):
         swagger_operation.consumes = ["multipart/form-data"]
@@ -416,7 +414,7 @@ def build_response(description, resource=None):
     if resource is not None:
         response.schema = swagger.JsonReference(
             {
-                "$ref": "#/definitions/{}".format(type_name(name_for(resource))),
+                "$ref": f"#/definitions/{type_name(name_for(resource))}",
             }
         )
     return response

@@ -9,7 +9,7 @@ from distutils.util import strtobool
 from functools import wraps
 from itertools import chain
 from logging import Logger
-from typing import Any, Dict
+from typing import Any
 
 from marshmallow import Schema, fields
 from microcosm.api import defaults
@@ -94,7 +94,7 @@ class Health:
 
         return wrapper
 
-    def to_dict(self, full=None) -> Dict[str, Any]:
+    def to_dict(self, full=None) -> dict[str, Any]:
         """
         Encode the name, the status of all checks, and the current overall status.
 
@@ -105,7 +105,7 @@ class Health:
             checks = self.checks.items()
 
         # evaluate checks
-        check_results: Dict[str, HealthResult] = {
+        check_results: dict[str, HealthResult] = {
             key: HealthResult.evaluate(self.log_error(func), self.graph)
             for key, func in checks
         }
@@ -130,13 +130,11 @@ class RetrieveHealthSchema(Schema):
 
 
 class HealthConvention(Convention):
-
     def __init__(self, graph, include_build_info=False):
         super().__init__(graph)
         self.health = Health(graph, include_build_info)
 
     def configure_retrieve(self, ns, definition):
-
         @self.add_route(ns.singleton_path, Operation.Retrieve, ns)
         @skip_logging
         def current_health():

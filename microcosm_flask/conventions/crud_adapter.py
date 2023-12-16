@@ -18,7 +18,7 @@ class CRUDStoreAdapter:
 
     @property
     def identifier_key(self):
-        return "{}_id".format(name_for(self.store.model_class))
+        return f"{name_for(self.store.model_class)}_id"
 
     def create(self, **kwargs):
         model = self.store.model_class(**kwargs)

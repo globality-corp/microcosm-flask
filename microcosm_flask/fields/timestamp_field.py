@@ -19,7 +19,7 @@ class TimestampField(Field):
 
     def __init__(self, use_isoformat=False, *args, **kwargs):
         self.use_isoformat = use_isoformat
-        super(TimestampField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _serialize(self, value, attr, obj, **kwargs):
         """

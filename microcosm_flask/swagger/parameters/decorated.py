@@ -1,5 +1,3 @@
-from typing import Optional
-
 from marshmallow.fields import Field
 
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
@@ -14,13 +12,14 @@ class DecoratedParameterBuilder(ParameterBuilder):
     Build parameter from custom attributes (injected by a decorator).
 
     """
+
     def supports_field(self, field: Field) -> bool:
         return hasattr(field, SWAGGER_TYPE)
 
-    def parse_format(self, field: Field) -> Optional[str]:
+    def parse_format(self, field: Field) -> str | None:
         return getattr(field, SWAGGER_FORMAT, None)
 
-    def parse_type(self, field: Field) -> Optional[str]:
+    def parse_type(self, field: Field) -> str | None:
         field_type = getattr(field, SWAGGER_TYPE)
         if isinstance(field_type, list):
             # Ideally we'd use oneOf here, but OpenAPI 2.0 uses the 0.4-draft jsonschema

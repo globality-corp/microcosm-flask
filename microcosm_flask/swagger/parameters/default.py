@@ -1,6 +1,5 @@
 from collections import namedtuple
 from logging import Logger
-from typing import Optional
 
 from marshmallow import fields
 from marshmallow.fields import Field
@@ -43,19 +42,22 @@ class DefaultParameterBuilder(ParameterBuilder):
     Builds parameters using default field mappings.
 
     """
+
     logger: Logger
 
     def supports_field(self, field: Field) -> bool:
         try:
             FIELD_MAPPINGS[type(field)]
         except KeyError:
-            self.logger.exception("No mapped swagger type for marshmallow field: %s", field)
+            self.logger.exception(
+                "No mapped swagger type for marshmallow field: %s", field
+            )
             raise
         else:
             return True
 
-    def parse_format(self, field: Field) -> Optional[str]:
+    def parse_format(self, field: Field) -> str | None:
         return FIELD_MAPPINGS[type(field)].format
 
-    def parse_type(self, field: Field) -> Optional[str]:
+    def parse_type(self, field: Field) -> str | None:
         return FIELD_MAPPINGS[type(field)].type

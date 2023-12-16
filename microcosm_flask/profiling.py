@@ -13,7 +13,7 @@ except ImportError:
 
 
 def default_profile_dir(name):
-    return expanduser("~/.{name}/profile".format(name=name))
+    return expanduser(f"~/.{name}/profile")
 
 
 def enable_profiling(graph):

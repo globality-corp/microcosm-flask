@@ -17,7 +17,6 @@ except ImportError:
 
 
 class BaseFormatter(metaclass=ABCMeta):
-
     def __init__(self, response_schema=None):
         # Formatting could need the response schema
         # e.g. to specify column ordering in CSV response
@@ -41,7 +40,7 @@ class BaseFormatter(metaclass=ABCMeta):
     def build_response(self, response_data):
         return Response(
             self.format(response_data),
-            content_type=get_content_type(self.content_type, Response.charset)
+            content_type=get_content_type(self.content_type, "utf-8"),
         )
 
     def build_headers(self, headers, **kwargs):

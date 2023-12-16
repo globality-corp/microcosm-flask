@@ -36,7 +36,7 @@ from microcosm_flask.tests.conventions.fixtures import (
 )
 
 
-class TestEnum(Enum):
+class ForTestEnum(Enum):
     A = "A"
     B = "B"
 
@@ -46,7 +46,7 @@ class TestEnum(Enum):
 
 class SearchAddressPageSchema(OffsetLimitPageSchema):
     list_param = QueryStringList(String())
-    enum_param = EnumField(TestEnum)
+    enum_param = EnumField(ForTestEnum)
 
 
 def add_request_id(headers):
@@ -74,8 +74,7 @@ ADDRESS_MAPPINGS = {
 
 
 class TestCSV:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         person_ns = Namespace(subject=Person)
         address_ns = Namespace(subject=Address)
@@ -92,7 +91,9 @@ class TestCSV:
         if status_code == 204:
             response_lines = None
         else:
-            response_lines = [row for row in reader(StringIO(response.data.decode(UTF_8_SIG)))]
+            response_lines = [
+                row for row in reader(StringIO(response.data.decode(UTF_8_SIG)))
+            ]
 
         # validate data if provided
         assert_that(
@@ -118,5 +119,5 @@ class TestCSV:
             expected_lines=[
                 ["id", "firstName", "lastName"],
                 [str(PERSON_ID_1), "Alice", "Smith"],
-            ]
+            ],
         )

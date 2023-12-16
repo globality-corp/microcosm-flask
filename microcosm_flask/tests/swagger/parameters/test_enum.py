@@ -32,44 +32,69 @@ class ChoicesNonStrict(Enum, metaclass=FormatNonStrictMeta):
     Profit = "profit"
 
 
-class TestSchema(Schema):
+class ForTestSchema(Schema):
     choice = EnumField(Choices)
     value = EnumField(ValueType, by_value=True)
     choice_non_strict = EnumField(ChoicesNonStrict)
 
 
 def test_field_enum():
-    parameter = build_parameter(TestSchema().fields["choice"])
-    assert_that(parameter, is_(equal_to({
-        "format": "enum",
-        "type": "string",
-        "enum": [
-            "Profit",
-        ],
-    })))
+    parameter = build_parameter(ForTestSchema().fields["choice"])
+    assert_that(
+        parameter,
+        is_(
+            equal_to(
+                {
+                    "format": "enum",
+                    "type": "string",
+                    "enum": [
+                        "Profit",
+                    ],
+                }
+            )
+        ),
+    )
 
 
 def test_field_enum_non_strict():
-    parameter = build_parameter(TestSchema().fields["choice"], strict_enums=False)
-    assert_that(parameter, is_(equal_to({
-        "type": "string",
-    })))
+    parameter = build_parameter(ForTestSchema().fields["choice"], strict_enums=False)
+    assert_that(
+        parameter,
+        is_(
+            equal_to(
+                {
+                    "type": "string",
+                }
+            )
+        ),
+    )
 
 
 def test_field_int_enum():
-    parameter = build_parameter(TestSchema().fields["value"])
-    assert_that(parameter, is_(equal_to({
-        "format": "enum",
-        "type": "integer",
-        "enum": [
-            1,
-            2
-        ],
-    })))
+    parameter = build_parameter(ForTestSchema().fields["value"])
+    assert_that(
+        parameter,
+        is_(
+            equal_to(
+                {
+                    "format": "enum",
+                    "type": "integer",
+                    "enum": [1, 2],
+                }
+            )
+        ),
+    )
 
 
 def test_enum_format_override():
-    parameter = build_parameter(TestSchema().fields["choice_non_strict"])
-    assert_that(parameter, is_(equal_to({
-        "type": "string",
-    })))
+    parameter = build_parameter(ForTestSchema().fields["choice_non_strict"])
+    assert_that(
+        parameter,
+        is_(
+            equal_to(
+                {
+                    "type": "string",
+                }
+            )
+        ),
+    )

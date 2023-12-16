@@ -44,7 +44,7 @@ class BuildInfo:
 class BuildInfoConvention(Convention):
 
     def __init__(self, graph):
-        super(BuildInfoConvention, self).__init__(graph)
+        super().__init__(graph)
         self.build_info = BuildInfo.from_config(graph.config)
 
     def configure_retrieve(self, ns, definition):

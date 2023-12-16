@@ -79,7 +79,7 @@ def load_request_data(request_schema):
             UnprocessableEntity("Validation error"),
             [
                 {
-                    "message": "Could not validate field: {}".format(field),
+                    "message": f"Could not validate field: {field}",
                     "field": field,
                     "reasons": reasons,
                 } for field, reasons in error.messages.items()

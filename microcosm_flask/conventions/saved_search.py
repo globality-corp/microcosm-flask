@@ -58,7 +58,7 @@ class SavedSearchConvention(Convention):
                 response_format=response_format,
             )
 
-        saved_search.__doc__ = "Persist and return the search results of {}".format(pluralize(ns.subject_name))
+        saved_search.__doc__ = f"Persist and return the search results of {pluralize(ns.subject_name)}"
 
 
 def configure_saved_search(graph, ns, mappings):

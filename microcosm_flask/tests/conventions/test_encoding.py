@@ -6,7 +6,7 @@ from microcosm_flask.enums import ResponseFormats
 
 
 class TestEncoding:
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
     def test_find_response_format(self):
@@ -19,9 +19,7 @@ class TestEncoding:
                 is_(ResponseFormats.JSON),
             )
 
-        with self.graph.app.test_request_context(
-            headers=dict()
-        ):
+        with self.graph.app.test_request_context(headers=dict()):
             # If no "Accept" header default to endpoint allowed formats
             assert_that(
                 find_response_format([ResponseFormats.CSV]),
@@ -33,9 +31,7 @@ class TestEncoding:
                 equal_to(ResponseFormats.JSON),
             )
 
-        with self.graph.app.test_request_context(
-            headers=dict(Accept=["text/csv"])
-        ):
+        with self.graph.app.test_request_context(headers=dict(Accept=["text/csv"])):
             # If Accept header is present and that format is allowed, return it
             assert_that(
                 find_response_format([ResponseFormats.CSV, ResponseFormats.JSON]),

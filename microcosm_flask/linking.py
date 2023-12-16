@@ -95,7 +95,7 @@ class Link:
             if not allow_templates:
                 raise
             uri_templates = {
-                argument: "{{{}}}".format(argument)
+                argument: f"{{{argument}}}"
                 for argument in error.suggested.arguments
             }
             kwargs.update(uri_templates)

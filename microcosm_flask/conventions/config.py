@@ -48,7 +48,7 @@ class Config:
 class ConfigDiscoveryConvention(Convention):
 
     def __init__(self, graph):
-        super(ConfigDiscoveryConvention, self).__init__(graph)
+        super().__init__(graph)
         self.config_discovery = Config(graph)
 
     def configure_retrieve(self, ns, definition):

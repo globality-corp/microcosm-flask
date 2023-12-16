@@ -309,7 +309,7 @@ class RequestInfo:
             if parts[-1] != "Id":
                 continue
 
-            dct["{}_id".format(underscore(parts[1]))] = value
+            dct[f"{underscore(parts[1])}_id"] = value
 
 
 def _audit_request(options, func, request_context, *args, **kwargs):  # noqa: C901

@@ -14,8 +14,7 @@ from microcosm_flask.operations import Operation
 
 
 class TestRouteMetrics:
-
-    def setup(self):
+    def setup_method(self):
         try:
             import microcosm_metrics  # noqa: F401
         except ImportError:
@@ -45,6 +44,7 @@ class TestRouteMetrics:
         Classifier tag comes from StatusCodeClassifier
 
         """
+
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
         def foo():
             return ""
@@ -75,6 +75,7 @@ class TestRouteMetrics:
         Classifier tag comes from StatusCodeClassifier
 
         """
+
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
         def foo():
             return "", 204
@@ -105,6 +106,7 @@ class TestRouteMetrics:
         Classifier tag comes from StatusCodeClassifier
 
         """
+
         @self.graph.route(self.ns.collection_path, Operation.Search, self.ns)
         def foo():
             raise NotFound
@@ -118,7 +120,7 @@ class TestRouteMetrics:
             tags=[
                 "endpoint:foo.search.v1",
                 "backend_type:microcosm_flask",
-            ]
+            ],
         )
         self.graph.metrics.increment.assert_called_with(
             "route.call.count",

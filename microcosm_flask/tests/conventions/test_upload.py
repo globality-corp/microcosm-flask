@@ -40,7 +40,6 @@ class FileResponseSchema(Schema):
 
 
 class FileController:
-
     def __init__(self):
         self.calls = []
 
@@ -67,8 +66,7 @@ class FileController:
 
 
 class TestUpload:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
         self.ns = Namespace(subject="file")
@@ -163,7 +161,12 @@ class TestUpload:
             all_of(
                 has_key("200"),
                 is_not(has_key("204")),
-                has_entry("200", has_entry("schema", has_entry("$ref", "#/definitions/FileResponse"))),
+                has_entry(
+                    "200",
+                    has_entry(
+                        "schema", has_entry("$ref", "#/definitions/FileResponse")
+                    ),
+                ),
             ),
         )
 
@@ -175,33 +178,46 @@ class TestUpload:
             ),
         )
         assert_that(response.status_code, is_(equal_to(204)))
-        assert_that(self.controller.calls, contains(
-            has_entries(
-                files=contains(contains("file", anything(), "hello.txt")),
-                extra="something",
+        assert_that(
+            self.controller.calls,
+            contains(
+                has_entries(
+                    files=contains(contains("file", anything(), "hello.txt")),
+                    extra="something",
+                ),
             ),
-        ))
+        )
 
     def test_upload_for(self):
         person_id = uuid4()
         response = self.client.post(
-            "/api/person/{}/file".format(person_id),
+            f"/api/person/{person_id}/file",
             data=dict(
                 file=(BytesIO(b"Hello World\n"), "hello.txt"),
             ),
         )
         assert_that(response.status_code, is_(equal_to(200)))
         response_data = loads(response.get_data().decode("utf-8"))
-        assert_that(response_data, is_(equal_to(dict(
-            id=str(person_id),
-        ))))
-        assert_that(self.controller.calls, contains(
-            has_entries(
-                files=contains(contains("file", anything(), "hello.txt")),
-                extra="something",
-                person_id=person_id,
+        assert_that(
+            response_data,
+            is_(
+                equal_to(
+                    dict(
+                        id=str(person_id),
+                    )
+                )
             ),
-        ))
+        )
+        assert_that(
+            self.controller.calls,
+            contains(
+                has_entries(
+                    files=contains(contains("file", anything(), "hello.txt")),
+                    extra="something",
+                    person_id=person_id,
+                ),
+            ),
+        )
 
     def test_upload_multipart(self):
         response = self.client.post(
@@ -212,9 +228,12 @@ class TestUpload:
             ),
         )
         assert_that(response.status_code, is_(equal_to(204)))
-        assert_that(self.controller.calls, contains(
-            has_entries(
-                files=contains(contains("file", anything(), "hello.txt")),
-                extra="special",
+        assert_that(
+            self.controller.calls,
+            contains(
+                has_entries(
+                    files=contains(contains("file", anything(), "hello.txt")),
+                    extra="special",
+                ),
             ),
-        ))
+        )

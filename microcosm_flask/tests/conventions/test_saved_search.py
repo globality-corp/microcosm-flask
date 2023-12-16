@@ -27,19 +27,34 @@ class PersonSearch:
 
 
 class TestSavedSearch:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
         self.person_ns = Namespace(subject=Person)
         self.ns = Namespace(subject=PersonSearch)
         # ensure that link hrefs work
-        configure_crud(self.graph, self.person_ns, {
-            Operation.Retrieve: (person_retrieve, PersonLookupSchema(), PersonSchema()),
-        })
+        configure_crud(
+            self.graph,
+            self.person_ns,
+            {
+                Operation.Retrieve: (
+                    person_retrieve,
+                    PersonLookupSchema(),
+                    PersonSchema(),
+                ),
+            },
+        )
         # enable saved search
-        configure_saved_search(self.graph, self.ns, {
-            Operation.SavedSearch: (person_search, OffsetLimitPageSchema(), PersonSchema()),
-        })
+        configure_saved_search(
+            self.graph,
+            self.ns,
+            {
+                Operation.SavedSearch: (
+                    person_search,
+                    OffsetLimitPageSchema(),
+                    PersonSchema(),
+                ),
+            },
+        )
         self.client = self.graph.flask.test_client()
 
     def test_saved_search(self):

@@ -21,7 +21,7 @@ def operation_name(operation, ns):
     """
     verb = operation.value.name
     if ns.object_:
-        return "{}_{}".format(verb, pluralize(ns.object_name))
+        return f"{verb}_{pluralize(ns.object_name)}"
     else:
         return verb
 
