@@ -3,15 +3,8 @@ Generate JSON Schema for Marshmallow schemas.
 
 """
 import re
-from typing import (
-    Any,
-    Callable,
-    Iterable,
-    Mapping,
-    Set,
-    Tuple,
-    Type,
-)
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any
 
 from marshmallow import Schema
 from marshmallow.fields import Field, List, Nested
@@ -41,7 +34,7 @@ class Schemas:
 
         # NB: This will break if this class is ever instantiated and then has
         # `build` called more than once
-        self.seen_schemas: Set[Type[Schema]] = set()
+        self.seen_schemas: set[type[Schema]] = set()
 
     def build(self, schema: Schema) -> Mapping[str, Any]:
         """
@@ -72,7 +65,7 @@ class Schemas:
 
         return result
 
-    def iter_fields(self, schema: Schema) -> Iterable[Tuple[str, Field]]:
+    def iter_fields(self, schema: Schema) -> Iterable[tuple[str, Field]]:
         """
         Iterate through marshmallow schema fields.
 
@@ -85,7 +78,7 @@ class Schemas:
 
             yield field_name, field
 
-    def iter_schemas(self, schema: Schema) -> Iterable[Tuple[str, Any]]:
+    def iter_schemas(self, schema: Schema) -> Iterable[tuple[str, Any]]:
         """
         Build zero or more JSON schemas for a marshmallow schema.
 
@@ -114,5 +107,5 @@ class Schemas:
             if isinstance(field, List) and isinstance(field.inner, Nested):
                 yield from self.iter_schemas(field.inner.schema)
 
-    def to_tuple(self, schema: Schema) -> Tuple[str, Any]:
+    def to_tuple(self, schema: Schema) -> tuple[str, Any]:
         return definition_name_for_schema(schema), self.build(schema)

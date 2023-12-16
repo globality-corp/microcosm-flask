@@ -2,7 +2,7 @@
 Audit structure tests.
 
 """
-from logging import DEBUG, NOTSET, getLogger
+from logging import DEBUG, WARNING, getLogger
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -34,7 +34,8 @@ class TestRequestInfo:
     Test capturing of request data.
 
     """
-    def setup(self):
+
+    def setup_method(self):
         self.graph = create_object_graph("example", testing=True, debug=True)
         self.graph.use(
             "flask",
@@ -62,11 +63,15 @@ class TestRequestInfo:
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                        )
+                    )
+                ),
             )
 
     def test_request_context(self):
@@ -74,18 +79,26 @@ class TestRequestInfo:
         Log entries can include context from headers.
 
         """
-        with self.graph.flask.test_request_context("/", headers={"X-Request-Id": "request-id"}):
-            request_info = RequestInfo(self.options, test_func, self.graph.request_context)
+        with self.graph.flask.test_request_context(
+            "/", headers={"X-Request-Id": "request-id"}
+        ):
+            request_info = RequestInfo(
+                self.options, test_func, self.graph.request_context
+            )
             dct = request_info.to_dict()
             request_id = dct.pop("X-Request-Id")
             assert_that(request_id, is_(equal_to("request-id")))
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                        )
+                    )
+                ),
             )
 
     def test_success(self):
@@ -95,21 +108,26 @@ class TestRequestInfo:
         """
         with self.graph.flask.test_request_context("/"):
             request_info = RequestInfo(self.options, test_func, None)
-            request_info.capture_response(MagicMock(
-                data="{}",
-                status_code=201,
-            ))
+            request_info.capture_response(
+                MagicMock(
+                    data="{}",
+                    status_code=201,
+                )
+            )
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    success=True,
-                    status_code=201,
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            success=True,
+                            status_code=201,
+                        )
+                    )
+                ),
             )
 
     def test_error(self):
@@ -130,16 +148,19 @@ class TestRequestInfo:
             assert_that(stack_trace, is_not(none()))
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    success=False,
-                    status_code=404,
-                    message="Not Found",
-                    context=dict(errors=[]),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            success=False,
+                            status_code=404,
+                            message="Not Found",
+                            context=dict(errors=[]),
+                        )
+                    )
+                ),
             )
 
     def test_request_body(self):
@@ -153,13 +174,16 @@ class TestRequestInfo:
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    request_body=dict(foo="bar"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            request_body=dict(foo="bar"),
+                        )
+                    )
+                ),
             )
 
     def test_request_body_with_field_renaming(self):
@@ -175,13 +199,16 @@ class TestRequestInfo:
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    request_body=dict(baz="bar"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            request_body=dict(baz="bar"),
+                        )
+                    )
+                ),
             )
 
     def test_request_body_with_field_deletion(self):
@@ -189,7 +216,9 @@ class TestRequestInfo:
         Can capture the request body with fields removed
 
         """
-        with self.graph.flask.test_request_context("/", data='{"foo": "bar", "this": "that"}'):
+        with self.graph.flask.test_request_context(
+            "/", data='{"foo": "bar", "this": "that"}'
+        ):
             g.hide_request_fields = ["foo"]
 
             request_info = RequestInfo(self.options, test_func, None)
@@ -197,13 +226,16 @@ class TestRequestInfo:
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    request_body=dict(this="that"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            request_body=dict(this="that"),
+                        )
+                    )
+                ),
             )
 
     def test_response_id(self):
@@ -216,22 +248,27 @@ class TestRequestInfo:
         """
         with self.graph.flask.test_request_context("/"):
             request_info = RequestInfo(self.options, test_func, None)
-            request_info.capture_response(MagicMock(
-                data='{"foo": "bar"}',
-                status_code=200,
-            ))
+            request_info.capture_response(
+                MagicMock(
+                    data='{"foo": "bar"}',
+                    status_code=200,
+                )
+            )
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    success=True,
-                    status_code=200,
-                    response_body=dict(foo="bar"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            success=True,
+                            status_code=200,
+                            response_body=dict(foo="bar"),
+                        )
+                    )
+                ),
             )
 
     def test_response_body_with_field_renaming(self):
@@ -243,22 +280,27 @@ class TestRequestInfo:
             g.show_response_fields = dict(foo="baz")
 
             request_info = RequestInfo(self.options, test_func, None)
-            request_info.capture_response(MagicMock(
-                data='{"foo": "bar"}',
-                status_code=200,
-            ))
+            request_info.capture_response(
+                MagicMock(
+                    data='{"foo": "bar"}',
+                    status_code=200,
+                )
+            )
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    success=True,
-                    status_code=200,
-                    response_body=dict(baz="bar"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            success=True,
+                            status_code=200,
+                            response_body=dict(baz="bar"),
+                        )
+                    )
+                ),
             )
 
     def test_response_body_with_field_deletion(self):
@@ -270,22 +312,27 @@ class TestRequestInfo:
             g.hide_response_fields = ["foo"]
 
             request_info = RequestInfo(self.options, test_func, None)
-            request_info.capture_response(MagicMock(
-                data='{"foo": "bar", "this": "that"}',
-                status_code=200,
-            ))
+            request_info.capture_response(
+                MagicMock(
+                    data='{"foo": "bar", "this": "that"}',
+                    status_code=200,
+                )
+            )
             dct = request_info.to_dict()
             assert_that(
                 dct,
-                is_(equal_to(dict(
-                    operation="test_func",
-                    method="GET",
-                    func="test_func",
-
-                    success=True,
-                    status_code=200,
-                    response_body=dict(this="that"),
-                ))),
+                is_(
+                    equal_to(
+                        dict(
+                            operation="test_func",
+                            method="GET",
+                            func="test_func",
+                            success=True,
+                            status_code=200,
+                            response_body=dict(this="that"),
+                        )
+                    )
+                ),
             )
 
     def test_log_default(self):
@@ -298,11 +345,13 @@ class TestRequestInfo:
 
             logger = MagicMock()
             request_info.log(logger)
-            logger.info.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-            ))
+            logger.info.assert_called_with(
+                dict(
+                    operation="test_func",
+                    method="GET",
+                    func="test_func",
+                )
+            )
             logger.warning.assert_not_called()
 
     def test_log_debug(self):
@@ -323,11 +372,13 @@ class TestRequestInfo:
 
             logger = MagicMock()
             request_info.log(logger)
-            logger.debug.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-            ))
+            logger.debug.assert_called_with(
+                dict(
+                    operation="test_func",
+                    method="GET",
+                    func="test_func",
+                )
+            )
             logger.info.assert_not_called()
             logger.warning.assert_not_called()
 
@@ -337,12 +388,14 @@ class TestRequestInfo:
 
             logger = MagicMock()
             request_info.log(logger)
-            logger.info.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-                foo="bar",
-            ))
+            logger.info.assert_called_with(
+                dict(
+                    operation="test_func",
+                    method="GET",
+                    func="test_func",
+                    foo="bar",
+                )
+            )
 
     def test_log_query_string(self):
         ref_id = str(uuid4())
@@ -352,12 +405,9 @@ class TestRequestInfo:
 
             logger = MagicMock()
             request_info.log(logger)
-            logger.info.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-                foo=ref_id
-            ))
+            logger.info.assert_called_with(
+                dict(operation="test_func", method="GET", func="test_func", foo=ref_id)
+            )
 
     def test_log_response_id_header(self):
         new_id = str(uuid4())
@@ -367,31 +417,39 @@ class TestRequestInfo:
 
             logger = MagicMock()
             request_info.log(logger)
-            logger.info.assert_called_with(dict(
-                operation="test_func",
-                method="GET",
-                func="test_func",
-                foo_bar_id=new_id,
-            ))
+            logger.info.assert_called_with(
+                dict(
+                    operation="test_func",
+                    method="GET",
+                    func="test_func",
+                    foo_bar_id=new_id,
+                )
+            )
 
     def test_root_logging_level(self):
         """
         Enable DEBUG logging temporarily.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
-        with self.graph.flask.test_request_context("/", headers={"X-Request-Debug": "true"}):
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
+        with self.graph.flask.test_request_context(
+            "/", headers={"X-Request-Debug": "true"}
+        ):
             with logging_levels():
                 assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
 
     def test_disable_logging(self):
         """
         Disable logging per request.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(NOTSET)))
-        with self.graph.flask.test_request_context("/", headers={"X-Request-NoLog": "true"}):
+        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
+        with self.graph.flask.test_request_context(
+            "/", headers={"X-Request-NoLog": "true"}
+        ):
+
             def func():
                 pass
+
             assert_that(should_skip_logging(func), is_(equal_to(True)))

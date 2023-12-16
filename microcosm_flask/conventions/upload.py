@@ -108,7 +108,7 @@ class UploadConvention(Convention):
 
         """
         upload = self.create_upload_func(ns, definition, ns.collection_path, Operation.Upload)
-        upload.__doc__ = "Upload a {}".format(ns.subject_name)
+        upload.__doc__ = f"Upload a {ns.subject_name}"
 
     def configure_uploadfor(self, ns, definition):
         """
@@ -124,7 +124,7 @@ class UploadConvention(Convention):
 
         """
         upload_for = self.create_upload_func(ns, definition, ns.relation_path, Operation.UploadFor)
-        upload_for.__doc__ = "Upload a {} for a {}".format(ns.subject_name, ns.object_name)
+        upload_for.__doc__ = f"Upload a {ns.subject_name} for a {ns.object_name}"
 
 
 def configure_upload(graph, ns, mappings, exclude_func=None):

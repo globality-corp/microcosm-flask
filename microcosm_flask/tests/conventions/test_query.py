@@ -29,6 +29,7 @@ def make_query(graph, ns, request_schema, response_schema):
     Create an example query route.
 
     """
+
     @graph.route("/v1/foo/get", Operation.Query, ns)
     @qs(request_schema)
     @response(response_schema)
@@ -41,12 +42,13 @@ def make_query(graph, ns, request_schema, response_schema):
             result=True,
             value=request_data["required_value"],
         )
-        return dump_response_data(response_schema, response_data, Operation.Query.value.default_code)
+        return dump_response_data(
+            response_schema, response_data, Operation.Query.value.default_code
+        )
 
 
 class TestQuery:
-
-    def setup(self):
+    def setup_method(self):
         # override configuration to use "query" operations for swagger
         def loader(metadata):
             return dict(
@@ -56,6 +58,7 @@ class TestQuery:
                     version="v1",
                 ),
             )
+
         self.graph = create_object_graph(name="example", testing=True, loader=loader)
         self.graph.use("swagger_convention")
         self.ns = Namespace(subject="foo")
@@ -70,7 +73,10 @@ class TestQuery:
 
         """
         with self.graph.flask.test_request_context():
-            assert_that(self.ns.url_for(Operation.Query), is_(equal_to("http://localhost/api/v1/foo/get")))
+            assert_that(
+                self.ns.url_for(Operation.Query),
+                is_(equal_to("http://localhost/api/v1/foo/get")),
+            )
 
     def test_query(self):
         """
@@ -83,62 +89,79 @@ class TestQuery:
         }
         response = self.client.get(uri, query_string=query_string)
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(loads(response.get_data().decode("utf-8")), is_(equal_to({
-            "result": True,
-            "value": "bar",
-        })))
+        assert_that(
+            loads(response.get_data().decode("utf-8")),
+            is_(
+                equal_to(
+                    {
+                        "result": True,
+                        "value": "bar",
+                    }
+                )
+            ),
+        )
 
     def test_swagger(self):
         """
         Swagger definitions including this operation.
 
         """
-        response = self.client.get("/api/v1/swagger", query_string=dict(validate_schema=True))
+        response = self.client.get(
+            "/api/v1/swagger", query_string=dict(validate_schema=True)
+        )
         assert_that(response.status_code, is_(equal_to(200)))
         swagger = loads(response.get_data().decode("utf-8"))
         # we have the swagger docs endpoint too, which is implemented as a query.
         # ignore it here for now.
         del swagger["paths"]["/swagger/docs"]
-        assert_that(swagger["paths"], is_(equal_to({
-            "/foo/get": {
-                "get": {
-                    "description": "My doc string",
-                    "tags": ["foo"],
-                    "responses": {
-                        "default": {
-                            "description": "An error occurred", "schema": {
-                                "$ref": "#/definitions/Error",
-                            }
-                        },
-                        "200": {
-                            "description": "My doc string",
-                            "schema": {
-                                "$ref": "#/definitions/QueryResult",
+        assert_that(
+            swagger["paths"],
+            is_(
+                equal_to(
+                    {
+                        "/foo/get": {
+                            "get": {
+                                "description": "My doc string",
+                                "tags": ["foo"],
+                                "responses": {
+                                    "default": {
+                                        "description": "An error occurred",
+                                        "schema": {
+                                            "$ref": "#/definitions/Error",
+                                        },
+                                    },
+                                    "200": {
+                                        "description": "My doc string",
+                                        "schema": {
+                                            "$ref": "#/definitions/QueryResult",
+                                        },
+                                    },
+                                },
+                                "parameters": [
+                                    {
+                                        "in": "header",
+                                        "name": "X-Response-Skip-Null",
+                                        "required": False,
+                                        "type": "string",
+                                        "description": "Remove fields with null values from the response.",
+                                    },
+                                    {
+                                        "required": False,
+                                        "type": "string",
+                                        "name": "optional_value",
+                                        "in": "query",
+                                    },
+                                    {
+                                        "required": True,
+                                        "type": "string",
+                                        "name": "required_value",
+                                        "in": "query",
+                                    },
+                                ],
+                                "operationId": "query",
                             }
                         }
-                    },
-                    "parameters": [
-                        {
-                            "in": "header",
-                            "name": "X-Response-Skip-Null",
-                            "required": False,
-                            "type": "string",
-                            "description": "Remove fields with null values from the response."
-                        },
-                        {
-                            "required": False,
-                            "type": "string",
-                            "name": "optional_value",
-                            "in": "query",
-                        },
-                        {
-                            "required": True,
-                            "type": "string",
-                            "name": "required_value",
-                            "in": "query",
-                        },
-                    ],
-                    "operationId": "query",
-                }
-            }
-        })))
+                    }
+                )
+            ),
+        )

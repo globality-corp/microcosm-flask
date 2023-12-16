@@ -66,9 +66,9 @@ def configure_landing(graph):   # noqa: C901
             conf_string = []
         for key, value in config.items():
             if isinstance(value, dict):
-                get_env_file_commands(value, "{}__{}".format(conf_key, key), conf_string)
+                get_env_file_commands(value, f"{conf_key}__{key}", conf_string)
             else:
-                conf_string.append("export {}__{}='{}'".format(conf_key.upper(), key.upper(), value))
+                conf_string.append(f"export {conf_key.upper()}__{key.upper()}='{value}'")
         return conf_string
 
     def get_links(swagger_versions, properties):

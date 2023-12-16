@@ -19,8 +19,7 @@ from microcosm_flask.tests.conventions.fixtures import PersonSchema
 
 
 class TestDecorators:
-
-    def setup(self):
+    def setup_method(self):
         pass
 
     def test_get_fields_from_schema(self):
@@ -63,6 +62,7 @@ class TestDecorators:
         Registering an associated schema with an already-used suffix should raise
 
         """
+
         class ParentSchema(Schema):
             someField = fields.String(attribute="some_field")
 

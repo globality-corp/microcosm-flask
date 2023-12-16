@@ -2,12 +2,8 @@
 API interfaces for swagger operations.
 
 """
-from typing import (
-    Any,
-    Iterable,
-    Mapping,
-    Tuple,
-)
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 from marshmallow import Schema
 from marshmallow.fields import Field
@@ -25,7 +21,9 @@ def build_schema(schema: Schema, strict_enums: bool = True) -> Mapping[str, Any]
     return builder.build(schema)
 
 
-def iter_schemas(schema: Schema, strict_enums: bool = True) -> Iterable[Tuple[str, Any]]:
+def iter_schemas(
+    schema: Schema, strict_enums: bool = True
+) -> Iterable[tuple[str, Any]]:
     """
     Build zero or more JSON schemas for a marshmallow schema.
 

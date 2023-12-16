@@ -9,8 +9,7 @@ from microcosm_flask.operations import Operation
 
 
 class TestCreateCollectionConflict:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
         self.ns = Namespace(subject="foo")

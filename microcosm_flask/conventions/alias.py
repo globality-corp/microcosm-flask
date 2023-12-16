@@ -42,13 +42,13 @@ class AliasConvention(Convention):
             resource = definition.func(**merge_data(path_data, request_data))
 
             kwargs = dict()
-            identifier = "{}_id".format(name_for(ns.subject))
+            identifier = f"{name_for(ns.subject)}_id"
             kwargs[identifier] = resource.id
             url = ns.url_for(Operation.Retrieve, **kwargs)
 
             return redirect(url)
 
-        retrieve.__doc__ = "Alias a {} by name".format(ns.subject_name)
+        retrieve.__doc__ = f"Alias a {ns.subject_name} by name"
 
 
 def configure_alias(graph, ns, mappings):

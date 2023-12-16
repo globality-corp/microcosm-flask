@@ -23,7 +23,7 @@ class CSVFormatter(BaseFormatter):
     def build_headers(self, headers, **kwargs):
         # TODO: pass in optional filename
         filename = "response.csv"
-        headers["Content-Disposition"] = "attachment; filename=\"{}\"".format(filename)
+        headers["Content-Disposition"] = f"attachment; filename=\"{filename}\""
 
         return headers
 

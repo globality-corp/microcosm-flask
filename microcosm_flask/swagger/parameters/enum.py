@@ -1,10 +1,5 @@
-from typing import (
-    Any,
-    Callable,
-    Mapping,
-    Optional,
-    Sequence,
-)
+from collections.abc import Callable, Mapping, Sequence
+from typing import Any
 
 from marshmallow import Schema
 from marshmallow.fields import Field
@@ -31,6 +26,7 @@ class EnumParameterBuilder(ParameterBuilder):
     as a string.
 
     """
+
     def __init__(
         self,
         build_parameter: Callable[[Schema], Mapping[str, Any]],
@@ -43,7 +39,7 @@ class EnumParameterBuilder(ParameterBuilder):
     def supports_field(self, field: Field) -> bool:
         return bool(getattr(field, "enum", None))
 
-    def parse_format(self, field: Field) -> Optional[str]:
+    def parse_format(self, field: Field) -> str | None:
         if self.is_strict(field):
             return "enum"
 
@@ -52,22 +48,23 @@ class EnumParameterBuilder(ParameterBuilder):
     def parse_type(self, field: Field) -> str:
         enum_values = self._parse_enum_values(field)
 
-        if all((isinstance(enum_value, str) for enum_value in enum_values)):
+        if all(isinstance(enum_value, str) for enum_value in enum_values):
             return "string"
-        elif all((is_int(enum_value) for enum_value in enum_values)):
+        elif all(is_int(enum_value) for enum_value in enum_values):
             return "integer"
         else:
             raise Exception(f"Cannot infer enum type for field: {field.name}")
 
     def _parse_enum_values(self, field: Field) -> Sequence:
         if not isinstance(field, EnumField):
-            raise Exception(f"Cannot parse enum values for non-enum fields: {field.name}")
+            raise Exception(
+                f"Cannot parse enum values for non-enum fields: {field.name}"
+            )
         return [
-            choice.value if field.by_value else choice.name
-            for choice in field.enum
+            choice.value if field.by_value else choice.name for choice in field.enum
         ]
 
-    def parse_enum_values(self, field: Field) -> Optional[Sequence]:
+    def parse_enum_values(self, field: Field) -> Sequence | None:
         if self.is_strict(field):
             return self._parse_enum_values(field)
 
@@ -75,7 +72,7 @@ class EnumParameterBuilder(ParameterBuilder):
 
     def is_strict(self, field: Field) -> bool:
         return (
-            isinstance(field, EnumField) and
-            self.strict_enums and
-            getattr(field.enum, "__openapi_strict__", True)
+            isinstance(field, EnumField)
+            and self.strict_enums
+            and getattr(field.enum, "__openapi_strict__", True)
         )

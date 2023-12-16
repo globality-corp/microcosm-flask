@@ -1,11 +1,7 @@
+from collections.abc import Mapping
 from functools import lru_cache
 from pkg_resources import iter_entry_points
-from typing import (
-    Any,
-    List,
-    Mapping,
-    Type,
-)
+from typing import Any
 
 from marshmallow.fields import Field
 
@@ -24,6 +20,7 @@ class Parameters:
     and delegates to the first compatible implementation.
 
     """
+
     def __init__(self, strict_enums: bool = True):
         self.strict_enums = strict_enums
 
@@ -37,7 +34,7 @@ class Parameters:
             self.default_builder_type()
         ]
 
-        builders: List[ParameterBuilder] = [
+        builders: list[ParameterBuilder] = [
             builder_type(
                 build_parameter=self.build,  # type: ignore
                 strict_enums=self.strict_enums,
@@ -45,29 +42,22 @@ class Parameters:
             for builder_type in builder_types
         ]
 
-        builder = next(
-            builder
-            for builder in builders
-            if builder.supports_field(field)
-        )
+        builder = next(builder for builder in builders if builder.supports_field(field))
 
         return builder.build(field)
 
     @classmethod
     # NB: entry point lookups can be slow; memoize
-    @lru_cache()
-    def builder_types(cls) -> List[Type[ParameterBuilder]]:
+    @lru_cache
+    def builder_types(cls) -> list[type[ParameterBuilder]]:
         """
         Define the available builder types.
 
         """
-        return [
-            entry_point.load()
-            for entry_point in iter_entry_points(ENTRY_POINT)
-        ]
+        return [entry_point.load() for entry_point in iter_entry_points(ENTRY_POINT)]
 
     @classmethod
-    def default_builder_type(cls) -> Type[ParameterBuilder]:
+    def default_builder_type(cls) -> type[ParameterBuilder]:
         """
         Define the default builder type.
 

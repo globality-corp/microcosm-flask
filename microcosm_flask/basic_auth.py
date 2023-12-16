@@ -44,7 +44,7 @@ class ConfigBasicAuth(BasicAuth):
     """
 
     def __init__(self, app, credentials):
-        super(ConfigBasicAuth, self).__init__(app)
+        super().__init__(app)
         self.credentials = credentials
 
     def check_credentials(self, username, password):
@@ -59,7 +59,7 @@ class ConfigBasicAuth(BasicAuth):
         Override challenge to raise an exception that will trigger regular error handling.
 
         """
-        response = super(ConfigBasicAuth, self).challenge()
+        response = super().challenge()
         raise with_headers(Unauthorized(), response.headers)
 
 

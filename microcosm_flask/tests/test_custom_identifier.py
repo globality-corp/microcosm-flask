@@ -36,10 +36,9 @@ class ContentBasedAddressConverter(BaseConverter):
     @staticmethod
     def make_hash(obj):
         # naive content normalization function
-        content = dumps({
-            key: str(value)
-            for key, value in obj.__dict__.items()
-        }, sort_keys=True)
+        content = dumps(
+            {key: str(value) for key, value in obj.__dict__.items()}, sort_keys=True
+        )
         return sha256(content.encode("utf-8")).hexdigest()
 
 
@@ -71,17 +70,16 @@ PERSON_MAPPINGS = {
 
 
 class TestIdentifierType:
-
-    def setup(self):
+    def setup_method(self):
         loader = load_from_dict(
             route=dict(
-                converters=[
-                    "cba"
-                ],
+                converters=["cba"],
             ),
         )
         self.graph = create_object_graph(name="example", testing=True, loader=loader)
-        assert_that(self.graph.config.route.converters, contains_inanyorder("uuid", "cba"))
+        assert_that(
+            self.graph.config.route.converters, contains_inanyorder("uuid", "cba")
+        )
         self.person_ns = Namespace(
             subject=Person,
             # use custom identifier type
@@ -92,7 +90,7 @@ class TestIdentifierType:
 
     def test_content_based_address(self):
         hash_id = ContentBasedAddressConverter.make_hash(PERSON_1)
-        response = self.client.get("/api/person/{}".format(hash_id))
+        response = self.client.get(f"/api/person/{hash_id}")
 
         assert_that(response.status_code, is_(equal_to(200)))
         response_data = loads(response.get_data().decode("utf-8"))

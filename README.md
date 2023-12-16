@@ -39,7 +39,7 @@ pip install -U -e .
 Run the tests
 
 ```
-python setup.py nosetests
+pytest
 ```
 
 ## Linting

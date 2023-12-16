@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "4.1.3"
+version = "4.1.4"
 
 
 setup(
@@ -18,14 +18,14 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.6",
+    python_requires=">=3.10",
     keywords="microcosm",
     install_requires=[
         "Flask>=2",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
-        "jsonschema==3.2.0",
+        "jsonschema>=3.2.0",
         "marshmallow>=3.0.0",
         "microcosm>=3.1.0",
         "microcosm-logging>=1.5.0",
@@ -41,18 +41,18 @@ setup(
         "sentry": "sentry-sdk>=0.14.4",
         "spooky": "spooky>=2.0.0",
         "test": [
-            "nose>=1.3.7",
             "sentry-sdk>=0.14.4",
             "PyHamcrest",
             "coverage",
             "parameterized",
+            "pytest-cov",
         ],
         "lint": [
-            "flake8<5",
+            "flake8",
             "flake8-print",
             "flake8-logging-format",
             "flake8-isort",
-        ]
+        ],
     },
     setup_requires=[
         "nose>=1.3.7",
@@ -94,5 +94,6 @@ setup(
     tests_require=[
         "coverage>=3.7.1",
         "PyHamcrest>=1.9.0",
+        "pytest-cov",
     ],
 )

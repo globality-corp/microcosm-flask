@@ -65,7 +65,7 @@ class JSONMatcher(BaseMatcher):
         raise NotImplementedError
 
     def describe_to(self, description):
-        description.append_text("expected {}".format(prettify(self.expected)))
+        description.append_text(f"expected {prettify(self.expected)}")
 
 
 class URIMatcher(BaseMatcher):
@@ -88,7 +88,7 @@ class URIMatcher(BaseMatcher):
         return normalize_uri(item) == normalize_uri(self.uri)
 
     def describe_to(self, description):
-        description.append_text("expected URI: {}".format(self.uri))
+        description.append_text(f"expected URI: {self.uri}")
 
 
 def matches_uri(uri):

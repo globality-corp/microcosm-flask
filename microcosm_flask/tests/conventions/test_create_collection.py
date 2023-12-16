@@ -41,8 +41,7 @@ FOO_MAPPINGS = {
 
 
 class TestCreateCollection:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
         self.ns = Namespace(subject="foo")
@@ -111,14 +110,21 @@ class TestCreateCollection:
         )
 
         assert_that(response.status_code, is_(equal_to(200)))
-        assert_that(response.json, is_(equal_to({
-            "count": 1,
-            "offset": 0,
-            "limit": 20,
-            "items": [{"text": text}],
-            "_links": {
-                "self": {
-                    "href": "http://localhost/api/foo?offset=0&limit=20",
-                },
-            },
-        })))
+        assert_that(
+            response.json,
+            is_(
+                equal_to(
+                    {
+                        "count": 1,
+                        "offset": 0,
+                        "limit": 20,
+                        "items": [{"text": text}],
+                        "_links": {
+                            "self": {
+                                "href": "http://localhost/api/foo?offset=0&limit=20",
+                            },
+                        },
+                    }
+                )
+            ),
+        )

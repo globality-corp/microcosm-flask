@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from os import environ
-from typing import Any, Optional
+from typing import Any
 from unittest.mock import MagicMock
 
 from microcosm.decorators import defaults
@@ -17,9 +17,9 @@ except ImportError:
 
 @dataclass
 class SentryConfig:
-    dsn: Optional[str] = None
+    dsn: str | None = None
     enabled: bool = False
-    client: Optional[Any] = None
+    client: Any | None = None
 
 
 def before_send(event, hint):
@@ -64,8 +64,4 @@ def configure_sentry(graph: ObjectGraph):
             except BadDsn:
                 enabled, dsn, sentry = False, None, None
                 configure_sentry.logger.error("Bad DSN value set")
-    return SentryConfig(
-        dsn=dsn,
-        enabled=enabled,
-        client=sentry
-    )
+    return SentryConfig(dsn=dsn, enabled=enabled, client=sentry)

@@ -106,7 +106,7 @@ class OffsetLimitPaginatedList(PaginatedList):
     """
 
     def __init__(self, items, count, _page, _ns, _operation, _context):
-        super(OffsetLimitPaginatedList, self).__init__(
+        super().__init__(
             items=items,
             _page=_page,
             _ns=_ns,
@@ -129,7 +129,7 @@ class OffsetLimitPaginatedList(PaginatedList):
         Include previous and next links.
 
         """
-        links = super(OffsetLimitPaginatedList, self).links
+        links = super().links
         if self._page.offset + self._page.limit < self.count:
             links["next"] = Link.for_(
                 self._operation,
@@ -234,7 +234,7 @@ class Page:
         """
 
         class PaginatedListSchema(Schema):
-            __alias__ = "{}_list".format(ns.subject_name)
+            __alias__ = f"{ns.subject_name}_list"
             items = fields.List(fields.Nested(item_schema), required=True)
             _links = fields.Raw()
 
@@ -248,7 +248,7 @@ class OffsetLimitPage(Page):
     """
 
     def __init__(self, offset=None, limit=None, **kwargs):
-        super(OffsetLimitPage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.offset = self.default_offset if offset is None else offset
         self.limit = self.default_limit if limit is None else limit
 
@@ -276,9 +276,7 @@ class OffsetLimitPage(Page):
             return 20
 
     def to_items(self, func=str):
-        return [("offset", self.offset), ("limit", self.limit)] + super(
-            OffsetLimitPage, self
-        ).to_items(func=func)
+        return [("offset", self.offset), ("limit", self.limit)] + super().to_items(func=func)
 
     def to_paginated_list(self, result, _ns, _operation, **kwargs):
         items, count, context = self.parse_result(result)
@@ -312,7 +310,7 @@ class OffsetLimitPage(Page):
     @classmethod
     def make_paginated_list_schema_class(cls, ns, item_schema):
         class PaginatedListSchema(Schema):
-            __alias__ = "{}_list".format(ns.subject_name)
+            __alias__ = f"{ns.subject_name}_list"
 
             offset = fields.Integer(
                 required=True,

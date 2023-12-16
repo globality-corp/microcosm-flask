@@ -39,8 +39,7 @@ PERSON_MAPPINGS = {
 
 
 class TestAlias:
-
-    def setup(self):
+    def setup_method(self):
         self.graph = create_object_graph(name="example", testing=True)
 
         self.ns = Namespace(
@@ -68,7 +67,7 @@ class TestAlias:
         assert_that(response.status_code, is_(equal_to(302)))
         assert_that(
             response.headers["Location"],
-            is_(equal_to(f"http://localhost/api/person/{PERSON_ID_1}"))
+            is_(equal_to(f"http://localhost/api/person/{PERSON_ID_1}")),
         )
 
     def test_swagger(self):

@@ -53,7 +53,7 @@ def instance_path_for(name, identifier_type, identifier_key=None):
     return "/{}/<{}:{}>".format(
         name_for(name),
         identifier_type,
-        identifier_key or "{}_id".format(name_for(name)),
+        identifier_key or f"{name_for(name)}_id",
     )
 
 
@@ -76,6 +76,6 @@ def relation_path_for(from_name, to_name, identifier_type, identifier_key=None):
     return "/{}/<{}:{}>/{}".format(
         name_for(from_name),
         identifier_type,
-        identifier_key or "{}_id".format(name_for(from_name)),
+        identifier_key or f"{name_for(from_name)}_id",
         name_for(to_name),
     )

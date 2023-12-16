@@ -87,7 +87,7 @@ class URIField(Field):
     def normalize(self, value):
         result = normalize_uri_result(value)
         if not result.scheme:
-            raise ValidationError("URI scheme is required for: {}".format(value))
+            raise ValidationError(f"URI scheme is required for: {value}")
         if not result.authority:
-            raise ValidationError("URI authority is required for: {}".format(value))
+            raise ValidationError(f"URI authority is required for: {value}")
         return result.unsplit()

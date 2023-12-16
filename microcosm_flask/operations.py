@@ -76,6 +76,6 @@ class Operation(Enum):
         """
         parts = self.value.pattern.split(".")
         return "[.]".join(
-            "(?P<{}>[^.]*)".format(part[1:-1])
+            f"(?P<{part[1:-1]}>[^.]*)"
             for part in parts
         )

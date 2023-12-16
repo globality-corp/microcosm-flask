@@ -138,7 +138,7 @@ class Convention:
         else:
             operation_name = operation.lower()
 
-        return getattr(self, "configure_{}".format(operation_name))
+        return getattr(self, f"configure_{operation_name}")
 
     def negotiate_response_content(self, allowed_response_formats):
         response_format = find_response_format(allowed_response_formats)

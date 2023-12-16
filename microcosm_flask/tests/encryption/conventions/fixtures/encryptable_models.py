@@ -3,15 +3,14 @@ An end-user message in a chatroom.
 
 """
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 
 @dataclass
 class Encryptable:
     id: UUID
-    value: Optional[str] = None
-    other_value: Optional[str] = None
+    value: str | None = None
+    other_value: str | None = None
 
     # # encryption support
     # __encrypted_identifier__ = "encrypted_chatroom_message_id"
