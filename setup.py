@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "4.1.4"
+version = "4.1.5"
 
 
 setup(
@@ -34,6 +34,7 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        "marshmallow>=3.20.0",
     ],
     extras_require={
         "metrics": "microcosm-metrics>=2.2.0",
