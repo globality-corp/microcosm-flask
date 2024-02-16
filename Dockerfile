@@ -12,7 +12,7 @@
 #
 
 # ----------- deps -----------
-FROM python:3.8-slim-buster as deps
+FROM python:3.10-slim-buster as deps
 
 #
 # Most services will use the same set of packages here, though a few will install
