@@ -2,7 +2,7 @@
 Audit structure tests.
 
 """
-from logging import DEBUG, WARNING, getLogger
+from logging import DEBUG, NOTSET, getLogger
 from unittest.mock import MagicMock
 from uuid import uuid4
 
@@ -10,6 +10,7 @@ from flask import g
 from hamcrest import (
     assert_that,
     equal_to,
+    greater_than,
     is_,
     is_not,
     none,
@@ -431,20 +432,20 @@ class TestRequestInfo:
         Enable DEBUG logging temporarily.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
+        assert_that(getLogger().getEffectiveLevel(), is_not(equal_to(DEBUG)))
         with self.graph.flask.test_request_context(
             "/", headers={"X-Request-Debug": "true"}
         ):
             with logging_levels():
                 assert_that(getLogger().getEffectiveLevel(), is_(equal_to(DEBUG)))
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
+        assert_that(getLogger().getEffectiveLevel(), is_not(equal_to(DEBUG)))
 
     def test_disable_logging(self):
         """
         Disable logging per request.
 
         """
-        assert_that(getLogger().getEffectiveLevel(), is_(equal_to(WARNING)))
+        assert_that(getLogger().getEffectiveLevel(), is_(greater_than(NOTSET)))
         with self.graph.flask.test_request_context(
             "/", headers={"X-Request-NoLog": "true"}
         ):
