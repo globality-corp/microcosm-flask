@@ -5,7 +5,12 @@ from marshmallow import fields
 from marshmallow.fields import Field
 from microcosm_logging.decorators import logger
 
-from microcosm_flask.fields import CleanedField, LanguageField, URIField, OrderByField
+from microcosm_flask.fields import (
+    CleanedField,
+    LanguageField,
+    OrderByField,
+    URIField,
+)
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 

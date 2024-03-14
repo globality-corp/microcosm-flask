@@ -8,13 +8,17 @@ from enum import Enum, IntEnum, unique
 from hamcrest import (
     assert_that,
     calling,
-    raises, contains_exactly, has_properties, equal_to, is_,
+    contains_exactly,
+    equal_to,
+    has_properties,
+    is_,
+    raises,
 )
 from marshmallow import Schema, ValidationError
 from werkzeug.datastructures import ImmutableMultiDict
 
-from microcosm_flask.fields import QueryStringList, EnumField
-from microcosm_flask.fields.order_by_field import OrderDirection, OrderByField, OrderBy
+from microcosm_flask.fields import EnumField, QueryStringList
+from microcosm_flask.fields.order_by_field import OrderBy, OrderByField, OrderDirection
 
 
 @unique
@@ -128,11 +132,10 @@ def test_invalid_args():
                 [
                     (
                         "order_by_str",
-                        f"+INVALID_ENUM"
+                        "+INVALID_ENUM"
                     ),
                 ]
             )
         ),
         raises(ValidationError, pattern=re.escape("{'order_by_str': ['Invalid enum member INVALID_ENUM']}")),
     )
-
