@@ -35,6 +35,9 @@ class OrderByField(fields.Str):
         - OrderBy(created, OrderDirection.DESC)
         - OrderBy(title, OrderDirection.ASC)
 
+        Note that in this example, Title does not have a +/-. This will give the field a default of sort ASC. This is
+        all in accordance with the JSON API standard.
+
     JSON API standard: https://jsonapi.org/format/1.1/#fetching-sorting
     """
 

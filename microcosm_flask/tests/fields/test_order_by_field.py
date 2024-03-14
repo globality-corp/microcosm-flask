@@ -86,7 +86,7 @@ def test_load_order_by():
     )
 
 
-def test_dumop_order_by():
+def test_dump_order_by():
     """
     Can serialize enums.
 
@@ -111,12 +111,12 @@ def test_dumop_order_by():
 
     assert_that(result["order_by_str"], is_(equal_to(f"+{ForTestEnum.Foo.name}")))
     assert_that(result["order_by_int"], is_(equal_to(f"-{ForTestIntEnum.Bar.name}")))
-    # assert_that(result["order_by_str_field_list"], is_(equal_to(
-    #     f"+{ForTestEnum.Foo.name},-{ForTestEnum.Bar.name},{ForTestEnum.Bar.name}"
-    # )))
-    # assert_that(result["order_by_int_field_list"], is_(equal_to(
-    #     f"+{ForTestIntEnum.Foo.name},-{ForTestIntEnum.Bar.name},{ForTestIntEnum.Bar.name}"
-    # )))
+    assert_that(result["order_by_str_field_list"], is_(equal_to(
+        f"+{ForTestEnum.Foo.name},-{ForTestEnum.Bar.name},{ForTestEnum.Bar.name}"
+    )))
+    assert_that(result["order_by_int_field_list"], is_(equal_to(
+        f"+{ForTestIntEnum.Foo.name},-{ForTestIntEnum.Bar.name},{ForTestIntEnum.Bar.name}"
+    )))
 
 
 def test_invalid_args():
