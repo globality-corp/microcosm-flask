@@ -112,10 +112,10 @@ def test_dump_order_by():
     assert_that(result["order_by_str"], is_(equal_to(f"+{ForTestEnum.Foo.name}")))
     assert_that(result["order_by_int"], is_(equal_to(f"-{ForTestIntEnum.Bar.name}")))
     assert_that(result["order_by_str_field_list"], is_(equal_to(
-        f"+{ForTestEnum.Foo.name},-{ForTestEnum.Bar.name},{ForTestEnum.Bar.name}"
+        [f"+{ForTestEnum.Foo.name}", f"-{ForTestEnum.Bar.name}", f"+{ForTestEnum.Bar.name}"]
     )))
     assert_that(result["order_by_int_field_list"], is_(equal_to(
-        f"+{ForTestIntEnum.Foo.name},-{ForTestIntEnum.Bar.name},{ForTestIntEnum.Bar.name}"
+        [f"+{ForTestIntEnum.Foo.name}", f"-{ForTestIntEnum.Bar.name}", f"+{ForTestIntEnum.Bar.name}"]
     )))
 
 
