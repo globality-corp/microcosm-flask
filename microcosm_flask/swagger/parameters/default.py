@@ -5,7 +5,12 @@ from marshmallow import fields
 from marshmallow.fields import Field
 from microcosm_logging.decorators import logger
 
-from microcosm_flask.fields import CleanedField, LanguageField, URIField
+from microcosm_flask.fields import (
+    CleanedField,
+    LanguageField,
+    OrderByField,
+    URIField,
+)
 from microcosm_flask.swagger.parameters.base import ParameterBuilder
 
 
@@ -16,6 +21,7 @@ FIELD_MAPPINGS = {
     LanguageField: FieldInfo("string", "language"),
     URIField: FieldInfo("string", "uri"),
     CleanedField: FieldInfo("string", "cleaned"),
+    OrderByField: FieldInfo("string", None),
     fields.Boolean: FieldInfo("boolean", None),
     fields.Date: FieldInfo("string", "date"),
     fields.DateTime: FieldInfo("string", "date-time"),
