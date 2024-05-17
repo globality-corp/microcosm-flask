@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "4.1.6"
+version = "5.0.0"
 
 
 setup(
@@ -21,7 +21,7 @@ setup(
     python_requires=">=3.10",
     keywords="microcosm",
     install_requires=[
-        "Flask>=2",
+        "Flask>=3",
         "Flask-BasicAuth>=0.2.0",
         "Flask-Cors>=3.0.7",
         "Flask-UUID>=0.2",
@@ -47,18 +47,18 @@ setup(
             "coverage",
             "parameterized",
             "pytest-cov",
+            "microcosm-metrics",
         ],
         "lint": [
+            "mypy",
             "flake8",
             "flake8-print",
             "flake8-logging-format",
             "flake8-isort",
+            "types-python-dateutil",
+            "types-setuptools",
         ],
     },
-    setup_requires=[
-        "nose>=1.3.7",
-    ],
-    dependency_links=[],
     entry_points={
         "microcosm_flask.swagger.parameters": [
             "constant = microcosm_flask.swagger.parameters.constant:ConstantParameterBuilder",
@@ -92,9 +92,4 @@ setup(
             "memory_profiler = microcosm_flask.memory:MemoryProfiler",
         ],
     },
-    tests_require=[
-        "coverage>=3.7.1",
-        "PyHamcrest>=1.9.0",
-        "pytest-cov",
-    ],
 )

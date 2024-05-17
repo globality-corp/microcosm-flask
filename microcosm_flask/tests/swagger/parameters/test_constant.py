@@ -4,14 +4,14 @@ from marshmallow import Schema, fields
 from microcosm_flask.swagger.api import build_parameter
 
 
-class ForTestSchema(Schema):
+class FooSchema(Schema):
     deprecated_constant_list = fields.Constant(constant=[], dump_only=True)
     deprecated_constant_string = fields.Constant(constant="HELLO", dump_only=True)
     deprecated_constant_int = fields.Constant(constant=123, dump_only=True)
 
 
 def test_field_constant_list():
-    parameter = build_parameter(ForTestSchema().fields["deprecated_constant_list"])
+    parameter = build_parameter(FooSchema().fields["deprecated_constant_list"])
     assert_that(
         parameter,
         is_(
@@ -25,7 +25,7 @@ def test_field_constant_list():
 
 
 def test_field_constant_string():
-    parameter = build_parameter(ForTestSchema().fields["deprecated_constant_string"])
+    parameter = build_parameter(FooSchema().fields["deprecated_constant_string"])
     assert_that(
         parameter,
         is_(
@@ -40,7 +40,7 @@ def test_field_constant_string():
 
 
 def test_field_constant_int():
-    parameter = build_parameter(ForTestSchema().fields["deprecated_constant_int"])
+    parameter = build_parameter(FooSchema().fields["deprecated_constant_int"])
     assert_that(
         parameter,
         is_(

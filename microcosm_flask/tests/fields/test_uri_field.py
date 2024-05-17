@@ -17,7 +17,7 @@ from microcosm_flask.fields.uri_field import normalize_uri
 
 
 class URISchema(Schema):
-    foo = URIField(include_query=True)
+    foo = URIField(metadata=dict(include_query=True))
 
 
 @pytest.mark.parametrize(
@@ -39,7 +39,7 @@ class URISchema(Schema):
     ],
 )
 def test_normalize_uri(uri, expected):
-    assert_that(normalize_uri(uri), is_(equal_to(expected)))
+    assert normalize_uri(uri) == expected
 
 
 def test_uri_dump():

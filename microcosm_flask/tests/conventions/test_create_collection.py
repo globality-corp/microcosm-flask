@@ -28,7 +28,7 @@ class FooRequestSchema(Schema):
 
 
 class FooResponseSchema(Schema):
-    text = fields.String(request=True)
+    text = fields.String(metadata=dict(request=True))
 
 
 FOO_MAPPINGS = {

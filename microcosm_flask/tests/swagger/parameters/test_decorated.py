@@ -9,7 +9,7 @@ class MixedField(fields.Field):
     __swagger_type__ = ["integer", "string"]
 
 
-class ForTestSchema(Schema):
+class FooSchema(Schema):
     decorated = swagger_field(swagger_format="uuid")(
         fields.Method(),
     )
@@ -17,7 +17,7 @@ class ForTestSchema(Schema):
 
 
 def test_field_decorated():
-    parameter = build_parameter(ForTestSchema().fields["decorated"])
+    parameter = build_parameter(FooSchema().fields["decorated"])
     assert_that(
         parameter,
         is_(
@@ -32,5 +32,5 @@ def test_field_decorated():
 
 
 def test_field_one_of():
-    parameter = build_parameter(ForTestSchema().fields["mixed"])
+    parameter = build_parameter(FooSchema().fields["mixed"])
     assert_that(parameter, is_(equal_to({})))

@@ -12,7 +12,7 @@ try:
     import sentry_sdk
     from sentry_sdk.utils import BadDsn
 except ImportError:
-    sentry_sdk = None
+    sentry_sdk = None  # type: ignore[assignment]
 
 
 @dataclass
@@ -54,7 +54,7 @@ def configure_sentry(graph: ObjectGraph):
             sentry = MagicMock()
         elif sentry_sdk:
             try:
-                sentry = sentry_sdk.init(
+                sentry = sentry_sdk.init(  # type: ignore[assignment]
                     graph.config.sentry_logging.dsn,
                     server_name=f"{graph.metadata.name}_api",
                     release=graph.config.build_info_convention.sha1,

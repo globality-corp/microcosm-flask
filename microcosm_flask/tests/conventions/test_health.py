@@ -193,7 +193,7 @@ def test_health_check_with_build_info():
         # Optional checks conditionally show up
         (True, False, False),
         (True, True, True),
-    ],
+    ]
 )
 def test_health_check_custom_checks(optional_check, full_check, expect_check_response):
     loader = load_from_dict(
@@ -242,7 +242,7 @@ def test_health_check_custom_checks(optional_check, full_check, expect_check_res
         # Optional checks conditionally show up, and only fail is specified
         (True, False, False),
         (True, True, True),
-    ],
+    ]
 )
 def test_health_check_custom_check_failed(optional_check, full_check, expect_failure):
     loader = load_from_dict(

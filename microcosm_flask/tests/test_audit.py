@@ -35,7 +35,6 @@ class TestRequestInfo:
     Test capturing of request data.
 
     """
-
     def setup_method(self):
         self.graph = create_object_graph("example", testing=True, debug=True)
         self.graph.use(

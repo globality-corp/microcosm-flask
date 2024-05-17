@@ -18,22 +18,22 @@ from microcosm_flask.fields import EnumField
 
 
 @unique
-class ForTestEnum(Enum):
+class FooEnum(Enum):
     Foo = "foo"
     Bar = "bar"
 
 
 @unique
-class ForTestIntEnum(IntEnum):
+class FooIntEnum(IntEnum):
     Foo = 1
     Bar = 2
 
 
 class EnumSchema(Schema):
-    name = EnumField(ForTestEnum, by_value=False)
-    value = EnumField(ForTestEnum, by_value=True)
-    int_name = EnumField(ForTestIntEnum, by_value=False)
-    int_value = EnumField(ForTestIntEnum, by_value=True)
+    name = EnumField(FooEnum, by_value=False)
+    value = EnumField(FooEnum, by_value=True)
+    int_name = EnumField(FooIntEnum, by_value=False)
+    int_value = EnumField(FooIntEnum, by_value=True)
 
 
 def test_load_enums():
@@ -42,19 +42,17 @@ def test_load_enums():
 
     """
     schema = EnumSchema()
-    result = schema.load(
-        {
-            "name": ForTestEnum.Foo.name,
-            "value": ForTestEnum.Bar.value,
-            "int_name": ForTestIntEnum.Foo.name,
-            "int_value": ForTestIntEnum.Bar.value,
-        }
-    )
+    result = schema.load({
+        "name": FooEnum.Foo.name,
+        "value": FooEnum.Bar.value,
+        "int_name": FooIntEnum.Foo.name,
+        "int_value": FooIntEnum.Bar.value,
+    })
 
-    assert_that(result["name"], is_(equal_to(ForTestEnum.Foo)))
-    assert_that(result["value"], is_(equal_to(ForTestEnum.Bar)))
-    assert_that(result["int_name"], is_(equal_to(ForTestIntEnum.Foo)))
-    assert_that(result["int_value"], is_(equal_to(ForTestIntEnum.Bar)))
+    assert_that(result["name"], is_(equal_to(FooEnum.Foo)))
+    assert_that(result["value"], is_(equal_to(FooEnum.Bar)))
+    assert_that(result["int_name"], is_(equal_to(FooIntEnum.Foo)))
+    assert_that(result["int_value"], is_(equal_to(FooIntEnum.Bar)))
 
 
 def test_dump_enums():
@@ -63,19 +61,17 @@ def test_dump_enums():
 
     """
     schema = EnumSchema()
-    result = schema.dump(
-        {
-            "name": ForTestEnum.Foo,
-            "value": ForTestEnum.Bar,
-            "int_name": ForTestIntEnum.Foo,
-            "int_value": ForTestIntEnum.Bar,
-        }
-    )
+    result = schema.dump({
+        "name": FooEnum.Foo,
+        "value": FooEnum.Bar,
+        "int_name": FooIntEnum.Foo,
+        "int_value": FooIntEnum.Bar,
+    })
 
-    assert_that(result["name"], is_(equal_to(ForTestEnum.Foo.name)))
-    assert_that(result["value"], is_(equal_to(ForTestEnum.Bar.value)))
-    assert_that(result["int_name"], is_(equal_to(ForTestIntEnum.Foo.name)))
-    assert_that(result["int_value"], is_(equal_to(ForTestIntEnum.Bar.value)))
+    assert_that(result["name"], is_(equal_to(FooEnum.Foo.name)))
+    assert_that(result["value"], is_(equal_to(FooEnum.Bar.value)))
+    assert_that(result["int_name"], is_(equal_to(FooIntEnum.Foo.name)))
+    assert_that(result["int_value"], is_(equal_to(FooIntEnum.Bar.value)))
 
 
 def test_load_int_enum_as_string():
@@ -84,13 +80,11 @@ def test_load_int_enum_as_string():
 
     """
     schema = EnumSchema()
-    result = schema.load(
-        {
-            "int_value": str(ForTestIntEnum.Bar.value),
-        }
-    )
+    result = schema.load({
+        "int_value": str(FooIntEnum.Bar.value),
+    })
 
-    assert_that(result["int_value"], is_(equal_to(ForTestIntEnum.Bar)))
+    assert_that(result["int_value"], is_(equal_to(FooIntEnum.Bar)))
 
 
 def test_dump_value_from_string():

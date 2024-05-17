@@ -9,6 +9,8 @@ from flask import Response
 from werkzeug.http import quote_etag
 from werkzeug.utils import get_content_type
 
+from microcosm_flask.formatting.encoding import UTF_8
+
 
 try:
     import spooky
@@ -40,7 +42,7 @@ class BaseFormatter(metaclass=ABCMeta):
     def build_response(self, response_data):
         return Response(
             self.format(response_data),
-            content_type=get_content_type(self.content_type, "utf-8"),
+            content_type=get_content_type(self.content_type, UTF_8)
         )
 
     def build_headers(self, headers, **kwargs):
