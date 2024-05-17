@@ -20,13 +20,13 @@ class NullableQueryStringListSchema(Schema):
     foo_ids = QueryStringList(String(), allow_none=True)
 
 
-class ForTestEnum(Enum):
+class FooEnum(Enum):
     A = "A"
     B = "B"
 
 
 class EnumQueryStringListSchema(Schema):
-    foo_ids = QueryStringList(EnumField(ForTestEnum))
+    foo_ids = QueryStringList(EnumField(FooEnum))
 
 
 def test_query_list_deserialize_items():
@@ -35,7 +35,7 @@ def test_query_list_deserialize_items():
         ImmutableMultiDict([("foo_ids", "A,B")]),
     )
 
-    assert_that(result["foo_ids"], is_(equal_to([ForTestEnum.A, ForTestEnum.B])))
+    assert_that(result["foo_ids"], is_(equal_to([FooEnum.A, FooEnum.B])))
 
 
 def test_query_list_load_with_comma_separated_single_keys():

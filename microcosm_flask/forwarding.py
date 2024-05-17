@@ -7,8 +7,7 @@ on a URI that is accessible to other services. This can be solved by configuring
 service URIs... or by resolving URIs using X-Forwarded headers.
 
 """
-import flask
-from flask import request
+from flask.globals import request, request_ctx  # type: ignore
 
 from microcosm_flask.session import register_session_factory
 
@@ -21,12 +20,10 @@ def use_forwarded_port(graph):
 
     """
     # There must be a better way!
-    if hasattr(flask, "globals") and hasattr(flask.globals, "request_ctx"):
-        # update session for Flask >= 2.2
-        context = flask.globals.request_ctx._get_current_object()
-    else:  # pragma: no cover
-        # update session for Flask < 2.2
-        context = flask._request_ctx_stack.top
+    context = request_ctx
+
+    if context is None:
+        return None
 
     # determine the configured overrides
     forwarded_host = graph.config.port_forwarding.get("host")

@@ -32,14 +32,14 @@ class ChoicesNonStrict(Enum, metaclass=FormatNonStrictMeta):
     Profit = "profit"
 
 
-class ForTestSchema(Schema):
+class FooSchema(Schema):
     choice = EnumField(Choices)
     value = EnumField(ValueType, by_value=True)
     choice_non_strict = EnumField(ChoicesNonStrict)
 
 
 def test_field_enum():
-    parameter = build_parameter(ForTestSchema().fields["choice"])
+    parameter = build_parameter(FooSchema().fields["choice"])
     assert_that(
         parameter,
         is_(
@@ -57,7 +57,7 @@ def test_field_enum():
 
 
 def test_field_enum_non_strict():
-    parameter = build_parameter(ForTestSchema().fields["choice"], strict_enums=False)
+    parameter = build_parameter(FooSchema().fields["choice"], strict_enums=False)
     assert_that(
         parameter,
         is_(
@@ -71,7 +71,7 @@ def test_field_enum_non_strict():
 
 
 def test_field_int_enum():
-    parameter = build_parameter(ForTestSchema().fields["value"])
+    parameter = build_parameter(FooSchema().fields["value"])
     assert_that(
         parameter,
         is_(
@@ -87,7 +87,7 @@ def test_field_int_enum():
 
 
 def test_enum_format_override():
-    parameter = build_parameter(ForTestSchema().fields["choice_non_strict"])
+    parameter = build_parameter(FooSchema().fields["choice_non_strict"])
     assert_that(
         parameter,
         is_(

@@ -24,22 +24,17 @@
 
 
 if [ "$1" = "test" ]; then
-   pip --quiet install microcosm-metrics
-   # Install standard test dependencies; YMMV
    pip --quiet install \
        .[test]
    pytest
 elif [ "$1" = "lint" ]; then
-   # Install standard linting dependencies; YMMV
    pip --quiet install \
        .[lint]
    exec flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
-   pip install types-python-dateutil
-   pip install types-setuptools
-   # Install standard type-linting dependencies
-   pip --quiet install mypy
-   exec mypy ${NAME} --ignore-missing-imports
+   pip --quiet install \
+       .[lint]
+   exec mypy ${NAME}
 else
    echo "Cannot execute $@"
    exit 3

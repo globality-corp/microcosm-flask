@@ -36,7 +36,7 @@ from microcosm_flask.tests.conventions.fixtures import (
 )
 
 
-class ForTestEnum(Enum):
+class FooEnum(Enum):
     A = "A"
     B = "B"
 
@@ -46,7 +46,7 @@ class ForTestEnum(Enum):
 
 class SearchAddressPageSchema(OffsetLimitPageSchema):
     list_param = QueryStringList(String())
-    enum_param = EnumField(ForTestEnum)
+    enum_param = EnumField(FooEnum)
 
 
 def add_request_id(headers):

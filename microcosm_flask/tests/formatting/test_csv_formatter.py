@@ -119,10 +119,7 @@ def test_make_response_ordered():
         )
     )
 
-    assert_that(
-        response.data,
-        is_(equal_to(b"id,firstName,lastName\r\nme,First,Last\r\n")),
-    )
+    assert_that(response.data, is_(equal_to(b"id,firstName,lastName\r\nme,First,Last\r\n")))
     assert_that(response.content_type, is_(equal_to("text/csv; charset=utf-8")))
     assert_that(
         response.headers,

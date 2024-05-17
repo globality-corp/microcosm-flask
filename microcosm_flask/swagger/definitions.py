@@ -21,7 +21,7 @@ from inspect import getdoc
 from logging import getLogger
 from urllib.parse import unquote
 
-import flask
+from flask.globals import request_ctx
 from openapi import model as swagger
 from werkzeug.routing import BuildError, Rule
 
@@ -99,13 +99,7 @@ def _construct_schema_request_arguments():
     Used in aid of generating paths during swagger generation
 
     """
-    if hasattr(flask, "globals") and hasattr(flask.globals, "request_ctx"):
-        # update session for Flask >= 2.2
-        reqctx = flask.globals.request_ctx._get_current_object()
-    else:  # pragma: no cover
-        # update session for Flask < 2.2
-        reqctx = flask._request_ctx_stack.top
-    url_adapter = reqctx.url_adapter
+    url_adapter = request_ctx.url_adapter
     rules: list[Rule] = url_adapter.map._rules
 
     return {

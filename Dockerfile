@@ -22,7 +22,7 @@ FROM python:3.10-slim-buster as deps
 ARG EXTRA_INDEX_URL
 ENV EXTRA_INDEX_URL ${EXTRA_INDEX_URL}
 
-ENV CORE_PACKAGES locales
+ENV CORE_PACKAGES locales libpq-dev
 ENV BUILD_PACKAGES build-essential libffi-dev
 ENV OTHER_PACKAGES libssl-dev
 

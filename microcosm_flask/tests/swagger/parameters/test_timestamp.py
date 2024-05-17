@@ -5,13 +5,13 @@ from microcosm_flask.fields import TimestampField
 from microcosm_flask.swagger.api import build_parameter
 
 
-class ForTestSchema(Schema):
+class FooSchema(Schema):
     unix_timestamp = TimestampField()
     iso_timestamp = TimestampField(use_isoformat=True)
 
 
 def test_field_unix_timestamp():
-    parameter = build_parameter(ForTestSchema().fields["unix_timestamp"])
+    parameter = build_parameter(FooSchema().fields["unix_timestamp"])
     assert_that(
         parameter,
         is_(
@@ -26,7 +26,7 @@ def test_field_unix_timestamp():
 
 
 def test_field_iso_timestamp():
-    parameter = build_parameter(ForTestSchema().fields["iso_timestamp"])
+    parameter = build_parameter(FooSchema().fields["iso_timestamp"])
     assert_that(
         parameter,
         is_(

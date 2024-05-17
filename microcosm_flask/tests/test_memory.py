@@ -14,7 +14,6 @@ class TestMemorySampling:
     Test capturing of memory info on API requests.
 
     """
-
     def setup_method(self):
         self.loader = load_from_dict(
             memory_profiler=dict(
