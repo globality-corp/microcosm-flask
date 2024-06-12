@@ -24,17 +24,14 @@
 
 
 if [ "$1" = "test" ]; then
-   pip --quiet install \
-       .[test]
-   pytest
+   pip --quiet install .\[test\]
+   pytest ${NAME}
 elif [ "$1" = "lint" ]; then
-   pip --quiet install \
-       .[lint]
-   exec flake8 ${NAME}
+   pip --quiet install .\[lint\]
+   flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
-   pip --quiet install \
-       .[lint]
-   exec mypy ${NAME}
+   pip --quiet install .\[typehinting\]
+   mypy ${NAME}
 else
    echo "Cannot execute $@"
    exit 3
