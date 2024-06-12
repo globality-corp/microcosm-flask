@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "5.0.0"
+version = "6.0.0"
 
 
 setup(
@@ -18,7 +18,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     keywords="microcosm",
     install_requires=[
         "Flask>=3",
@@ -27,8 +27,8 @@ setup(
         "Flask-UUID>=0.2",
         "jsonschema>=3.2.0",
         "marshmallow>=3.0.0",
-        "microcosm>=3.1.0",
-        "microcosm-logging>=1.5.0",
+        "microcosm>=4.0.0",
+        "microcosm-logging>=2.0.0",
         "openapi>=1.1.0",
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
@@ -37,7 +37,7 @@ setup(
         "marshmallow>=3.20.0",
     ],
     extras_require={
-        "metrics": "microcosm-metrics>=2.2.0",
+        "metrics": "microcosm-metrics>=3.0.0",
         "profiling": "pyinstrument>=3.0",
         "sentry": "sentry-sdk>=0.14.4",
         "spooky": "spooky>=2.0.0",
@@ -47,14 +47,19 @@ setup(
             "coverage",
             "parameterized",
             "pytest-cov",
-            "microcosm-metrics",
+            "microcosm-metrics>=3.0.0",
         ],
         "lint": [
             "mypy",
             "flake8",
             "flake8-print",
-            "flake8-logging-format",
+            "flake8-logging-format>=1.0.0",
             "flake8-isort",
+            "types-python-dateutil",
+            "types-setuptools",
+        ],
+        "typehinting": [
+            "mypy",
             "types-python-dateutil",
             "types-setuptools",
         ],
