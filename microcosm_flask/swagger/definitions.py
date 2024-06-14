@@ -325,6 +325,11 @@ def build_operation(operation, ns, rule, func):
             "X-Response-Skip-Null",
             description="Remove fields with null values from the response.",
         )
+    ).append(
+        header_param(
+            "X-Request-Client",
+            description="Client that is associated with the request.",
+        )
     )
 
     # path parameters
