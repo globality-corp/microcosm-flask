@@ -29,7 +29,7 @@ setup(
         "marshmallow>=3.0.0",
         "microcosm>=4.0.0",
         "microcosm-logging>=2.0.0",
-        "openapi>=1.1.0",
+        "openapi>=2.0.0",
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
