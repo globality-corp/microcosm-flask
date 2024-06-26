@@ -63,6 +63,7 @@ setup(
             "mypy",
             "types-python-dateutil",
             "types-setuptools",
+            "types-simplejson",
         ],
     },
     entry_points={
