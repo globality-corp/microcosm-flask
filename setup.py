@@ -34,6 +34,7 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        "simplejson>=3.17.2",
         "marshmallow>=3.20.0",
     ],
     extras_require={
