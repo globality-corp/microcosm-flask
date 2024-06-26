@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 
 project = "microcosm-flask"
-version = "6.0.0"
+version = "6.1.0"
 
 
 setup(
@@ -34,6 +34,7 @@ setup(
         "PyYAML>=3.13",
         "rfc3986>=1.2.0",
         "regex>=2021.8.21",
+        "simplejson>=3.17.2",
         "marshmallow>=3.20.0",
     ],
     extras_require={
@@ -62,6 +63,7 @@ setup(
             "mypy",
             "types-python-dateutil",
             "types-setuptools",
+            "types-simplejson",
         ],
     },
     entry_points={

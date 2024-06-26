@@ -25,6 +25,7 @@
 
 if [ "$1" = "test" ]; then
    pip --quiet install .\[test\]
+   pip --quiet install .
    pytest ${NAME}
 elif [ "$1" = "lint" ]; then
    pip --quiet install .\[lint\]
