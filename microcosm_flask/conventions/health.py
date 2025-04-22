@@ -5,7 +5,6 @@ Reports service health and basic information from the "/api/health" endpoint,
 using HTTP 200/503 status codes to indicate healthiness.
 
 """
-from distutils.util import strtobool
 from functools import wraps
 from itertools import chain
 from logging import Logger
@@ -18,6 +17,7 @@ from microcosm_flask.audit import skip_logging
 from microcosm_flask.conventions.base import Convention
 from microcosm_flask.conventions.build_info import BuildInfo
 from microcosm_flask.conventions.encoding import load_query_string_data, make_response
+from microcosm_flask.converters import str_to_bool
 from microcosm_flask.errors import extract_error_message
 from microcosm_flask.namespaces import Namespace
 from microcosm_flask.operations import Operation
@@ -158,7 +158,7 @@ def configure_health(graph):
         subject=Health,
     )
 
-    include_build_info = strtobool(graph.config.health_convention.include_build_info)
+    include_build_info = str_to_bool(graph.config.health_convention.include_build_info)
     convention = HealthConvention(graph, include_build_info)
     convention.configure(ns, retrieve=tuple())
     return convention.health

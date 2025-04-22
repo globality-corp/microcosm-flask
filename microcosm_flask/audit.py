@@ -4,17 +4,16 @@ Audit log support for Flask routes.
 """
 from collections import namedtuple
 from contextlib import contextmanager
-from distutils.util import strtobool
 from functools import wraps
 from json import loads
 from logging import DEBUG, getLogger
 from traceback import format_exc
 from uuid import UUID
-
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
+from microcosm_flask.converters import str_to_bool
 from microcosm_logging.timing import elapsed_time
 
 from microcosm_flask.errors import (
@@ -63,7 +62,7 @@ def should_skip_logging(func):
     Should we skip logging for this handler?
 
     """
-    disabled = strtobool(request.headers.get("x-request-nolog", "false"))
+    disabled = str_to_bool(request.headers.get("x-request-nolog", "false"))
     return disabled or getattr(func, SKIP_LOGGING, False)
 
 
@@ -75,7 +74,7 @@ def logging_levels():
     Supports setting per-request debug logging using the `X-Request-Debug` header.
 
     """
-    enabled = strtobool(request.headers.get("x-request-debug", "false"))
+    enabled = str_to_bool(request.headers.get("x-request-debug", "false"))
     level = None
     try:
         if enabled:

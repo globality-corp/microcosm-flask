@@ -2,10 +2,8 @@
 Landing Page convention.
 
 """
-from distutils import dist
-from io import StringIO
 from json import dumps
-from pkg_resources import DistributionNotFound, get_distribution
+from importlib.metadata import metadata, PackageNotFoundError
 
 from jinja2 import Template
 
@@ -29,12 +27,9 @@ def configure_landing(graph):   # noqa: C901
 
         """
         try:
-            distribution = get_distribution(graph.metadata.name)
-            metadata_str = distribution.get_metadata(distribution.PKG_INFO)
-            package_info = dist.DistributionMetadata()
-            package_info.read_pkg_file(StringIO(metadata_str))
-            return package_info
-        except DistributionNotFound:
+            package_metadata = metadata(graph.metadata.name)
+            return package_metadata
+        except PackageNotFoundError:
             return None
 
     def get_swagger_versions():
