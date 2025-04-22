@@ -16,12 +16,10 @@ def configure_uuid(graph):
 def str_to_bool(value):
     """
     Convert a string value to boolean.
-    Similar to distutils.util.strtobool but returns a boolean instead of an int.
+    Similar to distutils.util.strtobool, it returns an int.
     """
-    if isinstance(value, bool):
-        return value
     if str(value).lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
+        return 1
     elif str(value).lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
+        return 0
     raise ValueError(f"Invalid boolean value: {value}")
