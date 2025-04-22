@@ -22,7 +22,7 @@ FROM python:3.11-slim-buster as deps
 ARG EXTRA_INDEX_URL
 ENV EXTRA_INDEX_URL ${EXTRA_INDEX_URL}
 
-ENV CORE_PACKAGES locales libpq-dev
+ENV CORE_PACKAGES locales
 ENV BUILD_PACKAGES build-essential libffi-dev
 ENV OTHER_PACKAGES libssl-dev
 
@@ -108,4 +108,4 @@ ARG SHA1
 ENV MICROCOSM_FLASK__BUILD_INFO_CONVENTION__BUILD_NUM ${BUILD_NUM}
 ENV MICROCOSM_FLASK__BUILD_INFO_CONVENTION__SHA1 ${SHA1}
 COPY $NAME /src/$NAME/
-RUN pip install --no-cache-dir --extra-index-url "${EXTRA_INDEX_URL}" -e .
+RUN pip install --no-cache-dir --extra-index-url $EXTRA_INDEX_URL -e .
