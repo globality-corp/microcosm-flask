@@ -54,4 +54,4 @@ NAME=microcosm_flask ./entrypoint.sh typehinting
 
 ## Configuration
 
- - The object graph's `debug` and `testing` flags are propagated to the Flask application
+ - The object graph's `debug` and `testing` flags are propagated to the Flask application.
