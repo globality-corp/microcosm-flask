@@ -50,8 +50,9 @@ class DAGSchema(Schema):
     Nodes should be overridden with a non-raw schema.
 
     """
+    # Nb. using fields.Raw inside fields.Nested trips up mypy. documentation doesnt clarify.
     nodes = fields.Nested(
-        fields.Raw,
+        fields.Raw,  # type: ignore[arg-type]
         required=True,
         attribute="nodes_map",
     )

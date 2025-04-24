@@ -54,7 +54,7 @@ class Parameters:
         Define the available builder types.
 
         """
-        return [entry_point.load() for entry_point in entry_points(ENTRY_POINT)]
+        return [entry_point.load() for entry_point in entry_points(group=ENTRY_POINT)]
 
     @classmethod
     def default_builder_type(cls) -> type[ParameterBuilder]:
