@@ -53,9 +53,9 @@ setup(
         "lint": [
             "mypy",
             "flake8",
-            "flake8-print",
-            "flake8-logging-format>=1.0.0",
             "flake8-isort",
+            "flake8-logging-format>=1.0.0",
+            "flake8-print",
             "types-python-dateutil",
             "types-setuptools",
         ],
