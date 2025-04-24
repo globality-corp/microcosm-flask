@@ -28,7 +28,7 @@ setup(
         "jsonschema>=3.2.0",
         "marshmallow>=3.0.0",
         "microcosm>=4.0.0",
-        "microcosm-logging>=2.0.0",
+        "microcosm-logging>=2.1.0",
         "openapi>=2.0.0",
         "python-dateutil>=2.7.3",
         "PyYAML>=3.13",
