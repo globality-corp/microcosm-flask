@@ -9,13 +9,14 @@ from json import loads
 from logging import DEBUG, getLogger
 from traceback import format_exc
 from uuid import UUID
+
 from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
-from microcosm_flask.converters import str_to_bool
 from microcosm_logging.timing import elapsed_time
 
+from microcosm_flask.converters import str_to_bool
 from microcosm_flask.errors import (
     extract_context,
     extract_error_message,

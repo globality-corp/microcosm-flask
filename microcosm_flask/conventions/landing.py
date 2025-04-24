@@ -2,8 +2,8 @@
 Landing Page convention.
 
 """
+from importlib.metadata import PackageNotFoundError, metadata
 from json import dumps
-from importlib.metadata import metadata, PackageNotFoundError
 
 from jinja2 import Template
 
