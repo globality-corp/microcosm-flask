@@ -125,20 +125,6 @@ get:
 
 ---
 kind: secret
-name: ARTIFACTORY_USERNAME
-get:
-  path: secrets/dev/drone
-  name: DRONE_ARTIFACTORY_USERNAME
-
----
-kind: secret
-name: ARTIFACTORY_PASSWORD
-get:
-  path: secrets/dev/drone
-  name: DRONE_ARTIFACTORY_PASSWORD
-
----
-kind: secret
 name: GITHUB_PRIVATE_KEY
 get:
   path: secrets/dev/drone
@@ -176,5 +162,5 @@ get:
 kind: secret
 name: EXTRA_INDEX_URL
 get:
-  path: secrets/dev/drone
-  name: DRONE_EXTRA_INDEX_URL
+  path: secrets/dev/codeartifact
+  name: CODEARTIFACT_EXTRA_INDEX_URL

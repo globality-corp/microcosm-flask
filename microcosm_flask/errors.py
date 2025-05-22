@@ -22,9 +22,9 @@ class ErrorContextSchema(Schema):
 
 
 class ErrorSchema(Schema):
-    message = fields.String(required=True, default="Unknown Error")
-    code = fields.Integer(required=True, default=500)
-    retryable = fields.Boolean(required=True, default=False)
+    message = fields.String(required=True, dump_default="Unknown Error")
+    code = fields.Integer(required=True, dump_default=500)
+    retryable = fields.Boolean(required=True, dump_default=False)
     context = fields.Nested(ErrorContextSchema, required=False)  # type: ignore
 
 

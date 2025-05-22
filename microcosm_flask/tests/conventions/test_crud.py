@@ -3,6 +3,7 @@ CRUD convention tests.
 
 """
 from enum import Enum
+from unittest.mock import patch
 
 from hamcrest import (
     assert_that,
@@ -233,6 +234,44 @@ class TestCRUD:
             "lastName": "Jones",
         }
         response = self.client.post("/api/person", json=request_data)
+        self.assert_response(
+            response,
+            201,
+            {
+                "id": str(PERSON_ID_2),
+                "firstName": "Bob",
+                "lastName": "Jones",
+                "_links": {
+                    "self": {
+                        "href": f"http://localhost/api/person/{PERSON_ID_2}",
+                    }
+                },
+            },
+        )
+        assert_that(response.headers["X-Person-Id"], is_(equal_to(str(PERSON_ID_2))))
+        assert_that(response.headers["X-Request-Id"], is_(equal_to("request-id")))
+
+    @patch("microcosm_flask.audit.FAIL_MISSING_X_REQUEST_CLIENT", True)
+    def test_x_request_client_missing(self):
+        request_data = {
+            "firstName": "Bob",
+            "lastName": "Jones",
+        }
+        response = self.client.post("/api/person", json=request_data)
+        self.assert_response(
+            response,
+            500,
+            {
+                "code": 500,
+                "context": {
+                    "errors": [],
+                },
+                "message": "X-Request-Client header is required for mutation requests",
+                "retryable": False,
+            },
+        )
+
+        response = self.client.post("/api/person", json=request_data, headers={'X-Request-Client': 'foo'})
         self.assert_response(
             response,
             201,

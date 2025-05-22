@@ -8,6 +8,7 @@ from distutils.util import strtobool
 from functools import wraps
 from json import loads
 from logging import DEBUG, getLogger
+from os import environ
 from traceback import format_exc
 from uuid import UUID
 
@@ -15,6 +16,7 @@ from flask import current_app, g, request
 from inflection import underscore
 from microcosm.api import defaults, typed
 from microcosm.config.types import boolean
+from microcosm.errors import ValidationError
 from microcosm_logging.timing import elapsed_time
 
 from microcosm_flask.errors import (
@@ -39,6 +41,13 @@ AuditOptions = namedtuple("AuditOptions", [
 
 
 SKIP_LOGGING = "_microcosm_flask_skip_audit_logging"
+FAIL_MISSING_X_REQUEST_CLIENT = environ.get("FAIL_MISSING_X_REQUEST_CLIENT", 'False').lower() in [
+    "true", "1", "y", "yes",
+]
+
+
+def get_flag_x_request_client():
+    return FAIL_MISSING_X_REQUEST_CLIENT
 
 
 def is_uuid(value):
@@ -320,7 +329,14 @@ def _audit_request(options, func, request_context, *args, **kwargs):  # noqa: C9
     logger = getLogger("audit")
 
     request_info = RequestInfo(options, func, request_context)
-    response = None
+
+    # Check if this is a mutation request (POST, PUT, PATCH, DELETE)
+    if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+        if not request.headers.get('X-Request-Client'):
+            if get_flag_x_request_client():
+                raise ValidationError("X-Request-Client header is required for mutation requests")
+            else:
+                logger.warning("No X-Request-Client header")
 
     request_info.capture_request()
     try:
