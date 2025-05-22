@@ -1,6 +1,6 @@
 from collections.abc import Mapping
 from functools import lru_cache
-from pkg_resources import iter_entry_points
+from importlib.metadata import entry_points
 from typing import Any
 
 from marshmallow.fields import Field
@@ -54,7 +54,7 @@ class Parameters:
         Define the available builder types.
 
         """
-        return [entry_point.load() for entry_point in iter_entry_points(ENTRY_POINT)]
+        return [entry_point.load() for entry_point in entry_points(group=ENTRY_POINT)]
 
     @classmethod
     def default_builder_type(cls) -> type[ParameterBuilder]:

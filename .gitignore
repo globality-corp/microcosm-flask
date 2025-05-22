@@ -79,6 +79,7 @@ nosetests.xml
 coverage.xml
 *,cover
 cover
+junit.xml
 
 # Translations
 *.mo
@@ -98,10 +99,12 @@ target/
 
 .mypy_cache
 
-/coverage/
+# direnv
+.envrc
 
 # Python Virtual Environments
 venv/
+.venv/
 
 /coverate/
 **/coverage/**/*

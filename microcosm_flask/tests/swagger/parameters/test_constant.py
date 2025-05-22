@@ -5,9 +5,10 @@ from microcosm_flask.swagger.api import build_parameter
 
 
 class FooSchema(Schema):
-    deprecated_constant_list = fields.Constant(constant=[], dump_only=True)
-    deprecated_constant_string = fields.Constant(constant="HELLO", dump_only=True)
-    deprecated_constant_int = fields.Constant(constant=123, dump_only=True)
+    # Nb. mypy wants type annotations for these fields, unclear what those would be. Disable checks below.
+    deprecated_constant_list = fields.Constant(constant=[], dump_only=True)  # type: ignore[var-annotated]
+    deprecated_constant_string = fields.Constant(constant="HELLO", dump_only=True)  # type: ignore[var-annotated]
+    deprecated_constant_int = fields.Constant(constant=123, dump_only=True)  # type: ignore[var-annotated]
 
 
 def test_field_constant_list():

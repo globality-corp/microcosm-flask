@@ -1,10 +1,13 @@
 {
   "params": {
+    "docker": {
+      "docker_tag": "python:3.11-slim-buster"
+    },
     "name": "microcosm-flask",
     "pypi": {
       "repository": "pypi"
     }
   },
   "type": "python-library",
-  "version": "2024.52.0"
+  "version": "2024.54.0"
 }

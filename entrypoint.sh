@@ -24,15 +24,19 @@
 
 
 if [ "$1" = "test" ]; then
-   pip --quiet install .\[test\]
-   pip --quiet install .
-   pytest ${NAME}
+   # Install standard test dependencies; YMMV
+   pip --quiet install \
+       .[test] pytest pytest-cov PyHamcrest
+   pytest
 elif [ "$1" = "lint" ]; then
-   pip --quiet install .\[lint\]
+   # Install standard linting dependencies; YMMV
+   pip --quiet install \
+       .[lint]
    flake8 ${NAME}
 elif [ "$1" = "typehinting" ]; then
-   pip --quiet install .\[typehinting\]
-   mypy ${NAME}
+   # Install standard type-linting dependencies
+   pip --quiet install mypy types-simplejson types-python-dateutil
+   exec mypy ${NAME} --ignore-missing-imports
 else
    echo "Cannot execute $@"
    exit 3
