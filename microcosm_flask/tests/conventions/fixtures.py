@@ -49,7 +49,7 @@ class NewPersonSchema(Schema):
     firstName = fields.String(attribute="first_name", required=True)
     last_name = fields.String(data_key="lastName", required=True)
     eye_color = EnumField(EyeColor, data_key="eyeColor")
-    email = fields.Email()
+    email = fields.Email(allow_none=True)
 
     @property
     def csv_column_order(self):
